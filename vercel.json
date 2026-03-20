@@ -52,6 +52,6 @@
   "rewrites": [],
   "redirects": [],
   "env": {
-    "NEXT_PUBLIC_SITE_URL": "https://skilltree.futurelab.dev"
+    "NEXT_PUBLIC_SITE_URL": "https://example.com"
   }
 }

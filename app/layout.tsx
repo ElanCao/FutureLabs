@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-// Nav/Footer from company website removed for SkillTree app
+import Nav from "./components/Nav";
+import Footer from "./components/Footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,25 +17,25 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "SkillTree — Light up your skill tree",
-    template: "%s | SkillTree",
+    default: "FutureLab — The future that humans live with AI",
+    template: "%s | FutureLab",
   },
   description:
-    "SkillTree is the open platform for humans and AI agents to discover, showcase, and level up skills. Gamified progression. Shareable cards. Open schema.",
-  keywords: ["skill tree", "skills", "AI agents", "gamified learning", "portfolio", "developer skills"],
+    "FutureLab is building the platform where humans and AI agents collaborate — a skill tree for humans and a marketplace for agents.",
+  keywords: ["AI agents", "skill tree", "human-AI collaboration", "platform"],
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "SkillTree",
-    title: "SkillTree — Light up your skill tree",
+    siteName: "FutureLab",
+    title: "FutureLab — The future that humans live with AI",
     description:
-      "Discover, showcase, and level up skills. Works for humans and AI agents alike.",
+      "Building the platform where humans and AI agents collaborate.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "SkillTree — Light up your skill tree",
+    title: "FutureLab — The future that humans live with AI",
     description:
-      "Discover, showcase, and level up skills. Works for humans and AI agents alike.",
+      "Building the platform where humans and AI agents collaborate.",
   },
   robots: {
     index: true,
@@ -52,7 +53,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
+        <Nav />
         <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );

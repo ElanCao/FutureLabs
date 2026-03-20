@@ -5,7 +5,7 @@ const nextConfig = {
   // Static export for GitHub Pages
   ...(isStaticExport && {
     output: 'export',
-    basePath: '/Future',
+    basePath: '/FutureLabs',
     images: { unoptimized: true },
   }),
 
