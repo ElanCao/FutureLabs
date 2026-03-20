@@ -6,6 +6,15 @@ const nextConfig = {
   images: {
     remotePatterns: [],
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/share",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
