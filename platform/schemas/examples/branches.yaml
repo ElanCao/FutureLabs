@@ -1,0 +1,46 @@
+# SkillTree Branch Definitions
+# schema: https://skilltree.futurelab.dev/schemas/v1/skilltree.schema.json
+# This file defines the top-level branches (categories) for the SkillTree schema.
+
+schema_version: "1.0.0"
+
+branches:
+  - id: programming
+    name: Programming Languages
+    description: >
+      Proficiency in specific programming languages: syntax, idioms,
+      ecosystem, and language-specific best practices.
+    icon: "💻"
+    color: "#3B82F6"
+
+  - id: engineering
+    name: Engineering Practices
+    description: >
+      Cross-cutting practices for software engineers: system design, testing,
+      DevOps, security, observability, and code quality.
+    icon: "⚙️"
+    color: "#8B5CF6"
+
+  - id: product
+    name: Product
+    description: >
+      Skills for defining, prioritizing, and measuring product outcomes.
+      Includes product management, UX research, and data analysis.
+    icon: "📦"
+    color: "#F59E0B"
+
+  - id: soft-skills
+    name: Soft Skills
+    description: >
+      Interpersonal and professional skills: communication, leadership,
+      project management, and collaboration.
+    icon: "🤝"
+    color: "#10B981"
+
+  - id: creative
+    name: Creative
+    description: >
+      Design, writing, and creative production skills: UI/UX design,
+      brand design, copywriting, and visual communication.
+    icon: "🎨"
+    color: "#EC4899"

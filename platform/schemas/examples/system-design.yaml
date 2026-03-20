@@ -1,0 +1,125 @@
+# SkillTree Skill Example: System Design
+# schema: https://skilltree.futurelab.dev/schemas/v1/skilltree.schema.json
+
+id: system-design
+name: System Design
+branch: engineering
+parent_skill_id: null
+description: >
+  Ability to design scalable, reliable, and maintainable distributed systems.
+  Covers requirements analysis, high-level architecture, component selection,
+  data modeling, capacity planning, and trade-off reasoning.
+icon: "🏗️"
+max_level: 10
+agent_compatible: true
+community: false
+tags: [architecture, distributed-systems, scalability, backend, infra]
+prerequisites: []
+
+levels:
+  - level: 1
+    title: Novice
+    behavioral_description: >
+      Understands what a client-server architecture is. Can describe the
+      difference between a database and a file system. Knows what an API is.
+    example_evidence:
+      - "Explained to a peer how a web browser fetches a page"
+    xp_threshold: 0
+
+  - level: 2
+    title: Beginner
+    behavioral_description: >
+      Designs a simple three-tier app (frontend, backend, database). Knows
+      when to use SQL vs. NoSQL at a basic level. Understands HTTP verbs and
+      REST conventions.
+    example_evidence:
+      - "Drew a system diagram for a basic CRUD app and explained each tier"
+    xp_threshold: 100
+
+  - level: 3
+    title: Apprentice
+    behavioral_description: >
+      Identifies bottlenecks in a simple system and proposes caching, indexing,
+      or read replicas. Understands CAP theorem at a conceptual level. Can
+      design a URL shortener or basic rate limiter.
+    example_evidence:
+      - "Proposed a Redis caching layer that reduced DB load by 60%"
+      - "Designed a URL shortener with collision-safe ID generation"
+    xp_threshold: 300
+
+  - level: 4
+    title: Practitioner
+    behavioral_description: >
+      Designs systems handling ~10k RPS. Applies horizontal scaling, load
+      balancing, and CDN strategies. Chooses message queues for async
+      workloads. Estimates storage/bandwidth requirements.
+    example_evidence:
+      - "Designed a notification system using a message queue (SQS/Kafka)"
+      - "Built capacity plan for a system expected to handle 5M daily users"
+    xp_threshold: 700
+
+  - level: 5
+    title: Competent
+    behavioral_description: >
+      Designs multi-region systems with data replication and consistency
+      trade-offs. Applies consistent hashing for distributed caches/queues.
+      Designs idempotent APIs and handles partial failures gracefully.
+    example_evidence:
+      - "Designed a multi-region key-value store with eventual consistency"
+      - "Led the design review for a payments service with at-least-once delivery"
+    xp_threshold: 1400
+
+  - level: 6
+    title: Skilled
+    behavioral_description: >
+      Authors Architecture Decision Records (ADRs) adopted by teams.
+      Designs event-sourced and CQRS systems. Evaluates consensus protocols
+      (Raft, Paxos). Runs failure-mode analysis (chaos engineering).
+    example_evidence:
+      - "Wrote ADR for migrating from monolith to event-driven microservices"
+      - "Ran a GameDay exercise that uncovered a cascading-failure scenario"
+    xp_threshold: 2500
+
+  - level: 7
+    title: Advanced
+    behavioral_description: >
+      Designs systems at 100k+ RPS across multiple datacenters. Owns
+      reliability/availability OKRs. Mentors staff-level engineers. Drives
+      cross-org platform decisions (databases, service mesh, observability).
+    example_evidence:
+      - "Led architecture for a globally distributed search index (petabyte scale)"
+      - "Defined org-wide SLO framework and runbook standards"
+    xp_threshold: 4000
+
+  - level: 8
+    title: Expert
+    behavioral_description: >
+      Writes publicly recognized system design content (blog posts, talks,
+      open-source frameworks) adopted by other companies. Identifies
+      industry-wide patterns and publishes novel solutions.
+    example_evidence:
+      - "Conference talk on novel consistency model cited 100+ times"
+      - "Open-source infrastructure tool with 1k+ GitHub stars"
+    xp_threshold: 6000
+
+  - level: 9
+    title: Master
+    behavioral_description: >
+      Defines industry standards for distributed systems design. Work shapes
+      cloud provider offerings or open-source foundations. Teaches the
+      next generation of principal engineers at scale.
+    example_evidence:
+      - "Authored a widely-adopted distributed systems textbook or course"
+      - "Principal architect of a foundational cloud service"
+    xp_threshold: 9000
+
+  - level: 10
+    title: World-Class
+    behavioral_description: >
+      Globally recognized authority on distributed systems. Published research
+      defines how the industry builds infrastructure. Advises hyperscalers and
+      cloud platforms at the architectural strategy level.
+    example_evidence:
+      - "Author of a seminal distributed systems paper (Google Spanner, Dynamo, etc.)"
+      - "Keynoted re:Invent, QCon, or equivalent infrastructure conference"
+    xp_threshold: 15000

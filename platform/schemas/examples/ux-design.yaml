@@ -1,0 +1,92 @@
+# SkillTree Skill Example: UX Design (Creative)
+# schema: https://skilltree.futurelab.dev/schemas/v1/skilltree.schema.json
+
+id: ux-design
+name: UX Design
+branch: creative
+parent_skill_id: null
+description: >
+  Ability to research, define, prototype, and validate user-centered product
+  experiences. Covers user research, interaction design, prototyping,
+  usability testing, and design systems.
+icon: "🎨"
+max_level: 10
+agent_compatible: false
+community: false
+tags: [ux, design, user-research, prototyping, interaction-design, figma]
+prerequisites: []
+
+levels:
+  - level: 1
+    title: Novice
+    behavioral_description: >
+      Understands what UX design means. Can distinguish between UI and UX.
+      Uses a design tool (Figma/Sketch) to view and comment on designs.
+    example_evidence:
+      - "Left feedback on a Figma prototype"
+    xp_threshold: 0
+
+  - level: 2
+    title: Beginner
+    behavioral_description: >
+      Creates simple wireframes for screens. Understands basic usability
+      heuristics. Conducts an informal user interview.
+    example_evidence:
+      - "Created lo-fi wireframes for a 3-screen user flow"
+      - "Conducted 2 user interviews and summarized findings"
+    xp_threshold: 100
+
+  - level: 3
+    title: Apprentice
+    behavioral_description: >
+      Designs end-to-end user flows with hi-fi prototypes. Applies visual
+      hierarchy and spacing principles. Runs moderated usability tests and
+      synthesizes findings into actionable recommendations.
+    example_evidence:
+      - "Ran a 5-participant usability test and produced a findings report"
+      - "Designed a full onboarding flow from research to hi-fi prototype"
+    xp_threshold: 300
+
+  - level: 4
+    title: Practitioner
+    behavioral_description: >
+      Leads end-to-end UX for a product area. Uses quantitative data (funnels,
+      heatmaps) alongside qualitative research. Contributes to or maintains a
+      design system. Facilitates design critiques.
+    example_evidence:
+      - "Redesigned checkout flow that reduced drop-off by 15%"
+      - "Added 10+ components to the team design system"
+    xp_threshold: 700
+
+  - level: 5
+    title: Competent
+    behavioral_description: >
+      Defines UX strategy and OKRs for a product domain. Runs Jobs-to-be-Done
+      and diary studies. Collaborates with PMs and engineers to ship
+      user-tested features on a regular cadence.
+    example_evidence:
+      - "Led a discovery sprint that reprioritized a quarter of roadmap"
+      - "Established the team's research ops process"
+    xp_threshold: 1400
+
+  - level: 7
+    title: Advanced
+    behavioral_description: >
+      Owns design quality for a product org (multiple teams). Defines the
+      design system and design language. Hires and mentors junior/mid
+      designers. Represents design at the executive table.
+    example_evidence:
+      - "Built a design team from 1 to 8 designers"
+      - "Led the creation of a company-wide design system"
+    xp_threshold: 4000
+
+  - level: 9
+    title: Master
+    behavioral_description: >
+      Shapes UX industry practices through public writing, speaking, and
+      open-source tooling. Advises product companies at the board level on
+      design strategy.
+    example_evidence:
+      - "Author of a widely-cited UX book or course"
+      - "Keynoted Config, UXPA, or equivalent design conference"
+    xp_threshold: 9000
