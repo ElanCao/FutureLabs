@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Research",
@@ -95,6 +96,38 @@ export default function Research() {
             the outcome depends on the choices we make now about design,
             governance, and culture.&rdquo;
           </p>
+        </div>
+      </section>
+
+      {/* Featured research */}
+      <section className="py-14 bg-white border-b border-slate-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <h2 className="text-xs font-semibold tracking-widest uppercase text-slate-500 mb-6">
+            Featured Research
+          </h2>
+          <Link
+            href="/research/human-ai-future"
+            className="group block p-8 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 transition-colors"
+          >
+            <div className="flex flex-wrap items-center gap-3 mb-3">
+              <span className="text-xs font-medium bg-white/20 text-white px-2.5 py-1 rounded-full">
+                Founding Research Report
+              </span>
+              <span className="text-indigo-200 text-xs">March 2026</span>
+            </div>
+            <h3 className="text-2xl font-bold mb-3 group-hover:underline">
+              The Future Where Humans Live With AI
+            </h3>
+            <p className="text-indigo-100 max-w-2xl leading-relaxed text-sm">
+              What it means — and what it requires — for humans and AI agents to
+              share the same world of work, learning, and purpose. Covering the
+              agentic shift, key trends, opportunities, and implications for
+              individuals, organizations, and policymakers.
+            </p>
+            <span className="mt-5 inline-flex items-center text-sm font-medium text-white gap-1 group-hover:gap-2 transition-all">
+              Read the report →
+            </span>
+          </Link>
         </div>
       </section>
 
