@@ -15,11 +15,18 @@ const team = [
     icon: "🎯",
   },
   {
-    name: "Founding Engineer",
-    role: "Full-Stack Engineering",
+    name: "CTO",
+    role: "Chief Technology Officer",
     description:
-      "Builds the product end-to-end — from architecture to deployment. Owns implementation, ships fast, and unblocks the team.",
+      "Owns technical architecture, engineering roadmap, and execution. Manages the engineering team and makes SkillTree real.",
     icon: "⚙️",
+  },
+  {
+    name: "Chief Research Officer",
+    role: "Research & Strategy",
+    description:
+      "Articulates the mission, vision, and values. Leads research on the AI-human future that underpins everything we build.",
+    icon: "🔬",
   },
   {
     name: "CMO",
@@ -27,6 +34,13 @@ const team = [
     description:
       "Brand, marketing, and website copy. Shapes how FutureLab communicates its mission and connects with the world.",
     icon: "📣",
+  },
+  {
+    name: "Founding Engineer",
+    role: "Full-Stack Engineering",
+    description:
+      "Builds the product end-to-end — from architecture to deployment. Owns implementation, ships fast, and unblocks the team.",
+    icon: "🌱",
   },
 ];
 
@@ -142,7 +156,17 @@ export default function About() {
             <div className="ml-4">
               <div className="flex items-start gap-1 mb-1">
                 <span className="text-slate-400">├──</span>
-                <span>Founding Engineer</span>
+                <span>CTO</span>
+              </div>
+              <div className="ml-4 mb-1">
+                <div className="flex items-start gap-1">
+                  <span className="text-slate-400">└──</span>
+                  <span>Founding Engineer</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-1 mb-1">
+                <span className="text-slate-400">├──</span>
+                <span>Chief Research Officer</span>
               </div>
               <div className="flex items-start gap-1">
                 <span className="text-slate-400">└──</span>
@@ -152,7 +176,7 @@ export default function About() {
           </div>
 
           {/* Team cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {team.map((member) => (
               <div
                 key={member.name}
