@@ -1,0 +1,237 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://skilltree.futurelab.dev/schemas/v1/skilltree.schema.json",
+  "title": "SkillTree Schema",
+  "description": "Open, machine-readable schema for human and AI agent skill trees. Version 1.0. Human and AI agents share the same schema — a skill is a skill regardless of who holds it.",
+  "version": "1.0.0",
+  "type": "object",
+  "definitions": {
+    "SkillLevel": {
+      "type": "object",
+      "description": "A concrete, observable behavioral description for one level of a skill. Levels must be verifiable — avoid vague adjectives.",
+      "required": ["level", "title", "behavioral_description", "xp_threshold"],
+      "properties": {
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Level number (1 = beginner, 10 = world-class)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Short display title for this level (e.g., 'Novice', 'Practitioner', 'Expert')"
+        },
+        "behavioral_description": {
+          "type": "string",
+          "description": "What someone at this level can demonstrably DO. Use action verbs. No vague adjectives."
+        },
+        "example_evidence": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Example evidence types that demonstrate this level (e.g., 'Built a CRUD REST API', 'Authored an RFC')"
+        },
+        "xp_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Cumulative XP required to reach this level"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Skill": {
+      "type": "object",
+      "description": "An individual skill within a branch. Skills are hierarchical — a skill may have a parent skill.",
+      "required": ["id", "name", "branch", "max_level", "levels"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$",
+          "description": "URL-safe unique identifier for this skill (e.g., 'python', 'system-design')"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable skill name"
+        },
+        "branch": {
+          "type": "string",
+          "description": "ID of the parent branch"
+        },
+        "parent_skill_id": {
+          "type": ["string", "null"],
+          "description": "ID of the parent skill for hierarchical skills (e.g., 'pandas' is a child of 'python'). Null for top-level skills."
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of what this skill covers"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Emoji or icon identifier for display"
+        },
+        "max_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 10
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Array of skill IDs that should be reached (any level) before this skill",
+          "default": []
+        },
+        "levels": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SkillLevel" },
+          "minItems": 1,
+          "description": "Level descriptors. Must cover levels 1 through max_level."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Free-form tags for search and filtering"
+        },
+        "agent_compatible": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether this skill can be held by an AI agent (true for most technical skills)"
+        },
+        "community": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this skill was proposed by the community vs. official"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Branch": {
+      "type": "object",
+      "description": "A top-level category grouping related skills",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "icon": { "type": "string" },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "description": "Hex color for UI display"
+        }
+      },
+      "additionalProperties": false
+    },
+    "EvidenceRecord": {
+      "type": "object",
+      "description": "A piece of evidence supporting a skill level claim",
+      "required": ["type", "created_at"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["certificate", "project", "self_assessment", "peer_review", "publication", "contribution"],
+          "description": "The kind of evidence"
+        },
+        "title": { "type": "string" },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "description": { "type": "string" },
+        "verified": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this evidence has been verified by a third party or peer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UserSkillRecord": {
+      "type": "object",
+      "description": "A user's or agent's current state for a specific skill",
+      "required": ["skill_id", "current_level", "xp"],
+      "properties": {
+        "skill_id": { "type": "string" },
+        "current_level": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "xp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EvidenceRecord" }
+        },
+        "unlocked_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "last_leveled_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Profile": {
+      "type": "object",
+      "description": "A user or agent profile with their skill tree",
+      "required": ["id", "username", "entity_type", "skills"],
+      "properties": {
+        "id": { "type": "string" },
+        "username": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_-]{2,30}$"
+        },
+        "display_name": { "type": "string" },
+        "bio": { "type": "string" },
+        "avatar_url": { "type": "string", "format": "uri" },
+        "entity_type": {
+          "type": "string",
+          "enum": ["human", "ai_agent"],
+          "description": "Whether this profile belongs to a human or an AI agent"
+        },
+        "privacy": {
+          "type": "string",
+          "enum": ["public", "friends", "private"],
+          "default": "private"
+        },
+        "skills": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/UserSkillRecord" }
+        },
+        "total_xp": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "branches": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Branch" }
+    },
+    "skills": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Skill" }
+    }
+  },
+  "required": ["schema_version", "branches", "skills"],
+  "additionalProperties": false
+}
