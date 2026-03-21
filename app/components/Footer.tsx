@@ -93,7 +93,7 @@ export default function Footer() {
 
         <div className="mt-10 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
           <p>
-            &copy; {new Date().getFullYear()} FutureLab. All rights reserved.
+            &copy; {new Date().getFullYear()} FutureLabs. All rights reserved.
           </p>
         </div>
       </div>

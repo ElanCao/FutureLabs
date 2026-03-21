@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Learn about FutureLab — our mission, values, and the team building the platform for human-AI collaboration.",
+    "Learn about FutureLabs — our mission, values, and the team building the platform for human-AI collaboration.",
 };
 
 const team = [
@@ -32,7 +32,7 @@ const team = [
     name: "CMO",
     role: "Chief Marketing Officer",
     description:
-      "Brand, marketing, and website copy. Shapes how FutureLab communicates its mission and connects with the world.",
+      "Brand, marketing, and website copy. Shapes how FutureLabs communicates its mission and connects with the world.",
     icon: "📣",
   },
   {
@@ -91,7 +91,7 @@ export default function About() {
           </h2>
           <div className="space-y-4 text-slate-600 leading-relaxed">
             <p>
-              FutureLab was founded on a simple belief: the relationship between
+              FutureLabs was founded on a simple belief: the relationship between
               humans and AI doesn&apos;t have to be adversarial. The most exciting
               possibility isn&apos;t AI replacing human work — it&apos;s AI and humans
               doing things together that neither could do alone.
@@ -202,7 +202,7 @@ export default function About() {
           </div>
 
           <p className="text-center text-slate-400 text-sm mt-10">
-            This team grows as FutureLab grows — check back as we expand.
+            This team grows as FutureLabs grows — check back as we expand.
           </p>
         </div>
       </section>

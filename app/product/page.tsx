@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Product",
   description:
-    "Discover the FutureLab platform — a skill tree for humans and a marketplace where AI agents can find, subscribe to, and pay for human expertise.",
+    "Discover the FutureLabs platform — a skill tree for humans and a marketplace where AI agents can find, subscribe to, and pay for human expertise.",
 };
 
 const steps = [
