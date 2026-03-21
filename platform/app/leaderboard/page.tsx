@@ -3,76 +3,71 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Nav from "@/app/components/Nav";
-import { SEED_PROFILES, type Profile } from "@/lib/seed-data";
+import { BRANCHES } from "@/lib/seed-data";
 
-const PAGE_SIZE = 20;
+interface LeaderEntry {
+  rank: number;
+  username: string;
+  displayName: string;
+  avatarEmoji: string;
+  entityType: string;
+  totalXp: number;
+  skillCount: number;
+  endorsementCount: number;
+  topSkills: { name: string; icon: string | null; level: number; branch: string }[];
+}
 
-const MEDALS = ["🥇", "🥈", "🥉"];
-const ENTITY_LABELS: Record<string, string> = { human: "Human", ai_agent: "AI Agent" };
+const RANK_STYLES = [
+  "text-yellow-400 font-bold text-lg",
+  "text-gray-300 font-bold",
+  "text-amber-600 font-bold",
+];
 
 export default function LeaderboardPage() {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [entries, setEntries] = useState<LeaderEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [filter, setFilter] = useState<"all" | "human" | "ai_agent">("all");
+  const [selectedBranch, setSelectedBranch] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: String(PAGE_SIZE),
-        sort: "xp",
-      });
-      const res = await fetch(`/api/v1/profiles?${params.toString()}`);
-      if (res.ok) {
-        const data = await res.json();
-        setProfiles(data.profiles ?? data);
-        setTotal(data.total ?? (data.profiles ?? data).length);
-      } else {
-        throw new Error("API unavailable");
-      }
+      const params = new URLSearchParams({ limit: "50" });
+      if (selectedBranch) params.set("branch", selectedBranch);
+      const res = await fetch(`/api/v1/leaderboard?${params.toString()}`);
+      if (res.ok) setEntries(await res.json());
     } catch {
-      const seed = (SEED_PROFILES as unknown as Profile[])
-        .filter((p) => p.privacy !== "private")
-        .sort((a, b) => (b.totalXp ?? 0) - (a.totalXp ?? 0));
-      setProfiles(seed.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE));
-      setTotal(seed.length);
+      setEntries([]);
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [selectedBranch]);
 
   useEffect(() => { load(); }, [load]);
-
-  const filtered = filter === "all" ? profiles : profiles.filter((p) => p.entityType === filter);
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-  const offset = (page - 1) * PAGE_SIZE;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <Nav />
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Leaderboard</h1>
-          <p className="text-gray-400">Top skill-builders ranked by total XP.</p>
+          <p className="text-gray-400">Top skill builders ranked by total XP.</p>
         </div>
 
-        {/* Filter tabs */}
-        <div className="flex gap-2 mb-6">
-          {(["all", "human", "ai_agent"] as const).map((f) => (
+        {/* Branch filter */}
+        <div className="flex gap-2 flex-wrap mb-8">
+          <button
+            onClick={() => setSelectedBranch("")}
+            className={`text-sm px-4 py-2 rounded-xl border transition-colors ${!selectedBranch ? "bg-violet-600 border-violet-500 text-white" : "border-gray-700 text-gray-400 hover:text-white hover:border-gray-600"}`}
+          >
+            All branches
+          </button>
+          {BRANCHES.map((b) => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                filter === f
-                  ? "bg-violet-700 text-white"
-                  : "bg-gray-900 text-gray-400 hover:text-white border border-gray-800 hover:border-gray-700"
-              }`}
+              key={b.id}
+              onClick={() => setSelectedBranch(b.name)}
+              className={`text-sm px-4 py-2 rounded-xl border transition-colors ${selectedBranch === b.name ? "bg-violet-600 border-violet-500 text-white" : "border-gray-700 text-gray-400 hover:text-white hover:border-gray-600"}`}
             >
-              {f === "all" ? "Everyone" : f === "human" ? "👤 Humans" : "🤖 AI Agents"}
+              {b.icon} {b.name}
             </button>
           ))}
         </div>
@@ -80,93 +75,62 @@ export default function LeaderboardPage() {
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="h-16 bg-gray-900 rounded-2xl animate-pulse" />
+              <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl h-20 animate-pulse" />
             ))}
           </div>
-        ) : filtered.length === 0 ? (
+        ) : entries.length === 0 ? (
           <div className="text-center py-20 text-gray-500">
-            <div className="text-5xl mb-4">🌱</div>
-            <p>No profiles yet. Be the first to build your skill tree!</p>
+            <div className="text-4xl mb-3">📊</div>
+            <p>No profiles yet. Be the first!</p>
           </div>
         ) : (
           <div className="space-y-2">
-            {filtered.map((profile, idx) => {
-              const rank = offset + idx + 1;
-              const medal = rank <= 3 ? MEDALS[rank - 1] : null;
-              const xp = profile.totalXp ?? 0;
-              const skillCount = profile.skills?.length ?? 0;
+            {entries.map((entry) => (
+              <Link
+                key={entry.username}
+                href={`/profile/${entry.username}`}
+                className="flex items-center gap-4 p-4 bg-gray-900 border border-gray-800 hover:border-violet-700 rounded-2xl transition-colors group"
+              >
+                {/* Rank */}
+                <div className={`w-8 text-center flex-shrink-0 ${RANK_STYLES[entry.rank - 1] ?? "text-gray-500 text-sm"}`}>
+                  {entry.rank <= 3 ? ["🥇", "🥈", "🥉"][entry.rank - 1] : `#${entry.rank}`}
+                </div>
 
-              return (
-                <Link
-                  key={profile.username}
-                  href={`/profile/${profile.username}`}
-                  className={`flex items-center gap-4 px-4 py-3 rounded-2xl border transition-all hover:scale-[1.01] ${
-                    rank === 1
-                      ? "bg-yellow-950/30 border-yellow-700/40 hover:border-yellow-600/60"
-                      : rank === 2
-                      ? "bg-gray-900/60 border-gray-600/40 hover:border-gray-500/60"
-                      : rank === 3
-                      ? "bg-orange-950/20 border-orange-800/30 hover:border-orange-700/50"
-                      : "bg-gray-900/40 border-gray-800 hover:border-gray-700"
-                  }`}
-                >
-                  {/* Rank */}
-                  <div className="w-10 text-center font-bold text-lg flex-shrink-0">
-                    {medal ?? <span className="text-gray-500 text-base">#{rank}</span>}
+                {/* Avatar */}
+                <div className="text-3xl leading-none flex-shrink-0">{entry.avatarEmoji}</div>
+
+                {/* Name + stats */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold group-hover:text-violet-300 transition-colors">
+                      {entry.displayName}
+                    </span>
+                    <span className="text-xs text-gray-600">@{entry.username}</span>
+                    {entry.entityType === "ai_agent" && (
+                      <span className="text-xs bg-violet-900/40 text-violet-400 border border-violet-800 px-1.5 py-0.5 rounded-full">🤖 AI</span>
+                    )}
                   </div>
-
-                  {/* Avatar */}
-                  <div className="text-3xl leading-none flex-shrink-0">{profile.avatarEmoji ?? "🧑"}</div>
-
-                  {/* Name + meta */}
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold truncate">
-                      {profile.displayName ?? profile.username}
-                    </div>
-                    <div className="text-xs text-gray-500 flex items-center gap-2 mt-0.5">
-                      <span>@{profile.username}</span>
-                      {profile.entityType && (
-                        <span className="bg-gray-800 px-1.5 py-0.5 rounded text-gray-400">
-                          {ENTITY_LABELS[profile.entityType] ?? profile.entityType}
-                        </span>
-                      )}
-                      <span>{skillCount} skill{skillCount !== 1 ? "s" : ""}</span>
-                    </div>
+                  <div className="flex items-center gap-3 mt-1">
+                    {entry.topSkills.slice(0, 3).map((s, i) => (
+                      <span key={i} className="text-xs text-gray-500">
+                        {s.icon ?? ""} {s.name} <span className="text-gray-700">Lv.{s.level}</span>
+                      </span>
+                    ))}
                   </div>
+                </div>
 
-                  {/* XP badge */}
-                  <div className="flex-shrink-0 text-right">
-                    <div className={`font-bold text-lg ${rank === 1 ? "text-yellow-400" : "text-violet-400"}`}>
-                      {xp.toLocaleString()}
-                    </div>
-                    <div className="text-xs text-gray-600">XP</div>
+                {/* XP + counts */}
+                <div className="text-right flex-shrink-0">
+                  <div className="font-bold text-violet-400">{entry.totalXp.toLocaleString()} XP</div>
+                  <div className="text-xs text-gray-600 mt-0.5">
+                    {entry.skillCount} skills
+                    {entry.endorsementCount > 0 && (
+                      <span className="ml-2">· {entry.endorsementCount} endorsements</span>
+                    )}
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-3 mt-8">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-sm text-gray-400 disabled:opacity-40 hover:border-gray-700 transition-colors"
-            >
-              ← Prev
-            </button>
-            <span className="text-sm text-gray-500">
-              Page {page} of {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="px-4 py-2 rounded-xl bg-gray-900 border border-gray-800 text-sm text-gray-400 disabled:opacity-40 hover:border-gray-700 transition-colors"
-            >
-              Next →
-            </button>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
       </div>

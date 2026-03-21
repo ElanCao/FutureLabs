@@ -1,9 +1,10 @@
 /**
- * GET /api/v1/profiles/:username/endorsements
- *   — Returns all endorsements for a profile, grouped by skillId.
- *     Each group includes endorser info and endorsement count.
+ * GET  /api/v1/profiles/:username/endorsements — list endorsements received
+ * POST /api/v1/profiles/:username/endorsements — endorse a skill (auth required)
  */
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
 
 interface Params { params: { username: string } }
@@ -11,54 +12,100 @@ interface Params { params: { username: string } }
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
     const profile = await prisma.profile.findUnique({ where: { username: params.username } });
-    if (!profile || profile.privacy === "private") {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
+    if (!profile) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     const endorsements = await prisma.skillEndorsement.findMany({
       where: { endorseeId: profile.id },
-      orderBy: { createdAt: "desc" },
       include: {
         endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
         skill: { select: { id: true, name: true, icon: true } },
       },
+      orderBy: { createdAt: "desc" },
     });
 
-    // Group by skillId
-    const bySkill: Record<string, {
-      skillId: string;
-      skillName: string;
-      skillIcon: string | null;
-      count: number;
-      endorsers: { username: string; displayName: string; avatarEmoji: string; note: string | null; createdAt: Date }[];
-    }> = {};
-
-    for (const e of endorsements) {
-      if (!bySkill[e.skillId]) {
-        bySkill[e.skillId] = {
-          skillId: e.skillId,
-          skillName: e.skill.name,
-          skillIcon: e.skill.icon,
-          count: 0,
-          endorsers: [],
-        };
-      }
-      bySkill[e.skillId].count++;
-      // Only include first 5 endorsers
-      if (bySkill[e.skillId].endorsers.length < 5) {
-        bySkill[e.skillId].endorsers.push({
+    return NextResponse.json(
+      endorsements.map((e) => ({
+        id: e.id,
+        skillId: e.skillId,
+        skillName: e.skill.name,
+        skillIcon: e.skill.icon,
+        endorser: {
           username: e.endorser.username,
           displayName: e.endorser.displayName ?? e.endorser.username,
           avatarEmoji: e.endorser.avatarEmoji ?? "🧑",
-          note: e.note,
-          createdAt: e.createdAt,
-        });
-      }
+        },
+        note: e.note,
+        createdAt: e.createdAt,
+      }))
+    );
+  } catch {
+    return NextResponse.json([]);
+  }
+}
+
+export async function POST(req: NextRequest, { params }: Params) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const userId = (session.user as { id?: string }).id;
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await req.json();
+  const { skillId, note } = body;
+  if (!skillId) return NextResponse.json({ error: "skillId required" }, { status: 400 });
+
+  try {
+    const endorser = await prisma.profile.findUnique({ where: { userId } });
+    if (!endorser) return NextResponse.json({ error: "You need a profile to endorse others" }, { status: 403 });
+
+    const endorsee = await prisma.profile.findUnique({ where: { username: params.username } });
+    if (!endorsee) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+
+    if (endorser.id === endorsee.id) {
+      return NextResponse.json({ error: "You cannot endorse yourself" }, { status: 400 });
     }
 
-    return NextResponse.json({ endorsements: Object.values(bySkill) });
-  } catch (err) {
-    console.error("GET endorsements error:", err);
-    return NextResponse.json({ error: "Failed to fetch endorsements" }, { status: 500 });
+    const skillRecord = await prisma.userSkillRecord.findUnique({
+      where: { profileId_skillId: { profileId: endorsee.id, skillId } },
+    });
+    if (!skillRecord) return NextResponse.json({ error: "User does not have this skill" }, { status: 400 });
+
+    const endorsement = await prisma.skillEndorsement.create({
+      data: { endorserId: endorser.id, endorseeId: endorsee.id, skillId, note: note ?? null },
+      include: {
+        skill: { select: { name: true, icon: true } },
+        endorser: { select: { username: true, displayName: true } },
+      },
+    });
+
+    await prisma.notification.create({
+      data: {
+        profileId: endorsee.id,
+        type: "endorsement",
+        referenceId: endorsement.id,
+        message: `${endorser.displayName ?? endorser.username} endorsed your ${endorsement.skill.name} skill!`,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        id: endorsement.id,
+        skillId: endorsement.skillId,
+        skillName: endorsement.skill.name,
+        skillIcon: endorsement.skill.icon,
+        endorser: {
+          username: endorsement.endorser.username,
+          displayName: endorsement.endorser.displayName ?? endorsement.endorser.username,
+        },
+        note: endorsement.note,
+        createdAt: endorsement.createdAt,
+      },
+      { status: 201 }
+    );
+  } catch (err: unknown) {
+    if (err && typeof err === "object" && "code" in err && err.code === "P2002") {
+      return NextResponse.json({ error: "Already endorsed" }, { status: 409 });
+    }
+    return NextResponse.json({ error: "Failed to create endorsement" }, { status: 500 });
   }
 }
