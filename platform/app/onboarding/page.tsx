@@ -13,6 +13,7 @@ export default function OnboardingPage() {
   const [selectedSkillId, setSelectedSkillId] = useState("");
   const [selectedLevel, setSelectedLevel] = useState(1);
   const [selectedBranch, setSelectedBranch] = useState("");
+  const [skillSearch, setSkillSearch] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -22,9 +23,11 @@ export default function OnboardingPage() {
     }
   }, [status, router]);
 
-  const filteredSkills = selectedBranch
-    ? SKILLS.filter((s) => s.branch === selectedBranch)
-    : SKILLS;
+  const filteredSkills = SKILLS.filter((s) => {
+    if (selectedBranch && s.branch !== selectedBranch) return false;
+    if (skillSearch.trim()) return s.name.toLowerCase().includes(skillSearch.toLowerCase());
+    return true;
+  });
 
   const selectedSkill = SKILLS.find((s) => s.id === selectedSkillId);
   const levelData = selectedSkill?.levels.find((l) => l.level === selectedLevel);
@@ -146,17 +149,54 @@ export default function OnboardingPage() {
                 ))}
               </div>
 
-              {/* Skill select */}
-              <select
-                value={selectedSkillId}
-                onChange={(e) => { setSelectedSkillId(e.target.value); setSelectedLevel(1); }}
-                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:border-violet-500 outline-none transition-colors"
-              >
-                <option value="">— Pick a skill —</option>
-                {filteredSkills.map((s) => (
-                  <option key={s.id} value={s.id}>{s.icon} {s.name}</option>
-                ))}
-              </select>
+              {/* Search */}
+              <input
+                type="text"
+                placeholder="Search 100+ skills…"
+                value={skillSearch}
+                onChange={(e) => { setSkillSearch(e.target.value); setSelectedSkillId(""); setSelectedLevel(1); }}
+                className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-violet-500 outline-none transition-colors"
+              />
+
+              {/* Skill list */}
+              {!selectedSkillId && (
+                <div className="max-h-48 overflow-y-auto rounded-xl border border-gray-700 bg-gray-900">
+                  {filteredSkills.length === 0 ? (
+                    <div className="py-6 text-center text-gray-500 text-sm">No skills found</div>
+                  ) : (
+                    <div className="divide-y divide-gray-800">
+                      {filteredSkills.map((s) => {
+                        const branch = BRANCHES.find((b) => b.id === s.branch);
+                        return (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => { setSelectedSkillId(s.id); setSelectedLevel(1); }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-800 transition-colors text-left"
+                          >
+                            <span className="text-base w-5 text-center flex-shrink-0">{s.icon}</span>
+                            <span className="text-sm font-medium text-white flex-1">{s.name}</span>
+                            <span className="text-xs text-gray-500 flex-shrink-0">{branch?.name}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Selected skill indicator */}
+              {selectedSkillId && selectedSkill && (
+                <button
+                  type="button"
+                  onClick={() => { setSelectedSkillId(""); setSelectedLevel(1); }}
+                  className="flex items-center gap-2 text-sm text-violet-400 hover:text-violet-300"
+                >
+                  <span>{selectedSkill.icon}</span>
+                  <span className="font-medium">{selectedSkill.name}</span>
+                  <span className="text-gray-600 ml-1">× change</span>
+                </button>
+              )}
             </div>
 
             {/* Level picker */}

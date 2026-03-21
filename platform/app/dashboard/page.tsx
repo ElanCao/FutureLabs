@@ -127,24 +127,33 @@ function AddSkillModal({
   onAdd: (skillId: string, level: number) => void;
 }) {
   const [selectedBranch, setSelectedBranch] = useState("");
+  const [search, setSearch] = useState("");
   const [selectedSkillId, setSelectedSkillId] = useState("");
   const [level, setLevel] = useState(1);
 
-  const filteredSkills = (selectedBranch ? SKILLS.filter((s) => s.branch === selectedBranch) : SKILLS).filter(
-    (s) => !existingIds.has(s.id)
-  );
+  const filteredSkills = SKILLS.filter((s) => {
+    if (existingIds.has(s.id)) return false;
+    if (selectedBranch && s.branch !== selectedBranch) return false;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      return s.name.toLowerCase().includes(q);
+    }
+    return true;
+  });
   const selectedSkill = SKILLS.find((s) => s.id === selectedSkillId);
   const levelData = selectedSkill?.levels.find((l) => l.level === level);
+  const selectedBranchData = selectedSkillId ? BRANCHES.find((b) => b.id === selectedSkill?.branch) : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-md p-6">
-        <div className="flex items-center justify-between mb-5">
+      <div className="bg-gray-900 border border-gray-800 rounded-2xl w-full max-w-lg p-6 flex flex-col max-h-[90vh]">
+        <div className="flex items-center justify-between mb-5 flex-shrink-0">
           <h2 className="text-lg font-bold">Add a Skill</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-white text-xl">×</button>
+          <button onClick={onClose} className="text-gray-500 hover:text-white text-xl leading-none">×</button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 flex-shrink-0">
+          {/* Branch filter */}
           <div className="flex gap-2 flex-wrap">
             <button
               type="button"
@@ -157,7 +166,7 @@ function AddSkillModal({
               <button
                 key={b.id}
                 type="button"
-                onClick={() => { setSelectedBranch(b.id); setSelectedSkillId(""); }}
+                onClick={() => { setSelectedBranch(b.id === selectedBranch ? "" : b.id); setSelectedSkillId(""); }}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${selectedBranch === b.id ? "bg-violet-600 border-violet-500 text-white" : "border-gray-700 text-gray-400 hover:text-white"}`}
               >
                 {b.icon} {b.name}
@@ -165,21 +174,63 @@ function AddSkillModal({
             ))}
           </div>
 
-          <select
-            value={selectedSkillId}
-            onChange={(e) => { setSelectedSkillId(e.target.value); setLevel(1); }}
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:border-violet-500 outline-none"
-          >
-            <option value="">— Select a skill —</option>
-            {filteredSkills.map((s) => (
-              <option key={s.id} value={s.id}>{s.icon} {s.name}</option>
-            ))}
-          </select>
+          {/* Search */}
+          <input
+            type="text"
+            placeholder="Search skills…"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setSelectedSkillId(""); }}
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:border-violet-500 outline-none"
+          />
+        </div>
 
-          {selectedSkillId && (
+        {/* Skill list */}
+        {!selectedSkillId ? (
+          <div className="mt-3 overflow-y-auto flex-1 min-h-0 rounded-xl border border-gray-800">
+            {filteredSkills.length === 0 ? (
+              <div className="py-8 text-center text-gray-500 text-sm">No skills found</div>
+            ) : (
+              <div className="divide-y divide-gray-800">
+                {filteredSkills.map((s) => {
+                  const branch = BRANCHES.find((b) => b.id === s.branch);
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => { setSelectedSkillId(s.id); setLevel(1); }}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-800 transition-colors text-left"
+                    >
+                      <span className="text-lg leading-none w-6 text-center flex-shrink-0">{s.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-white truncate">{s.name}</div>
+                        <div className="text-xs text-gray-500 truncate">{branch?.name}</div>
+                      </div>
+                      <span className="text-xs text-gray-600 flex-shrink-0">{s.maxLevel} lvls</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="mt-3 space-y-3 flex-1">
+            {/* Selected skill header */}
+            <button
+              type="button"
+              onClick={() => setSelectedSkillId("")}
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              <span>←</span>
+              <span className="text-lg">{selectedSkill?.icon}</span>
+              <span className="font-medium text-white">{selectedSkill?.name}</span>
+              <span className="text-gray-600">·</span>
+              <span style={{ color: selectedBranchData?.color }}>{selectedBranchData?.name}</span>
+            </button>
+
+            {/* Level selector */}
             <div>
               <label className="text-sm text-gray-400 mb-2 block">
-                Starting level: <span className="text-violet-400 font-semibold">{level}</span>
+                Starting level: <span className="text-violet-400 font-semibold">{level} — {levelData?.title}</span>
               </label>
               <input
                 type="range"
@@ -191,15 +242,14 @@ function AddSkillModal({
               />
               {levelData && (
                 <div className="mt-2 bg-gray-800 rounded-xl p-3">
-                  <div className="text-sm font-medium">{levelData.title}</div>
-                  <div className="text-xs text-gray-500 mt-1">{levelData.description}</div>
+                  <div className="text-xs text-gray-400 leading-relaxed">{levelData.description}</div>
                 </div>
               )}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="flex gap-3 mt-6">
+        <div className="flex gap-3 mt-4 flex-shrink-0">
           <button onClick={onClose} className="flex-1 py-2.5 bg-gray-800 hover:bg-gray-700 text-white rounded-xl text-sm">Cancel</button>
           <button
             disabled={!selectedSkillId}
