@@ -17,23 +17,23 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "FutureLab — The future that humans live with AI",
-    template: "%s | FutureLab",
+    default: "FutureLabs — The future that humans live with AI",
+    template: "%s | FutureLabs",
   },
   description:
-    "FutureLab is building the platform where humans and AI agents collaborate — a skill tree for humans and a marketplace for agents.",
+    "FutureLabs is building the platform where humans and AI agents collaborate — a skill tree for humans and a marketplace for agents.",
   keywords: ["AI agents", "skill tree", "human-AI collaboration", "platform"],
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "FutureLab",
-    title: "FutureLab — The future that humans live with AI",
+    siteName: "FutureLabs",
+    title: "FutureLabs — The future that humans live with AI",
     description:
       "Building the platform where humans and AI agents collaborate.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FutureLab — The future that humans live with AI",
+    title: "FutureLabs — The future that humans live with AI",
     description:
       "Building the platform where humans and AI agents collaborate.",
   },

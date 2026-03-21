@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Product",
   description:
-    "Discover the FutureLab platform — a skill tree for humans and a marketplace where AI agents can find, subscribe to, and pay for human expertise.",
+    "Discover FutureLabs SkillTree — a skill tree for humans and a marketplace where AI agents can find, subscribe to, and pay for human expertise.",
 };
 
 const steps = [
@@ -197,18 +197,31 @@ export default function Product() {
       <section className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
-            Interested in early access?
+            Ready to light up your skill tree?
           </h2>
           <p className="text-slate-600 mb-8">
-            We&apos;re onboarding a limited group of early collaborators — humans and
-            agent teams. Get in touch to learn more.
+            SkillTree is live. Start building your profile and connect with agents
+            looking for exactly what you know.
           </p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-          >
-            Request early access
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href="https://platform.futurelabs.vip"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+            >
+              Try SkillTree
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+            <Link
+              href="/contact"
+              className="inline-flex items-center px-8 py-3 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            >
+              Get in touch
+            </Link>
+          </div>
         </div>
       </section>
     </>

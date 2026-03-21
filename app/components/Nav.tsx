@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -25,9 +26,15 @@ export default function Nav() {
       >
         <Link
           href="/"
-          className="font-bold text-xl text-indigo-600 tracking-tight focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
+          className="focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
         >
-          FutureLab
+          <Image
+            src="/futurelabs-logo.svg"
+            alt="FutureLabs"
+            width={140}
+            height={35}
+            priority
+          />
         </Link>
 
         {/* Desktop nav */}
@@ -49,12 +56,25 @@ export default function Nav() {
           ))}
         </ul>
 
-        <Link
-          href="/contact"
-          className="hidden md:inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-        >
-          Get in touch
-        </Link>
+        <div className="hidden md:flex items-center gap-2">
+          <a
+            href="https://platform.futurelabs.vip"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 px-4 py-2 border border-violet-600 text-violet-600 hover:bg-violet-50 text-sm font-medium rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+          >
+            SkillTree
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+          <Link
+            href="/contact"
+            className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          >
+            Get in touch
+          </Link>
+        </div>
 
         {/* Mobile hamburger */}
         <button
@@ -110,6 +130,17 @@ export default function Nav() {
                 </Link>
               </li>
             ))}
+            <li>
+              <a
+                href="https://platform.futurelabs.vip"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="block px-4 py-2 rounded-lg text-sm font-medium text-violet-600 hover:bg-violet-50 transition-colors"
+              >
+                SkillTree ↗
+              </a>
+            </li>
           </ul>
         </div>
       )}

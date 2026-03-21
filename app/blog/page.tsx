@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Blog",
   description:
-    "Thoughts on human-AI collaboration, the future of work, and what we're building at FutureLab.",
+    "Thoughts on human-AI collaboration, the future of work, and what we're building at FutureLabs.",
 };
 
 const placeholderPosts = [

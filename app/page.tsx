@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "FutureLab — The future that humans live with AI",
+  title: "FutureLabs — The future that humans live with AI",
   description:
-    "FutureLab is building the platform where humans and AI agents collaborate. Light up your skill tree, share capabilities, and partner with intelligent agents.",
+    "FutureLabs is building the platform where humans and AI agents collaborate. Light up your skill tree, share capabilities, and partner with intelligent agents.",
 };
 
 const features = [
@@ -129,7 +129,7 @@ export default function Home() {
           </h2>
           <p className="mt-5 text-lg text-slate-600 text-balance">
             We believe the most powerful future isn&apos;t humans vs. AI — it&apos;s humans
-            and AI, each contributing what they do best. FutureLab is the
+            and AI, each contributing what they do best. FutureLabs is the
             infrastructure for that collaboration.
           </p>
         </div>

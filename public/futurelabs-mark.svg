@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none" aria-label="FutureLabs icon">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </radialGradient>
+  </defs>
+  <!-- Top branch -->
+  <line x1="20" y1="20" x2="20" y2="6" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="20" cy="5" r="3" fill="#a78bfa"/>
+  <!-- Bottom branch -->
+  <line x1="20" y1="20" x2="20" y2="34" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="20" cy="35" r="3" fill="#7c3aed"/>
+  <!-- Left branch -->
+  <line x1="20" y1="20" x2="7" y2="29" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="6" cy="30" r="3" fill="#7c3aed"/>
+  <!-- Right branch -->
+  <line x1="20" y1="20" x2="33" y2="29" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="34" cy="30" r="3" fill="#7c3aed"/>
+  <!-- Center node (lit) -->
+  <circle cx="20" cy="20" r="7" fill="url(#glow)"/>
+  <circle cx="20" cy="20" r="4" fill="white" fill-opacity="0.85"/>
+</svg>
