@@ -3,5 +3,8 @@ node_modules/
 out/
 .vercel/
 *.env*.local
+.env
 .DS_Store
 .vercel
+
+/lib/generated/prisma
