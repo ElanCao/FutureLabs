@@ -9,9 +9,17 @@ export default function Nav() {
 
   return (
     <nav className="border-b border-gray-800 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
-      <Link href="/" className="font-bold text-violet-400 text-lg">
-        🌳 SkillTree
-      </Link>
+      <div className="flex items-center gap-4">
+        <a
+          href="https://futurelabs.vip"
+          className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1"
+        >
+          ← FutureLabs
+        </a>
+        <Link href="/" className="font-bold text-violet-400 text-lg">
+          🌳 SkillTree
+        </Link>
+      </div>
       <div className="flex items-center gap-4">
         <Link href="/explore" className="text-sm text-gray-400 hover:text-white transition-colors">
           Explore
