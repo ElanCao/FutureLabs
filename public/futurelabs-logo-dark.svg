@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" fill="none" role="img" aria-label="FutureLabs">
+  <defs>
+    <linearGradient id="nodeGradD" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c4b5fd"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+    <filter id="glowD" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Icon: skill-tree node mark (4 branches from center node) -->
+  <!-- Root branch (down) -->
+  <line x1="24" y1="28" x2="24" y2="40" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="24" cy="42" r="2.5" fill="#8b5cf6" opacity="0.6"/>
+
+  <!-- Left branch -->
+  <line x1="24" y1="22" x2="13" y2="32" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="11" cy="33.5" r="2.5" fill="#a78bfa" opacity="0.6"/>
+
+  <!-- Right branch -->
+  <line x1="24" y1="22" x2="35" y2="32" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="37" cy="33.5" r="2.5" fill="#a78bfa" opacity="0.6"/>
+
+  <!-- Trunk -->
+  <line x1="24" y1="22" x2="24" y2="28" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Center node (lit up) -->
+  <circle cx="24" cy="19" r="6" fill="url(#nodeGradD)" filter="url(#glowD)"/>
+  <circle cx="24" cy="19" r="3" fill="white" opacity="0.95"/>
+
+  <!-- Top branch (up) -->
+  <line x1="24" y1="13.5" x2="24" y2="7" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="24" cy="5" r="2.5" fill="#c4b5fd" opacity="0.8"/>
+
+  <!-- Wordmark: FutureLabs (white on dark) -->
+  <text x="56" y="31" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif" font-size="20" font-weight="700" letter-spacing="-0.4" fill="#ffffff">Future<tspan fill="#c4b5fd">Labs</tspan></text>
+</svg>
