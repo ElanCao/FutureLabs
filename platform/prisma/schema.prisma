@@ -91,6 +91,21 @@ model Profile {
   givenEndorsements   SkillEndorsement[]  @relation("GivenEndorsements")
   receivedEndorsements SkillEndorsement[] @relation("ReceivedEndorsements")
   notifications       Notification[]
+  apiKeys             ApiKey[]
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  profileId   String
+  name        String
+  keyHash     String    @unique
+  keyPrefix   String
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
 }
 
 model Branch {

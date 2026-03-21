@@ -5,6 +5,14 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Nav from "@/app/components/Nav";
 
+interface ApiKeyRecord {
+  id: string;
+  name: string;
+  keyPrefix: string;
+  lastUsedAt: string | null;
+  createdAt: string;
+}
+
 const AVATAR_EMOJIS = [
   "🧑", "👩", "👨", "🧑‍💻", "👩‍💻", "👨‍💻", "🧑‍🎨", "👩‍🎨", "👨‍🎨",
   "🧑‍🚀", "👩‍🚀", "👨‍🚀", "🧑‍🔬", "👩‍🔬", "👨‍🔬", "🧑‍🏫", "👩‍🏫", "👨‍🏫",
@@ -35,6 +43,12 @@ export default function SettingsPage() {
   const [avatarEmoji, setAvatarEmoji] = useState("🧑");
   const [privacy, setPrivacy] = useState<"public" | "private">("public");
 
+  // API Keys state
+  const [apiKeys, setApiKeys] = useState<ApiKeyRecord[]>([]);
+  const [newKeyName, setNewKeyName] = useState("");
+  const [creatingKey, setCreatingKey] = useState(false);
+  const [newKeyValue, setNewKeyValue] = useState<string | null>(null);
+
   const loadProfile = useCallback(async () => {
     if (!session?.user) return;
     try {
@@ -48,12 +62,42 @@ export default function SettingsPage() {
       setAvatarEmoji(data.avatarEmoji ?? "🧑");
       setPrivacy(data.privacy === "private" ? "private" : "public");
       setHasProfile(true);
+      // Load API keys
+      const keysRes = await fetch(`/api/v1/profiles/${data.username}/api-keys`);
+      if (keysRes.ok) setApiKeys(await keysRes.json());
     } catch {
       setHasProfile(false);
     } finally {
       setLoading(false);
     }
   }, [session]);
+
+  async function createApiKey(e: React.FormEvent) {
+    e.preventDefault();
+    if (!profile || !newKeyName.trim()) return;
+    setCreatingKey(true);
+    try {
+      const res = await fetch(`/api/v1/profiles/${profile.username}/api-keys`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newKeyName.trim() }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setNewKeyValue(data.key);
+        setApiKeys((prev) => [{ id: data.id, name: data.name, keyPrefix: data.keyPrefix, lastUsedAt: null, createdAt: data.createdAt }, ...prev]);
+        setNewKeyName("");
+      }
+    } finally {
+      setCreatingKey(false);
+    }
+  }
+
+  async function revokeApiKey(keyId: string) {
+    if (!profile || !confirm("Revoke this API key? This cannot be undone.")) return;
+    const res = await fetch(`/api/v1/profiles/${profile.username}/api-keys?id=${keyId}`, { method: "DELETE" });
+    if (res.ok) setApiKeys((prev) => prev.filter((k) => k.id !== keyId));
+  }
 
   useEffect(() => {
     if (status === "authenticated") loadProfile();
@@ -258,6 +302,86 @@ export default function SettingsPage() {
             </button>
           </div>
         </form>
+
+        {/* API Keys section */}
+        <div className="mt-12 border-t border-gray-800 pt-10">
+          <h2 className="text-xl font-bold mb-1">API Keys</h2>
+          <p className="text-gray-500 text-sm mb-6">
+            Allow AI agents and scripts to authenticate as you. Keys are shown only once at creation.
+          </p>
+
+          {/* New key value banner */}
+          {newKeyValue && (
+            <div className="bg-green-950 border border-green-800 rounded-xl p-4 mb-6">
+              <div className="text-sm font-medium text-green-400 mb-2">
+                ✅ Copy this key — it won&apos;t be shown again
+              </div>
+              <code className="text-xs text-green-300 break-all bg-green-900/40 px-3 py-2 rounded-lg block">
+                {newKeyValue}
+              </code>
+              <button
+                onClick={() => { navigator.clipboard.writeText(newKeyValue); }}
+                className="mt-2 text-xs text-green-500 hover:text-green-300 transition-colors"
+              >
+                Copy to clipboard
+              </button>
+              <button
+                onClick={() => setNewKeyValue(null)}
+                className="mt-2 ml-4 text-xs text-gray-600 hover:text-gray-400 transition-colors"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
+
+          {/* Create new key */}
+          <form onSubmit={createApiKey} className="flex gap-3 mb-6">
+            <input
+              type="text"
+              value={newKeyName}
+              onChange={(e) => setNewKeyName(e.target.value)}
+              placeholder="Key name (e.g. My Agent)"
+              maxLength={64}
+              className="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 transition-colors"
+            />
+            <button
+              type="submit"
+              disabled={creatingKey || !newKeyName.trim()}
+              className="bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+            >
+              {creatingKey ? "Creating…" : "Create key"}
+            </button>
+          </form>
+
+          {/* Existing keys */}
+          {apiKeys.length === 0 ? (
+            <p className="text-gray-600 text-sm">No API keys yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {apiKeys.map((k) => (
+                <div key={k.id} className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-xl px-4 py-3">
+                  <div>
+                    <div className="text-sm font-medium">{k.name}</div>
+                    <div className="text-xs text-gray-600 mt-0.5">
+                      <span className="font-mono">{k.keyPrefix}…</span>
+                      <span className="ml-3">
+                        {k.lastUsedAt
+                          ? `Last used ${new Date(k.lastUsedAt).toLocaleDateString()}`
+                          : "Never used"}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => revokeApiKey(k.id)}
+                    className="text-xs text-red-600 hover:text-red-400 transition-colors ml-4"
+                  >
+                    Revoke
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
