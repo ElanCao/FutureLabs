@@ -67,6 +67,11 @@ export async function GET(_req: NextRequest, { params }: Params) {
         skillId: s.skillId,
         currentLevel: s.currentLevel,
         xp: s.xp,
+        // Inline skill metadata (for share card and API consumers)
+        name: s.skill.name,
+        icon: s.skill.icon ?? "⭐",
+        maxLevel: s.skill.maxLevel,
+        branchName: s.skill.branch.name,
         evidence: s.evidence.map((e) => ({
           type: e.type, title: e.title, url: e.url, description: e.description,
         })),

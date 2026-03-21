@@ -7,6 +7,15 @@ import Link from "next/link";
 import QRCode from "qrcode";
 import { getProfile, getProfileSkills, SEED_PROFILES, type Profile } from "@/lib/seed-data";
 
+interface EnrichedSkillRecord {
+  skillId: string;
+  currentLevel: number;
+  xp: number;
+  name?: string;
+  icon?: string;
+  maxLevel?: number;
+}
+
 // Color palette: deep navy + electric blue + white
 const PALETTE = {
   bgDeep: "#050d1a",
@@ -49,10 +58,30 @@ async function fetchProfileForCard(username: string): Promise<Profile | null> {
   return null;
 }
 
+function resolveSkills(profile: Profile): { icon: string; name: string; maxLevel: number; record: { currentLevel: number; xp: number } }[] {
+  // For seed profiles or DB profiles with inline metadata
+  const enriched = (profile.skills as EnrichedSkillRecord[]).filter((s) => s.name);
+  if (enriched.length > 0) {
+    return enriched.map((s) => ({
+      icon: s.icon ?? "⭐",
+      name: s.name!,
+      maxLevel: s.maxLevel ?? 10,
+      record: { currentLevel: s.currentLevel, xp: s.xp },
+    }));
+  }
+  // Fallback: seed-data skill lookup
+  return getProfileSkills(profile).map((item) => ({
+    icon: item.skill.icon ?? "⭐",
+    name: item.skill.name,
+    maxLevel: item.skill.maxLevel,
+    record: { currentLevel: item.record.currentLevel, xp: item.record.xp },
+  }));
+}
+
 async function drawCard(canvas: HTMLCanvasElement, profile: Profile): Promise<void> {
   if (!profile) return;
 
-  const profileSkills = getProfileSkills(profile);
+  const profileSkills = resolveSkills(profile);
   const topSkills = [...profileSkills]
     .sort((a, b) => b.record.currentLevel - a.record.currentLevel)
     .slice(0, 6);
@@ -240,7 +269,7 @@ async function drawCard(canvas: HTMLCanvasElement, profile: Profile): Promise<vo
     ctx.font = "bold 15px system-ui, sans-serif";
     ctx.fillStyle = PALETTE.offWhite;
     ctx.textAlign = "left";
-    ctx.fillText(`${item.skill.icon} ${item.skill.name}`, bx + 14, by + 22);
+    ctx.fillText(`${item.icon} ${item.name}`, bx + 14, by + 22);
 
     // Level badge
     ctx.font = "bold 13px system-ui, sans-serif";
@@ -250,8 +279,8 @@ async function drawCard(canvas: HTMLCanvasElement, profile: Profile): Promise<vo
     // XP pips
     const PIP_X = bx + 68;
     const PIP_Y = by + 36;
-    const pipW = (BADGE_W - 82) / item.skill.maxLevel;
-    for (let i = 0; i < item.skill.maxLevel; i++) {
+    const pipW = (BADGE_W - 82) / item.maxLevel;
+    for (let i = 0; i < item.maxLevel; i++) {
       ctx.fillStyle = i < item.record.currentLevel ? levelColor : PALETTE.gray800;
       ctx.beginPath();
       ctx.roundRect(PIP_X + i * (pipW + 1), PIP_Y, pipW - 0.5, 5, 2);
