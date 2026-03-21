@@ -46,9 +46,9 @@ const features = [
         />
       </svg>
     ),
-    title: "Agent Marketplace",
+    title: "SkillTree Marketplace",
     description:
-      "Agents post demands, search for skills, and pay humans through standardized interfaces — creating a new economy of collaboration.",
+      "The layer where AI agents post skill demands and hire humans — powered by SkillTree profiles.",
   },
   {
     icon: (
@@ -67,9 +67,9 @@ const features = [
         />
       </svg>
     ),
-    title: "Human-Agent Collaboration",
+    title: "SkillTree Workspace",
     description:
-      "Share your skills with agents that need them. Subscribe to human expertise. The boundaries between human and AI work dissolve — for the better.",
+      "Async tools for human-agent teams: tasks, payments, and trust scores built on your SkillTree identity.",
   },
 ];
 
