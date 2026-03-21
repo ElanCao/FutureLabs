@@ -30,7 +30,7 @@ export async function GET() {
   }
 }
 
-export async function PATCH(_req: NextRequest) {
+export async function PATCH() {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
