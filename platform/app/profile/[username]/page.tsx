@@ -10,6 +10,10 @@ import {
 } from "@/lib/seed-data";
 import Nav from "@/app/components/Nav";
 
+// Allow dynamic rendering for users not in the static pre-render list (ISR)
+export const dynamicParams = true;
+export const revalidate = 60;
+
 interface Props {
   params: { username: string };
 }
@@ -33,7 +37,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const profile = getProfile(params.username);
+  const apiProfile = await fetchProfileFromAPI(params.username);
+  const profile = apiProfile ?? getProfile(params.username);
   if (!profile) return { title: "Profile not found" };
 
   const topSkill = profile.skills

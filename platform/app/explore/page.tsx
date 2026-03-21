@@ -11,6 +11,8 @@ export default function ExplorePage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBranch, setSelectedBranch] = useState("");
+  const [skillSearch, setSkillSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [apiAvailable, setApiAvailable] = useState<boolean | null>(null);
@@ -20,6 +22,7 @@ export default function ExplorePage() {
     try {
       const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
       if (selectedBranch) params.set("branch", selectedBranch);
+      if (skillSearch) params.set("skill", skillSearch);
       const res = await fetch(`/api/v1/profiles?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
@@ -36,12 +39,18 @@ export default function ExplorePage() {
       if (selectedBranch) {
         filtered = filtered.filter((p) => p.skills.length > 0);
       }
+      if (skillSearch) {
+        const q = skillSearch.toLowerCase();
+        filtered = filtered.filter((p) =>
+          p.skills.some((s) => s.skillId.toLowerCase().includes(q))
+        );
+      }
       setProfiles(filtered.filter((p) => p.privacy !== "private").slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE));
       setTotal(filtered.length);
     } finally {
       setLoading(false);
     }
-  }, [page, selectedBranch]);
+  }, [page, selectedBranch, skillSearch]);
 
   useEffect(() => {
     loadProfiles();
@@ -58,6 +67,35 @@ export default function ExplorePage() {
           <h1 className="text-3xl font-bold mb-2">Explore Profiles</h1>
           <p className="text-gray-400">Discover people and AI agents building their skill trees.</p>
         </div>
+
+        {/* Skill search */}
+        <form
+          onSubmit={(e) => { e.preventDefault(); setSkillSearch(searchInput.trim()); setPage(1); }}
+          className="flex gap-2 mb-6"
+        >
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search by skill name…"
+            className="flex-1 bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 transition-colors"
+          />
+          <button
+            type="submit"
+            className="bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium px-5 py-2.5 rounded-xl transition-colors"
+          >
+            Search
+          </button>
+          {skillSearch && (
+            <button
+              type="button"
+              onClick={() => { setSkillSearch(""); setSearchInput(""); setPage(1); }}
+              className="text-sm text-gray-500 hover:text-white px-3 py-2.5 rounded-xl border border-gray-800 transition-colors"
+            >
+              Clear
+            </button>
+          )}
+        </form>
 
         {/* Branch filter */}
         <div className="flex gap-2 flex-wrap mb-8">

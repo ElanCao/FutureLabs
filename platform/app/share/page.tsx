@@ -2,9 +2,10 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import QRCode from "qrcode";
-import { getProfile, getProfileSkills, SEED_PROFILES } from "@/lib/seed-data";
+import { getProfile, getProfileSkills, SEED_PROFILES, type Profile } from "@/lib/seed-data";
 
 // Color palette: deep navy + electric blue + white
 const PALETTE = {
@@ -37,8 +38,18 @@ const LEVEL_COLORS: Record<number, string> = {
   10: "#fbbf24",
 };
 
-async function drawCard(canvas: HTMLCanvasElement, username: string): Promise<void> {
-  const profile = getProfile(username);
+async function fetchProfileForCard(username: string): Promise<Profile | null> {
+  // Try seed data first (instant), then API fallback for real users
+  const seed = getProfile(username);
+  if (seed) return seed as unknown as Profile;
+  try {
+    const res = await fetch(`/api/v1/profiles/${encodeURIComponent(username)}`);
+    if (res.ok) return res.json();
+  } catch { /* ignore */ }
+  return null;
+}
+
+async function drawCard(canvas: HTMLCanvasElement, profile: Profile): Promise<void> {
   if (!profile) return;
 
   const profileSkills = getProfileSkills(profile);
@@ -331,18 +342,48 @@ async function drawCard(canvas: HTMLCanvasElement, username: string): Promise<vo
 
 function ShareCardContent() {
   const searchParams = useSearchParams();
-  const usernameParam = searchParams.get("username") || "alex";
+  const { data: session } = useSession();
+  // Default to logged-in user's username, URL param, or first seed profile
+  const sessionUsername = (session?.user as { username?: string })?.username ?? "";
+  const usernameParam = searchParams.get("username") || sessionUsername || SEED_PROFILES[0].username;
   const [username, setUsername] = useState(usernameParam);
+  const [inputValue, setInputValue] = useState(usernameParam);
+  const [currentProfile, setCurrentProfile] = useState<Profile | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [downloaded, setDownloaded] = useState(false);
   const [rendering, setRendering] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+
+  // Update default when session loads
+  useEffect(() => {
+    if (sessionUsername && !searchParams.get("username")) {
+      setUsername(sessionUsername);
+      setInputValue(sessionUsername);
+    }
+  }, [sessionUsername, searchParams]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
     setRendering(true);
-    drawCard(canvasRef.current, username).finally(() => setRendering(false));
+    setNotFound(false);
+    fetchProfileForCard(username).then((profile) => {
+      if (!profile) {
+        setNotFound(true);
+        setCurrentProfile(null);
+        setRendering(false);
+        return;
+      }
+      setCurrentProfile(profile);
+      drawCard(canvasRef.current!, profile).finally(() => setRendering(false));
+    });
     setDownloaded(false);
   }, [username]);
+
+  function handleUsernameSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = inputValue.trim().replace(/^@/, "");
+    if (trimmed) setUsername(trimmed);
+  }
 
   function handleDownload() {
     const canvas = canvasRef.current;
@@ -354,8 +395,6 @@ function ShareCardContent() {
     setDownloaded(true);
   }
 
-  const profile = getProfile(username);
-
   return (
     <div className="min-h-screen bg-[#050d1a] text-white">
       {/* Nav */}
@@ -363,7 +402,7 @@ function ShareCardContent() {
         <Link href="/" className="font-bold text-sky-400 text-lg">
           🌳 SkillTree
         </Link>
-        {profile && (
+        {currentProfile && (
           <Link
             href={`/profile/${username}`}
             className="text-sm text-gray-400 hover:text-white transition-colors"
@@ -381,13 +420,31 @@ function ShareCardContent() {
           </p>
         </div>
 
-        {/* Profile selector */}
-        <div className="flex gap-3 flex-wrap justify-center mb-8">
+        {/* Username input */}
+        <form onSubmit={handleUsernameSubmit} className="flex gap-2 justify-center mb-6">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder="Enter username…"
+            className="bg-gray-900 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-sky-600 w-52"
+          />
+          <button
+            type="submit"
+            className="bg-sky-700 hover:bg-sky-600 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+          >
+            Generate
+          </button>
+        </form>
+
+        {/* Seed profile quick picks */}
+        <div className="flex gap-2 flex-wrap justify-center mb-8">
+          <span className="text-xs text-gray-600 self-center mr-1">Quick picks:</span>
           {SEED_PROFILES.map((p) => (
             <button
               key={p.username}
-              onClick={() => setUsername(p.username)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
+              onClick={() => { setUsername(p.username); setInputValue(p.username); }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
                 username === p.username
                   ? "bg-sky-700 border-sky-500 text-white"
                   : "bg-gray-900/80 border-gray-800 text-gray-400 hover:border-sky-800 hover:text-white"
@@ -406,9 +463,14 @@ function ShareCardContent() {
               <span className="text-sky-400 text-sm">Rendering…</span>
             </div>
           )}
+          {notFound && !rendering && (
+            <div className="flex items-center justify-center bg-[#050d1a] h-48">
+              <span className="text-gray-500 text-sm">Profile &quot;{username}&quot; not found.</span>
+            </div>
+          )}
           <canvas
             ref={canvasRef}
-            className="w-full h-auto block"
+            className={`w-full h-auto block ${notFound ? "hidden" : ""}`}
             style={{ aspectRatio: "1200/630" }}
           />
         </div>
@@ -417,12 +479,12 @@ function ShareCardContent() {
         <div className="flex gap-4 justify-center">
           <button
             onClick={handleDownload}
-            disabled={rendering}
+            disabled={rendering || notFound}
             className="flex items-center gap-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
           >
             {downloaded ? "✅ Downloaded!" : "⬇️ Download PNG"}
           </button>
-          {profile && (
+          {currentProfile && (
             <Link
               href={`/profile/${username}`}
               className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"

@@ -54,6 +54,12 @@ export default function Nav() {
                   >
                     My Skill Tree
                   </Link>
+                  <Link
+                    href="/dashboard/settings"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                  >
+                    Settings
+                  </Link>
                   <button
                     onClick={() => signOut()}
                     className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-red-400 transition-colors"
