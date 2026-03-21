@@ -16,6 +16,9 @@ export default function Nav() {
         <Link href="/explore" className="text-sm text-gray-400 hover:text-white transition-colors">
           Explore
         </Link>
+        <Link href="/leaderboard" className="text-sm text-gray-400 hover:text-white transition-colors">
+          Leaderboard
+        </Link>
         {status === "loading" ? (
           <div className="w-8 h-8 rounded-full bg-gray-800 animate-pulse" />
         ) : session?.user ? (

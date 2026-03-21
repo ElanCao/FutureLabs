@@ -59,4 +59,13 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_PLATFORM_URL || 'https://example.com' }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_PLATFORM_URL || 'https://futurelabs.vip' }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL || 'postgresql://stub:stub@localhost:5432/stub?sslmode=disable' }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL || 'postgresql://stub:stub@localhost:5432/stub?sslmode=disable' }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET || 'ci-stub-secret-for-build-only-32ch' }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL || 'http://localhost:3000' }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
+          GITHUB_ID: ${{ secrets.GITHUB_ID || 'stub' }}
+          GITHUB_SECRET: ${{ secrets.GITHUB_SECRET || 'stub' }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID || 'stub' }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET || 'stub' }}
