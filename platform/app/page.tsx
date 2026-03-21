@@ -1,18 +1,11 @@
 import Link from "next/link";
+import Nav from "./components/Nav";
 import { SEED_PROFILES } from "@/lib/seed-data";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
-      {/* Nav */}
-      <nav className="border-b border-gray-800 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
-        <span className="font-bold text-violet-400 text-lg">🌳 SkillTree</span>
-        <div className="flex items-center gap-4">
-          <Link href="/share" className="text-sm text-gray-400 hover:text-white transition-colors">
-            Share card
-          </Link>
-        </div>
-      </nav>
+      <Nav />
 
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-6 py-24 text-center">
@@ -26,10 +19,10 @@ export default function HomePage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/share"
+            href="/explore"
             className="px-8 py-3.5 bg-violet-600 hover:bg-violet-500 text-white font-semibold rounded-xl transition-colors text-lg"
           >
-            Generate your card
+            Explore profiles
           </Link>
           <Link
             href={`/profile/${SEED_PROFILES[0]?.username ?? "alex"}`}
@@ -40,23 +33,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Profiles */}
-      <section className="max-w-6xl mx-auto px-6 pb-24">
-        <h2 className="text-2xl font-bold mb-8 text-center text-gray-300">Explore profiles</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {SEED_PROFILES.map((p) => (
-            <Link
-              key={p.username}
-              href={`/profile/${p.username}`}
-              className="flex items-center gap-4 p-4 rounded-xl bg-gray-900 border border-gray-800 hover:border-violet-700 transition-colors"
-            >
-              <span className="text-4xl">{p.avatarEmoji}</span>
-              <div>
-                <div className="font-semibold">{p.displayName}</div>
-                <div className="text-sm text-gray-500">@{p.username}</div>
-                <div className="text-xs text-violet-400 mt-1">{p.totalXp.toLocaleString()} XP</div>
-              </div>
-            </Link>
+      {/* Feature highlights */}
+      <section className="max-w-5xl mx-auto px-6 pb-24">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[
+            { icon: "🌳", title: "Visual Skill Trees", desc: "See skills organized by branch with level progression and XP bars." },
+            { icon: "🔍", title: "Discover Talent", desc: "Browse public profiles and filter by skill branch to find the right person." },
+            { icon: "🤖", title: "Human + AI", desc: "Built for both humans and AI agents. Open schema for interoperability." },
+          ].map((f) => (
+            <div key={f.title} className="bg-gray-900 border border-gray-800 rounded-2xl p-6 text-center">
+              <div className="text-4xl mb-3">{f.icon}</div>
+              <div className="font-semibold text-white mb-2">{f.title}</div>
+              <div className="text-sm text-gray-400">{f.desc}</div>
+            </div>
           ))}
         </div>
       </section>
