@@ -74,20 +74,23 @@ model User {
 }
 
 model Profile {
-  id          String           @id @default(cuid())
-  username    String           @unique
-  displayName String?
-  bio         String?
-  avatarUrl   String?
-  avatarEmoji String?
-  entityType  EntityType       @default(human)
-  privacy     Privacy          @default(private)
-  totalXp     Int              @default(0)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  userId      String?          @unique
-  user        User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  skills      UserSkillRecord[]
+  id                  String              @id @default(cuid())
+  username            String              @unique
+  displayName         String?
+  bio                 String?
+  avatarUrl           String?
+  avatarEmoji         String?
+  entityType          EntityType          @default(human)
+  privacy             Privacy             @default(private)
+  totalXp             Int                 @default(0)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  userId              String?             @unique
+  user                User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  skills              UserSkillRecord[]
+  givenEndorsements   SkillEndorsement[]  @relation("GivenEndorsements")
+  receivedEndorsements SkillEndorsement[] @relation("ReceivedEndorsements")
+  notifications       Notification[]
 }
 
 model Branch {
@@ -101,24 +104,25 @@ model Branch {
 }
 
 model Skill {
-  id            String           @id @default(cuid())
+  id            String             @id @default(cuid())
   name          String
   branchId      String
   parentSkillId String?
   description   String?
   icon          String?
-  maxLevel      Int              @default(10)
+  maxLevel      Int                @default(10)
   prerequisites String[]
   tags          String[]
-  agentCompat   Boolean          @default(true)
-  community     Boolean          @default(false)
+  agentCompat   Boolean            @default(true)
+  community     Boolean            @default(false)
   levelsJson    Json
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
-  branch        Branch           @relation(fields: [branchId], references: [id])
-  parentSkill   Skill?           @relation("SkillParent", fields: [parentSkillId], references: [id])
-  childSkills   Skill[]          @relation("SkillParent")
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  branch        Branch             @relation(fields: [branchId], references: [id])
+  parentSkill   Skill?             @relation("SkillParent", fields: [parentSkillId], references: [id])
+  childSkills   Skill[]            @relation("SkillParent")
   userRecords   UserSkillRecord[]
+  endorsements  SkillEndorsement[]
 }
 
 model UserSkillRecord {
@@ -148,4 +152,29 @@ model EvidenceRecord {
   verified          Boolean         @default(false)
   createdAt         DateTime        @default(now())
   userSkillRecord   UserSkillRecord @relation(fields: [userSkillRecordId], references: [id], onDelete: Cascade)
+}
+
+model SkillEndorsement {
+  id          String   @id @default(cuid())
+  endorserId  String
+  endorseeId  String
+  skillId     String
+  note        String?
+  createdAt   DateTime @default(now())
+  endorser    Profile  @relation("GivenEndorsements", fields: [endorserId], references: [id], onDelete: Cascade)
+  endorsee    Profile  @relation("ReceivedEndorsements", fields: [endorseeId], references: [id], onDelete: Cascade)
+  skill       Skill    @relation(fields: [skillId], references: [id])
+
+  @@unique([endorserId, endorseeId, skillId])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  profileId   String
+  type        String
+  referenceId String?
+  message     String
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }

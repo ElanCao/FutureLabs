@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth-options";
+import { prisma } from "@/lib/prisma";
 import {
   getProfile,
   getProfileSkills,
@@ -9,6 +12,7 @@ import {
   type Profile,
 } from "@/lib/seed-data";
 import Nav from "@/app/components/Nav";
+import EndorseButton from "@/app/components/EndorseButton";
 
 // Allow dynamic rendering for users not in the static pre-render list (ISR)
 export const dynamicParams = true;
@@ -16,6 +20,11 @@ export const revalidate = 60;
 
 interface Props {
   params: { username: string };
+}
+
+interface EndorsementSummary {
+  count: number;
+  endorsers: { username: string; displayName: string; avatarEmoji: string }[];
 }
 
 async function fetchProfileFromAPI(username: string): Promise<Profile | null> {
@@ -101,9 +110,36 @@ function XpBar({ current, next, xp }: { current: number; next: number; xp: numbe
 
 export default async function ProfilePage({ params }: Props) {
   // Try API first, fall back to seed data
-  const apiProfile = await fetchProfileFromAPI(params.username);
+  const [apiProfile, session] = await Promise.all([
+    fetchProfileFromAPI(params.username),
+    getServerSession(authOptions),
+  ]);
   const profile = apiProfile ?? getProfile(params.username);
   if (!profile) notFound();
+
+  // Determine if viewer is the profile owner
+  let isOwner = false;
+  if (session?.user) {
+    const userId = (session.user as { id?: string }).id;
+    if (userId) {
+      try {
+        const ownerProfile = await prisma.profile.findUnique({ where: { userId } });
+        isOwner = ownerProfile?.username === params.username;
+      } catch {
+        // DB unavailable — assume not owner
+      }
+    }
+  }
+
+  // Build endorsement map from API profile (has endorsements field) or empty
+  const endorsementMap: Record<string, EndorsementSummary> = {};
+  if (apiProfile) {
+    for (const s of apiProfile.skills as (typeof apiProfile.skills[0] & { endorsements?: EndorsementSummary })[]) {
+      if (s.endorsements) {
+        endorsementMap[s.skillId] = s.endorsements;
+      }
+    }
+  }
 
   const profileSkills = getProfileSkills(profile);
   const topSkills = [...profileSkills].sort(
@@ -211,6 +247,13 @@ export default async function ProfilePage({ params }: Props) {
                       ))}
                     </div>
                   )}
+                  <EndorseButton
+                    username={params.username}
+                    skillId={skill.id}
+                    initialCount={endorsementMap[record.skillId]?.count ?? 0}
+                    initialEndorsers={endorsementMap[record.skillId]?.endorsers ?? []}
+                    isOwner={isOwner}
+                  />
                 </div>
               );
             })}

@@ -12,20 +12,48 @@ interface Params { params: { username: string } }
 
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
-    const profile = await prisma.profile.findUnique({
-      where: { username: params.username },
-      include: {
-        skills: {
-          include: { skill: { include: { branch: true } }, evidence: true },
+    const [profile, endorsements] = await Promise.all([
+      prisma.profile.findUnique({
+        where: { username: params.username },
+        include: {
+          skills: {
+            include: { skill: { include: { branch: true } }, evidence: true },
+          },
         },
-      },
-    });
+      }),
+      prisma.skillEndorsement.findMany({
+        where: { endorsee: { username: params.username } },
+        orderBy: { createdAt: "desc" },
+        include: {
+          endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
+        },
+      }),
+    ]);
 
     if (!profile || profile.privacy === "private") {
       // Fall back to seed data
       const seed = getProfile(params.username);
       if (!seed || seed.privacy === "private") return NextResponse.json({ error: "Not found" }, { status: 404 });
       return NextResponse.json(seed);
+    }
+
+    // Build endorsement summary grouped by skillId
+    const endorsementsBySkill: Record<string, {
+      count: number;
+      endorsers: { username: string; displayName: string; avatarEmoji: string }[];
+    }> = {};
+    for (const e of endorsements) {
+      if (!endorsementsBySkill[e.skillId]) {
+        endorsementsBySkill[e.skillId] = { count: 0, endorsers: [] };
+      }
+      endorsementsBySkill[e.skillId].count++;
+      if (endorsementsBySkill[e.skillId].endorsers.length < 5) {
+        endorsementsBySkill[e.skillId].endorsers.push({
+          username: e.endorser.username,
+          displayName: e.endorser.displayName ?? e.endorser.username,
+          avatarEmoji: e.endorser.avatarEmoji ?? "🧑",
+        });
+      }
     }
 
     return NextResponse.json({
@@ -43,6 +71,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
         evidence: s.evidence.map((e) => ({
           type: e.type, title: e.title, url: e.url, description: e.description,
         })),
+        endorsements: endorsementsBySkill[s.skillId] ?? { count: 0, endorsers: [] },
       })),
     });
   } catch {
