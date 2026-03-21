@@ -12,23 +12,14 @@ interface Params { params: { username: string } }
 
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
-    const [profile, endorsements] = await Promise.all([
-      prisma.profile.findUnique({
-        where: { username: params.username },
-        include: {
-          skills: {
-            include: { skill: { include: { branch: true } }, evidence: true },
-          },
+    const profile = await prisma.profile.findUnique({
+      where: { username: params.username },
+      include: {
+        skills: {
+          include: { skill: { include: { branch: true } }, evidence: true },
         },
-      }),
-      prisma.skillEndorsement.findMany({
-        where: { endorsee: { username: params.username } },
-        orderBy: { createdAt: "desc" },
-        include: {
-          endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
-        },
-      }),
-    ]);
+      },
+    });
 
     if (!profile || profile.privacy === "private") {
       // Fall back to seed data
@@ -36,6 +27,14 @@ export async function GET(_req: NextRequest, { params }: Params) {
       if (!seed || seed.privacy === "private") return NextResponse.json({ error: "Not found" }, { status: 404 });
       return NextResponse.json(seed);
     }
+
+    const endorsements = await prisma.skillEndorsement.findMany({
+      where: { endorseeId: profile.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
+      },
+    });
 
     // Build endorsement summary grouped by skillId
     const endorsementsBySkill: Record<string, {
