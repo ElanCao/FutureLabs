@@ -3,30 +3,48 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import QRCode from "qrcode";
 import { getProfile, getProfileSkills, SEED_PROFILES } from "@/lib/seed-data";
 
-const LEVEL_COLORS_HEX: Record<number, string> = {
-  0: "#374151",
-  1: "#4b5563",
-  2: "#6b7280",
-  3: "#1d4ed8",
-  4: "#2563eb",
-  5: "#4f46e5",
-  6: "#7c3aed",
+// Color palette: deep navy + electric blue + white
+const PALETTE = {
+  bgDeep: "#050d1a",
+  bgMid: "#071428",
+  bgLight: "#0a1a35",
+  navyBorder: "#0e2040",
+  electricBlue: "#0ea5e9",
+  electricBlueGlow: "rgba(14,165,233,0.18)",
+  electricBlueDim: "#0369a1",
+  accentPurple: "#7c3aed",
+  white: "#ffffff",
+  offWhite: "#e2e8f0",
+  gray400: "#94a3b8",
+  gray600: "#475569",
+  gray800: "#1e293b",
+};
+
+const LEVEL_COLORS: Record<number, string> = {
+  0: "#334155",
+  1: "#475569",
+  2: "#64748b",
+  3: "#0ea5e9",
+  4: "#0284c7",
+  5: "#7c3aed",
+  6: "#6d28d9",
   7: "#8b5cf6",
-  8: "#a855f7",
+  8: "#a78bfa",
   9: "#f59e0b",
   10: "#fbbf24",
 };
 
-function drawCard(canvas: HTMLCanvasElement, username: string): void {
+async function drawCard(canvas: HTMLCanvasElement, username: string): Promise<void> {
   const profile = getProfile(username);
   if (!profile) return;
 
   const profileSkills = getProfileSkills(profile);
   const topSkills = [...profileSkills]
     .sort((a, b) => b.record.currentLevel - a.record.currentLevel)
-    .slice(0, 5);
+    .slice(0, 6);
 
   const W = 1200;
   const H = 630;
@@ -35,137 +53,280 @@ function drawCard(canvas: HTMLCanvasElement, username: string): void {
 
   const ctx = canvas.getContext("2d")!;
 
-  // Background
+  // ── Background ──────────────────────────────────────────────────────────────
   const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, "#0f0a1e");
-  bg.addColorStop(0.5, "#0d0d1a");
-  bg.addColorStop(1, "#0a0a14");
+  bg.addColorStop(0, PALETTE.bgDeep);
+  bg.addColorStop(0.6, PALETTE.bgMid);
+  bg.addColorStop(1, PALETTE.bgLight);
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
   // Subtle grid
-  ctx.strokeStyle = "rgba(139,92,246,0.05)";
+  ctx.strokeStyle = "rgba(14,165,233,0.04)";
   ctx.lineWidth = 1;
-  for (let x = 0; x < W; x += 40) {
+  for (let x = 0; x < W; x += 48) {
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
   }
-  for (let y = 0; y < H; y += 40) {
+  for (let y = 0; y < H; y += 48) {
     ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
   }
 
-  // Glow accent top-left
-  const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, 400);
-  glow.addColorStop(0, "rgba(124,58,237,0.25)");
-  glow.addColorStop(1, "rgba(124,58,237,0)");
-  ctx.fillStyle = glow;
+  // Electric blue glow top-right
+  const glowTR = ctx.createRadialGradient(W, 0, 0, W, 0, 500);
+  glowTR.addColorStop(0, "rgba(14,165,233,0.12)");
+  glowTR.addColorStop(1, "rgba(14,165,233,0)");
+  ctx.fillStyle = glowTR;
   ctx.fillRect(0, 0, W, H);
+
+  // Purple glow bottom-left
+  const glowBL = ctx.createRadialGradient(0, H, 0, 0, H, 350);
+  glowBL.addColorStop(0, "rgba(124,58,237,0.12)");
+  glowBL.addColorStop(1, "rgba(124,58,237,0)");
+  ctx.fillStyle = glowBL;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Header bar ──────────────────────────────────────────────────────────────
+  ctx.fillStyle = "rgba(14,165,233,0.06)";
+  ctx.fillRect(0, 0, W, 70);
+  ctx.strokeStyle = "rgba(14,165,233,0.18)";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, 70); ctx.lineTo(W, 70); ctx.stroke();
 
   // Brand label
   ctx.font = "bold 22px system-ui, sans-serif";
-  ctx.fillStyle = "#7c3aed";
-  ctx.fillText("🌳 SkillTree", 48, 52);
+  ctx.fillStyle = PALETTE.electricBlue;
+  ctx.textAlign = "left";
+  ctx.fillText("🌳 SkillTree", 44, 44);
 
-  // Avatar
-  const avatarX = 48;
-  const avatarY = 80;
-  ctx.font = "80px serif";
-  ctx.fillText(profile.avatarEmoji, avatarX, avatarY + 80);
+  // futurelabs.vip badge top-right
+  ctx.font = "14px system-ui, sans-serif";
+  ctx.fillStyle = PALETTE.gray400;
+  ctx.textAlign = "right";
+  ctx.fillText("futurelabs.vip", W - 44, 44);
+  ctx.textAlign = "left";
+
+  // ── Left column: avatar + stats ─────────────────────────────────────────────
+  const COL_LEFT = 44;
+  const COL_RIGHT = 820; // QR code column starts here
+  const SECTION_TOP = 96;
+
+  // Avatar circle background
+  ctx.fillStyle = "rgba(14,165,233,0.08)";
+  ctx.beginPath();
+  ctx.arc(COL_LEFT + 52, SECTION_TOP + 52, 56, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(14,165,233,0.3)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Avatar emoji
+  ctx.font = "72px serif";
+  ctx.textAlign = "center";
+  ctx.fillText(profile.avatarEmoji, COL_LEFT + 52, SECTION_TOP + 78);
+  ctx.textAlign = "left";
 
   // Name + username
-  ctx.font = "bold 48px system-ui, sans-serif";
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText(profile.displayName, avatarX + 120, avatarY + 52);
+  const nameX = COL_LEFT + 120;
+  ctx.font = "bold 38px system-ui, sans-serif";
+  ctx.fillStyle = PALETTE.white;
+  ctx.fillText(profile.displayName, nameX, SECTION_TOP + 40);
 
-  ctx.font = "24px system-ui, sans-serif";
-  ctx.fillStyle = "#6b7280";
-  ctx.fillText(`@${profile.username}`, avatarX + 120, avatarY + 86);
+  ctx.font = "18px system-ui, sans-serif";
+  ctx.fillStyle = PALETTE.electricBlue;
+  ctx.fillText(`@${profile.username}`, nameX, SECTION_TOP + 68);
 
   if (profile.entityType === "ai_agent") {
-    ctx.font = "bold 16px system-ui, sans-serif";
+    ctx.font = "bold 14px system-ui, sans-serif";
     ctx.fillStyle = "#a78bfa";
-    ctx.fillText("🤖 AI Agent", avatarX + 120, avatarY + 116);
+    ctx.fillText("🤖 AI Agent", nameX, SECTION_TOP + 96);
   }
 
-  // Stats row
-  const statsY = avatarY + 150;
+  // ── Stats row ──────────────────────────────────────────────────────────────
+  const STATS_Y = SECTION_TOP + 130;
+  const avgLevel = (
+    profileSkills.reduce((s, p) => s + p.record.currentLevel, 0) /
+    (profileSkills.length || 1)
+  ).toFixed(1);
+
   const stats = [
     { label: "Total XP", value: profile.totalXp.toLocaleString() },
     { label: "Skills", value: profile.skills.length.toString() },
-    {
-      label: "Avg Level",
-      value: (
-        profileSkills.reduce((s, p) => s + p.record.currentLevel, 0) /
-        (profileSkills.length || 1)
-      ).toFixed(1),
-    },
+    { label: "Avg Level", value: avgLevel },
   ];
+
   stats.forEach((stat, i) => {
-    const x = 48 + i * 200;
-    ctx.font = "bold 36px system-ui, sans-serif";
-    ctx.fillStyle = "#8b5cf6";
-    ctx.fillText(stat.value, x, statsY);
-    ctx.font = "16px system-ui, sans-serif";
-    ctx.fillStyle = "#6b7280";
-    ctx.fillText(stat.label, x, statsY + 24);
+    const x = COL_LEFT + i * 220;
+    // Value
+    ctx.font = "bold 30px system-ui, sans-serif";
+    ctx.fillStyle = PALETTE.electricBlue;
+    ctx.fillText(stat.value, x, STATS_Y);
+    // Label
+    ctx.font = "13px system-ui, sans-serif";
+    ctx.fillStyle = PALETTE.gray400;
+    ctx.fillText(stat.label, x, STATS_Y + 22);
   });
 
-  // Divider
-  ctx.strokeStyle = "rgba(139,92,246,0.2)";
-  ctx.lineWidth = 1;
+  // XP bar (under stats)
+  const XP_BAR_Y = STATS_Y + 48;
+  const XP_BAR_W = COL_RIGHT - COL_LEFT - 20;
+  const maxXp = 10000;
+  const xpRatio = Math.min(profile.totalXp / maxXp, 1);
+
+  ctx.fillStyle = PALETTE.navyBorder;
   ctx.beginPath();
-  ctx.moveTo(48, statsY + 46);
-  ctx.lineTo(W - 200, statsY + 46);
-  ctx.stroke();
+  ctx.roundRect(COL_LEFT, XP_BAR_Y, XP_BAR_W, 8, 4);
+  ctx.fill();
 
-  // Top skills
-  const skillsStartY = statsY + 72;
+  const xpGrad = ctx.createLinearGradient(COL_LEFT, 0, COL_LEFT + XP_BAR_W * xpRatio, 0);
+  xpGrad.addColorStop(0, PALETTE.electricBlueDim);
+  xpGrad.addColorStop(1, PALETTE.electricBlue);
+  ctx.fillStyle = xpGrad;
+  ctx.beginPath();
+  ctx.roundRect(COL_LEFT, XP_BAR_Y, XP_BAR_W * xpRatio, 8, 4);
+  ctx.fill();
+
+  ctx.font = "11px system-ui, sans-serif";
+  ctx.fillStyle = PALETTE.gray600;
+  ctx.fillText(`${profile.totalXp.toLocaleString()} / ${maxXp.toLocaleString()} XP`, COL_LEFT, XP_BAR_Y + 22);
+
+  // ── Divider ─────────────────────────────────────────────────────────────────
+  const DIV_Y = XP_BAR_Y + 38;
+  ctx.strokeStyle = "rgba(14,165,233,0.12)";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(COL_LEFT, DIV_Y); ctx.lineTo(COL_RIGHT - 20, DIV_Y); ctx.stroke();
+
+  // ── Skill badges grid (max 6, 3 per row) ────────────────────────────────────
+  const SKILLS_Y = DIV_Y + 18;
+  const BADGE_W = 238;
+  const BADGE_H = 56;
+  const BADGE_GAP_X = 12;
+  const BADGE_GAP_Y = 10;
+  const COLS = 3;
+
   topSkills.forEach((item, idx) => {
-    const y = skillsStartY + idx * 76;
-    const barStartX = 48;
-    const barW = W - 300;
-    const levelColor = LEVEL_COLORS_HEX[item.record.currentLevel] || "#4b5563";
+    const col = idx % COLS;
+    const row = Math.floor(idx / COLS);
+    const bx = COL_LEFT + col * (BADGE_W + BADGE_GAP_X);
+    const by = SKILLS_Y + row * (BADGE_H + BADGE_GAP_Y);
+    const levelColor = LEVEL_COLORS[item.record.currentLevel] || "#475569";
 
-    ctx.font = "bold 20px system-ui, sans-serif";
-    ctx.fillStyle = "#e5e7eb";
-    ctx.fillText(`${item.skill.icon}  ${item.skill.name}`, barStartX, y + 18);
+    // Badge bg
+    ctx.fillStyle = "rgba(14,165,233,0.05)";
+    ctx.beginPath();
+    ctx.roundRect(bx, by, BADGE_W, BADGE_H, 8);
+    ctx.fill();
+    ctx.strokeStyle = levelColor + "55";
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-    ctx.font = "bold 16px system-ui, sans-serif";
+    // Level color left accent
     ctx.fillStyle = levelColor;
-    ctx.fillText(`Lv.${item.record.currentLevel}`, barStartX + 280, y + 18);
+    ctx.beginPath();
+    ctx.roundRect(bx, by, 4, BADGE_H, [8, 0, 0, 8]);
+    ctx.fill();
 
-    const levelData = item.skill.levels.find((l) => l.level === item.record.currentLevel);
-    if (levelData) {
-      ctx.font = "14px system-ui, sans-serif";
-      ctx.fillStyle = "#9ca3af";
-      const desc =
-        levelData.description.length > 70
-          ? levelData.description.slice(0, 67) + "…"
-          : levelData.description;
-      ctx.fillText(desc, barStartX + 340, y + 18);
-    }
+    // Skill icon + name
+    ctx.font = "bold 15px system-ui, sans-serif";
+    ctx.fillStyle = PALETTE.offWhite;
+    ctx.textAlign = "left";
+    ctx.fillText(`${item.skill.icon} ${item.skill.name}`, bx + 14, by + 22);
 
-    const pipY = y + 32;
-    const pipW = (barW - 340) / item.skill.maxLevel;
+    // Level badge
+    ctx.font = "bold 13px system-ui, sans-serif";
+    ctx.fillStyle = levelColor;
+    ctx.fillText(`Lv.${item.record.currentLevel}`, bx + 14, by + 42);
+
+    // XP pips
+    const PIP_X = bx + 68;
+    const PIP_Y = by + 36;
+    const pipW = (BADGE_W - 82) / item.skill.maxLevel;
     for (let i = 0; i < item.skill.maxLevel; i++) {
-      const pipX = barStartX + 340 + i * (pipW + 3);
-      ctx.fillStyle = i < item.record.currentLevel ? levelColor : "#1f2937";
+      ctx.fillStyle = i < item.record.currentLevel ? levelColor : PALETTE.gray800;
       ctx.beginPath();
-      ctx.roundRect(pipX, pipY, pipW - 1, 6, 3);
+      ctx.roundRect(PIP_X + i * (pipW + 1), PIP_Y, pipW - 0.5, 5, 2);
       ctx.fill();
     }
   });
 
-  // URL footer right
-  ctx.font = "12px system-ui, sans-serif";
-  ctx.fillStyle = "#4b5563";
-  ctx.textAlign = "right";
-  ctx.fillText(`skilltree.futurelab.dev/profile/${profile.username}`, W - 48, H - 24);
+  // ── Right column: QR code ───────────────────────────────────────────────────
+  const QR_SIZE = 160;
+  const QR_X = COL_RIGHT + 40;
+  const QR_Y = SECTION_TOP + 10;
+  const profileUrl = `https://futurelabs.vip/@${profile.username}`;
+
+  try {
+    const qrDataUrl = await QRCode.toDataURL(profileUrl, {
+      width: QR_SIZE,
+      margin: 1,
+      color: { dark: "#ffffff", light: "#071428" },
+      errorCorrectionLevel: "M",
+    });
+
+    // QR container
+    ctx.fillStyle = PALETTE.bgMid;
+    ctx.strokeStyle = "rgba(14,165,233,0.35)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(QR_X - 10, QR_Y - 10, QR_SIZE + 20, QR_SIZE + 60, 12);
+    ctx.fill();
+    ctx.stroke();
+
+    const img = new Image();
+    await new Promise<void>((resolve) => {
+      img.onload = () => {
+        ctx.drawImage(img, QR_X, QR_Y, QR_SIZE, QR_SIZE);
+        resolve();
+      };
+      img.src = qrDataUrl;
+    });
+
+    // QR label
+    ctx.font = "bold 13px system-ui, sans-serif";
+    ctx.fillStyle = PALETTE.electricBlue;
+    ctx.textAlign = "center";
+    ctx.fillText("Scan to view profile", QR_X + QR_SIZE / 2, QR_Y + QR_SIZE + 20);
+
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = PALETTE.gray400;
+    ctx.fillText(`@${profile.username}`, QR_X + QR_SIZE / 2, QR_Y + QR_SIZE + 38);
+    ctx.textAlign = "left";
+  } catch {
+    // QR fallback: text URL
+    ctx.font = "12px system-ui, sans-serif";
+    ctx.fillStyle = PALETTE.gray400;
+    ctx.textAlign = "center";
+    ctx.fillText(profileUrl, QR_X + QR_SIZE / 2, QR_Y + QR_SIZE / 2);
+    ctx.textAlign = "left";
+  }
+
+  // ── CTA text under QR ───────────────────────────────────────────────────────
+  const CTA_Y = QR_Y + QR_SIZE + 80;
+  ctx.font = "bold 16px system-ui, sans-serif";
+  ctx.fillStyle = PALETTE.offWhite;
+  ctx.textAlign = "center";
+  ctx.fillText("Build your own", QR_X + QR_SIZE / 2, CTA_Y);
+  ctx.font = "bold 18px system-ui, sans-serif";
+  ctx.fillStyle = PALETTE.electricBlue;
+  ctx.fillText("futurelabs.vip", QR_X + QR_SIZE / 2, CTA_Y + 26);
   ctx.textAlign = "left";
 
-  // Footer left
-  ctx.font = "14px system-ui, sans-serif";
-  ctx.fillStyle = "#374151";
-  ctx.fillText("skilltree.futurelab.dev", 48, H - 24);
+  // ── Footer ──────────────────────────────────────────────────────────────────
+  ctx.fillStyle = "rgba(14,165,233,0.04)";
+  ctx.fillRect(0, H - 44, W, 44);
+  ctx.strokeStyle = "rgba(14,165,233,0.12)";
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, H - 44); ctx.lineTo(W, H - 44); ctx.stroke();
+
+  ctx.font = "12px system-ui, sans-serif";
+  ctx.fillStyle = PALETTE.gray600;
+  ctx.textAlign = "left";
+  ctx.fillText("🌳 futurelabs.vip — Track and share your skill tree", COL_LEFT, H - 15);
+
+  ctx.font = "12px system-ui, sans-serif";
+  ctx.fillStyle = PALETTE.gray600;
+  ctx.textAlign = "right";
+  ctx.fillText(`futurelabs.vip/@${profile.username}`, W - COL_LEFT, H - 15);
+  ctx.textAlign = "left";
 }
 
 function ShareCardContent() {
@@ -174,11 +335,12 @@ function ShareCardContent() {
   const [username, setUsername] = useState(usernameParam);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [downloaded, setDownloaded] = useState(false);
+  const [rendering, setRendering] = useState(false);
 
   useEffect(() => {
-    if (canvasRef.current) {
-      drawCard(canvasRef.current, username);
-    }
+    if (!canvasRef.current) return;
+    setRendering(true);
+    drawCard(canvasRef.current, username).finally(() => setRendering(false));
     setDownloaded(false);
   }, [username]);
 
@@ -195,10 +357,10 @@ function ShareCardContent() {
   const profile = getProfile(username);
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-[#050d1a] text-white">
       {/* Nav */}
-      <nav className="border-b border-gray-800 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
-        <Link href="/" className="font-bold text-violet-400 text-lg">
+      <nav className="border-b border-sky-900/40 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
+        <Link href="/" className="font-bold text-sky-400 text-lg">
           🌳 SkillTree
         </Link>
         {profile && (
@@ -215,8 +377,7 @@ function ShareCardContent() {
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold mb-3">Share your skill tree</h1>
           <p className="text-gray-400">
-            Generate a beautiful card — perfect for Twitter, LinkedIn, or Product
-            Hunt.
+            Generate a beautiful card — perfect for Twitter, LinkedIn, or Product Hunt.
           </p>
         </div>
 
@@ -228,8 +389,8 @@ function ShareCardContent() {
               onClick={() => setUsername(p.username)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
                 username === p.username
-                  ? "bg-violet-700 border-violet-600 text-white"
-                  : "bg-gray-900 border-gray-800 text-gray-400 hover:border-gray-700 hover:text-white"
+                  ? "bg-sky-700 border-sky-500 text-white"
+                  : "bg-gray-900/80 border-gray-800 text-gray-400 hover:border-sky-800 hover:text-white"
               }`}
             >
               <span>{p.avatarEmoji}</span>
@@ -239,7 +400,12 @@ function ShareCardContent() {
         </div>
 
         {/* Canvas preview */}
-        <div className="rounded-2xl overflow-hidden border border-gray-800 shadow-2xl shadow-violet-900/20 w-full mb-8">
+        <div className="rounded-2xl overflow-hidden border border-sky-900/40 shadow-2xl shadow-sky-900/20 w-full mb-8 relative">
+          {rendering && (
+            <div className="absolute inset-0 flex items-center justify-center bg-[#050d1a]/80 z-10">
+              <span className="text-sky-400 text-sm">Rendering…</span>
+            </div>
+          )}
           <canvas
             ref={canvasRef}
             className="w-full h-auto block"
@@ -251,7 +417,8 @@ function ShareCardContent() {
         <div className="flex gap-4 justify-center">
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
+            disabled={rendering}
+            className="flex items-center gap-2 bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors text-lg"
           >
             {downloaded ? "✅ Downloaded!" : "⬇️ Download PNG"}
           </button>
@@ -275,7 +442,7 @@ function ShareCardContent() {
 
 export default function SharePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-950 flex items-center justify-center text-gray-400">Loading…</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#050d1a] flex items-center justify-center text-gray-400">Loading…</div>}>
       <ShareCardContent />
     </Suspense>
   );
