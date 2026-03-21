@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import {
   getProfile,
   getProfileSkills,
+  getSkill,
   SEED_PROFILES,
   type Profile,
 } from "@/lib/seed-data";
@@ -34,12 +35,30 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const profile = getProfile(params.username);
   if (!profile) return { title: "Profile not found" };
+
+  const topSkill = profile.skills
+    .slice()
+    .sort((a, b) => b.currentLevel - a.currentLevel)[0];
+  const topSkillName = topSkill
+    ? (getSkill(topSkill.skillId)?.name ?? "various skills")
+    : "various skills";
+  const totalSkills = profile.skills.length;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://futurelabs.vip";
+  const ogImageUrl = `${appUrl}/api/og?username=${encodeURIComponent(profile.username)}`;
+
   return {
-    title: `${profile.displayName} (@${profile.username}) — SkillTree`,
-    description: profile.bio,
+    title: `${profile.username} on SkillTree — ${topSkillName} and more`,
+    description: `${profile.username} has mastered ${topSkillName} (Level ${topSkill?.currentLevel ?? 1}) and ${totalSkills} other skills.`,
     openGraph: {
       title: `${profile.displayName}'s Skill Tree`,
-      description: `${profile.totalXp.toLocaleString()} XP · ${profile.skills.length} skills`,
+      description: `${profile.totalXp.toLocaleString()} XP · ${totalSkills} skills`,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${profile.username}'s skill tree` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${profile.username} on SkillTree — ${topSkillName} and more`,
+      description: `${profile.username} has mastered ${topSkillName} (Level ${topSkill?.currentLevel ?? 1}) and ${totalSkills} other skills.`,
+      images: [ogImageUrl],
     },
   };
 }
