@@ -10,15 +10,13 @@ import { authOptions } from "@/lib/auth-options";
 
 interface Params { params: { username: string; skillId: string } }
 
-async function requireOwner(_username: string) {
+async function requireAuth() {
   const session = await getServerSession(authOptions);
-  if (!session?.user) return false;
-  // In full impl: check session.user maps to username via DB
-  return true;
+  return !!session?.user;
 }
 
 export async function PUT(req: NextRequest, { params }: Params) {
-  if (!(await requireOwner(params.username))) {
+  if (!(await requireAuth())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const body = await req.json();
@@ -26,7 +24,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
 }
 
 export async function DELETE(_req: NextRequest, { params }: Params) {
-  if (!(await requireOwner(params.username))) {
+  if (!(await requireAuth())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   return NextResponse.json({ ok: true });
