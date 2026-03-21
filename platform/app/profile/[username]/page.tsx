@@ -6,7 +6,6 @@ import {
   getProfileSkills,
   SEED_PROFILES,
   type Profile,
-  type UserSkillRecord,
 } from "@/lib/seed-data";
 import Nav from "@/app/components/Nav";
 

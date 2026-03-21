@@ -34,12 +34,7 @@ export default function ExplorePage() {
       setApiAvailable(false);
       let filtered = SEED_PROFILES as unknown as Profile[];
       if (selectedBranch) {
-        filtered = filtered.filter((p) =>
-          p.skills.some((s) => {
-            // We can't check branch without SKILLS lookup here easily, just return all
-            return true;
-          })
-        );
+        filtered = filtered.filter((p) => p.skills.length > 0);
       }
       setProfiles(filtered.filter((p) => p.privacy !== "private").slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE));
       setTotal(filtered.length);

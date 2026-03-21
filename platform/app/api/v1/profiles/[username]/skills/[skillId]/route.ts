@@ -10,7 +10,7 @@ import { authOptions } from "@/lib/auth-options";
 
 interface Params { params: { username: string; skillId: string } }
 
-async function requireOwner(username: string) {
+async function requireOwner(_username: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return false;
   // In full impl: check session.user maps to username via DB

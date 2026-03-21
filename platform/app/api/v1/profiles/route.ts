@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
   const limit = Math.min(50, Number(searchParams.get("limit") ?? String(PAGE_SIZE)));
-  const branch = searchParams.get("branch") ?? "";
+  void searchParams.get("branch"); // branch filter handled by DB in FUT-23
 
   // Return seed profiles as fallback (DB implementation replaces this)
   const all = SEED_PROFILES.filter((p) => p.privacy === "public");

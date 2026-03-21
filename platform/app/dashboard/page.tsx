@@ -24,12 +24,11 @@ const LEVEL_COLORS = [
 
 // Evidence form modal
 function EvidenceModal({
-  skillId,
   existing,
   onClose,
   onSave,
 }: {
-  skillId: string;
+  skillId?: string;
   existing: EvidenceRecord[];
   onClose: () => void;
   onSave: (records: EvidenceRecord[]) => void;

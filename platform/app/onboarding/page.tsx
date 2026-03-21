@@ -95,7 +95,7 @@ export default function OnboardingPage() {
           <div className="text-center mb-8">
             <div className="text-5xl mb-4">🌱</div>
             <h1 className="text-3xl font-bold mb-2">Welcome to SkillTree</h1>
-            <p className="text-gray-400">Let's set up your profile and add your first skill.</p>
+            <p className="text-gray-400">Let&apos;s set up your profile and add your first skill.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
