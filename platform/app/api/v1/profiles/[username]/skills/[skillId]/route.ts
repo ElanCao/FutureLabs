@@ -23,7 +23,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
   return NextResponse.json({ skillId: params.skillId, ...body });
 }
 
-export async function DELETE(_req: NextRequest, { params }: Params) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function DELETE(_req: NextRequest, _params: Params) {
   if (!(await requireAuth())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
