@@ -2,7 +2,7 @@
  * GET   /api/v1/notifications — list unread notifications for current user
  * PATCH /api/v1/notifications — mark all as read
  */
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
