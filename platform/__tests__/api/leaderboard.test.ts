@@ -57,4 +57,48 @@ describe("GET /api/v1/leaderboard", () => {
     const json = await res.json();
     expect(Array.isArray(json)).toBe(true);
   });
+
+  it("filters by branch name via DB query", async () => {
+    prismaMock.profile.findMany.mockResolvedValueOnce([mockProfile] as never);
+
+    const res = await GET(makeRequest("?branch=Engineering"));
+    expect(res.status).toBe(200);
+    expect(prismaMock.profile.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          skills: expect.objectContaining({ some: expect.anything() }),
+        }),
+      })
+    );
+  });
+
+  it("falls back to seed data with branch filter on DB error", async () => {
+    prismaMock.profile.findMany.mockRejectedValueOnce(new Error("DB down"));
+
+    const res = await GET(makeRequest("?branch=Engineering"));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(Array.isArray(json)).toBe(true);
+  });
+
+  it("maps topSkills correctly when profiles have skills", async () => {
+    const profileWithSkills = {
+      ...mockProfile,
+      skills: [
+        {
+          skillId: "s1",
+          currentLevel: 3,
+          skill: { name: "TypeScript", icon: "⚡", branch: { name: "Engineering" } },
+        },
+      ],
+    };
+    prismaMock.profile.findMany.mockResolvedValueOnce([profileWithSkills] as never);
+
+    const res = await GET(makeRequest());
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json[0].topSkills).toHaveLength(1);
+    expect(json[0].topSkills[0].name).toBe("TypeScript");
+    expect(json[0].topSkills[0].branch).toBe("Engineering");
+  });
 });

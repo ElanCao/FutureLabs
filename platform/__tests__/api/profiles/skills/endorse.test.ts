@@ -55,6 +55,24 @@ describe("POST /api/v1/profiles/:username/skills/:skillId/endorse", () => {
     expect(res.status).toBe(401);
   });
 
+  it("returns 403 if endorser has no profile", async () => {
+    getServerSessionMock.mockResolvedValueOnce({ user: { id: "u2" } });
+    prismaMock.profile.findUnique.mockResolvedValueOnce(null);
+
+    const res = await POST(makePostReq(), { params });
+    expect(res.status).toBe(403);
+  });
+
+  it("returns 404 if endorsee profile is private", async () => {
+    getServerSessionMock.mockResolvedValueOnce({ user: { id: "u2" } });
+    prismaMock.profile.findUnique
+      .mockResolvedValueOnce(endorserProfile as never)
+      .mockResolvedValueOnce({ ...endorseeProfile, privacy: "private" } as never);
+
+    const res = await POST(makePostReq(), { params });
+    expect(res.status).toBe(404);
+  });
+
   it("returns 400 for self-endorsement", async () => {
     getServerSessionMock.mockResolvedValueOnce({ user: { id: "u1" } });
     // endorser and endorsee have same profile id
@@ -122,5 +140,14 @@ describe("DELETE /api/v1/profiles/:username/skills/:skillId/endorse", () => {
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.ok).toBe(true);
+  });
+
+  it("returns 404 if endorser profile not found", async () => {
+    getServerSessionMock.mockResolvedValueOnce({ user: { id: "u2" } });
+    prismaMock.profile.findUnique.mockResolvedValueOnce(null);
+
+    const req = new NextRequest("http://localhost/", { method: "DELETE" });
+    const res = await DELETE(req, { params });
+    expect(res.status).toBe(404);
   });
 });

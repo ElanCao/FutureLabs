@@ -60,6 +60,40 @@ describe("GET /api/v1/profiles/:username", () => {
     const res = await GET(makeGetReq("unknown_person_xyz"), { params: { username: "unknown_person_xyz" } });
     expect(res.status).toBe(404);
   });
+
+  it("returns profile with skills and endorsements", async () => {
+    const profileWithSkills = {
+      ...mockProfile,
+      skills: [
+        {
+          skillId: "s1",
+          currentLevel: 2,
+          xp: 150,
+          evidence: [],
+          skill: {
+            name: "TypeScript",
+            icon: "⚡",
+            maxLevel: 5,
+            branch: { name: "Engineering" },
+          },
+        },
+      ],
+    };
+    prismaMock.profile.findUnique.mockResolvedValueOnce(profileWithSkills as never);
+    prismaMock.skillEndorsement.findMany.mockResolvedValueOnce([
+      {
+        skillId: "s1",
+        endorser: { username: "bob", displayName: "Bob", avatarEmoji: "🤖" },
+      },
+    ] as never);
+
+    const res = await GET(makeGetReq("alice"), { params: { username: "alice" } });
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.skills).toHaveLength(1);
+    expect(json.skills[0].name).toBe("TypeScript");
+    expect(json.skills[0].endorsements.count).toBe(1);
+  });
 });
 
 describe("PATCH /api/v1/profiles/:username", () => {
@@ -101,5 +135,32 @@ describe("PATCH /api/v1/profiles/:username", () => {
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.displayName).toBe("Alice B");
+  });
+
+  it("returns 404 if profile not found in PATCH", async () => {
+    getServerSessionMock.mockResolvedValueOnce({ user: { id: "u1" } });
+    prismaMock.profile.findUnique.mockResolvedValueOnce(null);
+
+    const req = new NextRequest("http://localhost/api/v1/profiles/alice", {
+      method: "PATCH",
+      body: JSON.stringify({ displayName: "Alice B" }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const res = await PATCH(req, { params: { username: "alice" } });
+    expect(res.status).toBe(404);
+  });
+
+  it("returns 500 on unexpected PATCH error", async () => {
+    getServerSessionMock.mockResolvedValueOnce({ user: { id: "u1" } });
+    prismaMock.profile.findUnique.mockResolvedValueOnce({ ...mockProfile, userId: "u1" } as never);
+    prismaMock.profile.update.mockRejectedValueOnce(new Error("DB error"));
+
+    const req = new NextRequest("http://localhost/api/v1/profiles/alice", {
+      method: "PATCH",
+      body: JSON.stringify({ displayName: "Alice B" }),
+      headers: { "Content-Type": "application/json" },
+    });
+    const res = await PATCH(req, { params: { username: "alice" } });
+    expect(res.status).toBe(500);
   });
 });

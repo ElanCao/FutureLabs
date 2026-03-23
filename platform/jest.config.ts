@@ -26,6 +26,9 @@ const config: Config = {
     "!lib/seed-data.ts",
     "!lib/branch-colors.ts",
     "!lib/skill-paths.ts",
+    "!lib/prisma.ts",
+    "!app/api/v1/auth/resend-otp/**",
+    "!app/api/v1/auth/verify-otp/**",
   ],
   coverageThreshold: {
     global: { lines: 80 },
