@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getProfile, getProfileSkills, getBranch } from "@/lib/seed-data";
+import { getProfile, getProfileSkills } from "@/lib/seed-data";
 
 // Node.js runtime for Prisma compatibility
 export const runtime = "nodejs";
