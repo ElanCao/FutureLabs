@@ -492,6 +492,10 @@ export default function DashboardPage() {
                   @{profile.username}
                 </Link>
                 <span className="text-gray-600 text-sm">·</span>
+                <Link href={`/tree/${profile.username}`} className="text-sm text-violet-300 hover:text-violet-200 border border-violet-800 hover:border-violet-600 px-2 py-0.5 rounded-md transition-colors">
+                  🌳 Skill Tree
+                </Link>
+                <span className="text-gray-600 text-sm">·</span>
                 <span className="text-sm text-gray-500">{profile.totalXp.toLocaleString()} XP</span>
               </div>
             )}
