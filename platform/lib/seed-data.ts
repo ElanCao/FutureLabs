@@ -20,6 +20,9 @@ export interface Skill {
   trending?: boolean;
   localizationTags?: string[];
   tags?: string[];
+  // Skill hierarchy
+  parentSkillId?: string | null;
+  prerequisites?: string[];
 }
 
 export interface Branch {
@@ -160,6 +163,7 @@ export const SKILLS: Skill[] = [
     icon: '🔷',
     branch: 'engineering',
     maxLevel: 10,
+    parentSkillId: 'javascript',
     levels: levels([
       'Can read TypeScript code and understand basic type annotations.',
       'Writes typed interfaces and basic generics. Configures tsconfig.',
@@ -198,6 +202,7 @@ export const SKILLS: Skill[] = [
     icon: '⚛️',
     branch: 'engineering',
     maxLevel: 10,
+    parentSkillId: 'javascript',
     levels: levels([
       'Understands component model. Can follow a React tutorial.',
       'Builds simple UIs with hooks (useState, useEffect). Passes props correctly.',
@@ -217,6 +222,7 @@ export const SKILLS: Skill[] = [
     icon: '▲',
     branch: 'engineering',
     maxLevel: 10,
+    parentSkillId: 'react',
     levels: levels([
       'Has deployed a basic Next.js app. Understands pages vs. app router.',
       'Uses SSR, SSG, and ISR. Manages routing and API routes.',
@@ -600,6 +606,7 @@ export const SKILLS: Skill[] = [
     icon: '🔮',
     branch: 'ai_ml',
     maxLevel: 10,
+    parentSkillId: 'ml_fundamentals',
     levels: levels([
       'Understands neural network basics — layers, activations, backprop.',
       'Trains simple neural nets with PyTorch or TensorFlow.',
@@ -619,6 +626,7 @@ export const SKILLS: Skill[] = [
     icon: '✨',
     branch: 'ai_ml',
     maxLevel: 10,
+    parentSkillId: 'deep_learning',
     levels: levels([
       'Has used ChatGPT or similar tools.',
       'Calls OpenAI/Anthropic APIs with basic prompts. Knows temperature and tokens.',
@@ -907,6 +915,7 @@ export const SKILLS: Skill[] = [
     icon: '⎈',
     branch: 'cloud_infra',
     maxLevel: 10,
+    parentSkillId: 'docker',
     levels: levels([
       'Understands pods, deployments, and services.',
       'Deploys apps to Kubernetes. Uses kubectl for basic operations.',
@@ -1062,6 +1071,7 @@ export const SKILLS: Skill[] = [
     icon: '🏭',
     branch: 'data',
     maxLevel: 10,
+    parentSkillId: 'sql',
     levels: levels([
       'Understands what data pipelines are.',
       'Builds basic ETL pipelines with Python or SQL.',
@@ -1467,6 +1477,7 @@ export const SKILLS: Skill[] = [
     icon: '🔲',
     branch: 'design',
     maxLevel: 10,
+    parentSkillId: 'ui_design',
     levels: levels([
       'Can open and view a Figma file. Makes basic edits.',
       'Creates frames, components, and auto-layouts.',
@@ -1486,6 +1497,7 @@ export const SKILLS: Skill[] = [
     icon: '🏛️',
     branch: 'design',
     maxLevel: 10,
+    parentSkillId: 'ui_design',
     levels: levels([
       'Understands what a design system is.',
       'Uses an existing design system (Material, Radix, etc.).',
