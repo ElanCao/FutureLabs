@@ -393,8 +393,43 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-gray-950 text-white flex flex-col">
         <Nav />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-gray-500 animate-pulse">Loading your skill tree…</div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 w-full">
+          <div className="flex items-start justify-between gap-4 mb-8">
+            <div className="space-y-2">
+              <div className="h-7 w-40 bg-gray-800 rounded-lg animate-pulse" />
+              <div className="h-4 w-28 bg-gray-800 rounded animate-pulse" />
+            </div>
+            <div className="flex gap-3">
+              <div className="h-9 w-24 bg-gray-800 rounded-xl animate-pulse" />
+              <div className="h-9 w-24 bg-gray-800 rounded-xl animate-pulse" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-3 animate-pulse">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 bg-gray-800 rounded-full" />
+                    <div className="space-y-1.5">
+                      <div className="h-4 w-28 bg-gray-800 rounded" />
+                      <div className="h-3 w-16 bg-gray-800 rounded" />
+                    </div>
+                  </div>
+                  <div className="h-6 w-12 bg-gray-800 rounded-full" />
+                </div>
+                <div className="flex gap-1 mt-3">
+                  {Array.from({ length: 8 }).map((_, j) => (
+                    <div key={j} className="h-2 flex-1 rounded-full bg-gray-800" />
+                  ))}
+                </div>
+                <div className="h-2 w-full bg-gray-800 rounded-full" />
+                <div className="space-y-1">
+                  <div className="h-4 w-32 bg-gray-800 rounded" />
+                  <div className="h-3 w-48 bg-gray-800 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

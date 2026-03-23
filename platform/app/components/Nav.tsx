@@ -91,9 +91,20 @@ function NotificationBell() {
 
 export default function Nav() {
   const { data: session, status } = useSession();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+    }
+    if (userMenuOpen) document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [userMenuOpen]);
 
   return (
-    <nav className="border-b border-gray-800 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
+    <nav className="border-b border-gray-800">
+      <div className="px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
       <Link href="/" className="font-bold text-violet-400 text-lg">
         🌳 SkillTree
       </Link>
@@ -115,8 +126,12 @@ export default function Nav() {
               Dashboard
             </Link>
             <NotificationBell />
-            <div className="relative group">
-              <button className="flex items-center gap-2 focus:outline-none">
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen((v) => !v)}
+                className="flex items-center gap-2 focus:outline-none"
+                aria-label="User menu"
+              >
                 {session.user.image ? (
                   <Image
                     src={session.user.image}
@@ -131,7 +146,8 @@ export default function Nav() {
                   </div>
                 )}
               </button>
-              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-900 border border-gray-800 rounded-xl shadow-xl opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all z-50">
+              {userMenuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-50">
                 <div className="px-4 py-3 border-b border-gray-800">
                   <div className="text-sm font-medium text-white truncate">{session.user.name}</div>
                   <div className="text-xs text-gray-500 truncate">{session.user.email}</div>
@@ -157,6 +173,7 @@ export default function Nav() {
                   </button>
                 </div>
               </div>
+              )}
             </div>
           </div>
         ) : (
@@ -168,6 +185,7 @@ export default function Nav() {
           </button>
         )}
       </div>
+    </div>
     </nav>
   );
 }

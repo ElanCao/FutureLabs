@@ -23,6 +23,18 @@ export default function OnboardingPage() {
     }
   }, [status, router]);
 
+  // Pre-fill username from session name (sanitized)
+  useEffect(() => {
+    if (session?.user?.name && !username) {
+      const suggested = session.user.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9_-]/g, "")
+        .slice(0, 32);
+      if (suggested.length >= 3) setUsername(suggested);
+    }
+  }, [session, username]);
+
   const filteredSkills = SKILLS.filter((s) => {
     if (selectedBranch && s.branch !== selectedBranch) return false;
     if (skillSearch.trim()) return s.name.toLowerCase().includes(skillSearch.toLowerCase());
@@ -119,7 +131,8 @@ export default function OnboardingPage() {
                   required
                 />
               </div>
-              <p className="text-xs text-gray-600 mt-1">Lowercase, 3–32 chars. Letters, numbers, _ or -</p>
+              <p className="text-xs text-gray-600 mt-1">This will be your public profile URL: <span className="text-gray-500">skilltree.app/profile/<span className="text-violet-400">{username || "your-username"}</span></span></p>
+              <p className="text-xs text-gray-700 mt-0.5">Lowercase, 3–32 chars. Letters, numbers, _ or -</p>
             </div>
 
             {/* First skill */}
