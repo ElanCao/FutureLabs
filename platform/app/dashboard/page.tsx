@@ -273,6 +273,7 @@ export default function DashboardPage() {
   const [showAddSkill, setShowAddSkill] = useState(false);
   const [privacyUpdating, setPrivacyUpdating] = useState(false);
   const [hasProfile, setHasProfile] = useState<boolean | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const loadProfile = useCallback(async () => {
     if (!session?.user) return;
@@ -369,6 +370,19 @@ export default function DashboardPage() {
       setProfile((p) => p ? { ...p, privacy: newPrivacy } : p);
     }
     setPrivacyUpdating(false);
+  }
+
+  async function shareProfile() {
+    if (!profile) return;
+    const url = `${window.location.origin}/tree/${profile.username}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      // Fallback: open in new tab
+      window.open(url, "_blank");
+    }
   }
 
   if (status === "unauthenticated") {
@@ -515,6 +529,16 @@ export default function DashboardPage() {
                 {profile.privacy === "public" ? "🌐 Public" : "🔒 Private"}
               </button>
             )}
+            <button
+              onClick={shareProfile}
+              className={`text-sm px-4 py-2 rounded-xl border transition-colors ${
+                copiedLink
+                  ? "border-green-700 text-green-400 bg-green-900/20"
+                  : "border-violet-700 text-violet-400 hover:bg-violet-900/20"
+              }`}
+            >
+              {copiedLink ? "Copied!" : "Share Profile"}
+            </button>
             <button
               onClick={() => setShowAddSkill(true)}
               className="bg-violet-600 hover:bg-violet-500 text-white text-sm px-4 py-2 rounded-xl font-medium transition-colors"

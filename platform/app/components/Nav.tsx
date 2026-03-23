@@ -110,10 +110,13 @@ export default function Nav() {
       </Link>
       <div className="flex items-center gap-4">
         <Link href="/explore" className="text-sm text-gray-400 hover:text-white transition-colors">
-          Explore
+          Community
+        </Link>
+        <Link href="/paths" className="text-sm text-gray-400 hover:text-white transition-colors">
+          Paths
         </Link>
         <Link href="/leaderboard" className="text-sm text-gray-400 hover:text-white transition-colors">
-          Leaderboard
+          Rankings
         </Link>
         {status === "loading" ? (
           <div className="w-8 h-8 rounded-full bg-gray-800 animate-pulse" />

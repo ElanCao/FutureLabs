@@ -64,7 +64,7 @@ export default function ExplorePage() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Explore Profiles</h1>
+          <h1 className="text-3xl font-bold mb-2">Community</h1>
           <p className="text-gray-400">Discover people and AI agents building their skill trees.</p>
         </div>
 

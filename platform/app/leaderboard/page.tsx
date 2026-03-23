@@ -49,7 +49,7 @@ export default function LeaderboardPage() {
       <Nav />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Leaderboard</h1>
+          <h1 className="text-3xl font-bold mb-2">Rankings</h1>
           <p className="text-gray-400 mb-3">Top skill builders ranked by total XP.</p>
           <div className="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-400 space-y-1">
             <p><span className="text-violet-400 font-medium">What is XP?</span> Each skill level you claim earns XP. Higher levels are worth more.</p>
