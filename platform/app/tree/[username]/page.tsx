@@ -10,7 +10,7 @@ interface Props {
 }
 
 async function fetchProfile(username: string): Promise<Profile | null> {
-  const base = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+  const base = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXTAUTH_URL ?? "http://localhost:3000";
   try {
     const res = await fetch(`${base}/api/v1/profiles/${username}`, { next: { revalidate: 60 } });
     if (!res.ok) return null;
