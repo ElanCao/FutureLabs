@@ -47,6 +47,8 @@ providers.push(
         const valid = await bcrypt.compare(credentials.password, user.password);
         if (!valid) return null;
 
+        if (!user.emailVerified) return null; // block unverified accounts
+
         return { id: user.id, email: user.email, name: user.name, image: user.image };
       } catch {
         return null;

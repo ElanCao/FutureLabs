@@ -194,3 +194,15 @@ model Notification {
   createdAt   DateTime @default(now())
   profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
+
+model EmailOtp {
+  id         String   @id @default(cuid())
+  email      String
+  codeHash   String
+  attempts   Int      @default(0)
+  lastSentAt DateTime @default(now())
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+
+  @@index([email])
+}

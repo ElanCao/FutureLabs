@@ -1,9 +1,14 @@
 /**
- * POST /api/v1/auth/register — create a new user account with email/password
+ * POST /api/v1/auth/register — create a new user account, send OTP for email verification
  */
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { sendOtpEmail } from "@/lib/email";
+
+function generateOtp(): string {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
@@ -23,19 +28,39 @@ export async function POST(req: NextRequest) {
   try {
     const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (existing) {
-      return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
+      if (existing.emailVerified) {
+        return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
+      }
+      // Account exists but unverified — resend OTP
+      const otp = generateOtp();
+      const codeHash = await bcrypt.hash(otp, 10);
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+      await prisma.emailOtp.deleteMany({ where: { email: normalizedEmail } });
+      await prisma.emailOtp.create({ data: { email: normalizedEmail, codeHash, expiresAt } });
+      await sendOtpEmail(normalizedEmail, otp);
+
+      return NextResponse.json({ requiresVerification: true, email: normalizedEmail }, { status: 200 });
     }
 
     const hash = await bcrypt.hash(password, 12);
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email: normalizedEmail,
         name: name?.trim() || null,
         password: hash,
+        // emailVerified intentionally null until OTP confirmed
       },
     });
 
-    return NextResponse.json({ id: user.id, email: user.email }, { status: 201 });
+    const otp = generateOtp();
+    const codeHash = await bcrypt.hash(otp, 10);
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+    await prisma.emailOtp.create({ data: { email: normalizedEmail, codeHash, expiresAt } });
+    await sendOtpEmail(normalizedEmail, otp);
+
+    return NextResponse.json({ requiresVerification: true, email: normalizedEmail }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Registration failed. Please try again." }, { status: 500 });
   }

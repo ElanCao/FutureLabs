@@ -44,10 +44,16 @@ function SignInForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name }),
       });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
         setError(data.error ?? "Registration failed.");
         setLoading(false);
+        return;
+      }
+      if (data.requiresVerification) {
+        // Temporarily store password so verify-email can auto sign-in after OTP
+        sessionStorage.setItem("__reg_pw", password);
+        router.push(`/verify-email?email=${encodeURIComponent(email)}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
         return;
       }
     }
