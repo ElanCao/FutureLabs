@@ -57,21 +57,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? (getSkill(topSkill.skillId)?.name ?? "various skills")
     : "various skills";
   const totalSkills = profile.skills.length;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://futurelabs.vip";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://platform.futurelabs.vip";
   const ogImageUrl = `${appUrl}/api/og?username=${encodeURIComponent(profile.username)}`;
+  const viralCopy = `My AI-era skill map — build yours at skilltree.app`;
 
   return {
     title: `${profile.username} on SkillTree — ${topSkillName} and more`,
-    description: `${profile.username} has mastered ${topSkillName} (Level ${topSkill?.currentLevel ?? 1}) and ${totalSkills} other skills.`,
+    description: viralCopy,
     openGraph: {
-      title: `${profile.displayName}'s Skill Tree`,
-      description: `${profile.totalXp.toLocaleString()} XP · ${totalSkills} skills`,
-      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${profile.username}'s skill tree` }],
+      title: `${profile.displayName}'s Skill Tree · ${totalSkills} skills · ${profile.totalXp.toLocaleString()} XP`,
+      description: viralCopy,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${profile.username}'s AI-era skill map` }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${profile.username} on SkillTree — ${topSkillName} and more`,
-      description: `${profile.username} has mastered ${topSkillName} (Level ${topSkill?.currentLevel ?? 1}) and ${totalSkills} other skills.`,
+      title: `${profile.displayName}'s Skill Tree · ${totalSkills} skills`,
+      description: viralCopy,
       images: [ogImageUrl],
     },
   };

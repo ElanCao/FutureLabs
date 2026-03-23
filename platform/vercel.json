@@ -16,6 +16,7 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_SITE_URL": "https://platform.futurelabs.vip"
+    "NEXT_PUBLIC_SITE_URL": "https://platform.futurelabs.vip",
+    "NEXT_PUBLIC_APP_URL": "https://platform.futurelabs.vip"
   }
 }
