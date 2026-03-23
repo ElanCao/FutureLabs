@@ -12,6 +12,14 @@ export interface Skill {
   branch: string;
   maxLevel: number;
   levels: SkillLevel[];
+  // Taxonomy metadata (Phase 2+)
+  subDomain?: string;
+  workRelevant?: boolean;
+  lifeSkill?: boolean;
+  verifiable?: boolean;
+  trending?: boolean;
+  localizationTags?: string[];
+  tags?: string[];
 }
 
 export interface Branch {
@@ -49,6 +57,7 @@ export interface Profile {
 // ---------- Branches ----------
 
 export const BRANCHES: Branch[] = [
+  // ── Phase 1: Technology & Professional (original branches) ──────────────────
   { id: 'engineering', name: 'Engineering', icon: '⚙️', color: '#6366f1' },
   { id: 'ai_ml', name: 'AI / ML', icon: '🤖', color: '#8b5cf6' },
   { id: 'cloud_infra', name: 'Cloud / Infra', icon: '☁️', color: '#0ea5e9' },
@@ -56,6 +65,26 @@ export const BRANCHES: Branch[] = [
   { id: 'product', name: 'Product', icon: '🎯', color: '#06b6d4' },
   { id: 'design', name: 'Design', icon: '🎨', color: '#f59e0b' },
   { id: 'soft_skills', name: 'Soft Skills', icon: '🌟', color: '#10b981' },
+  // ── Phase 1 expansion: Business domains ─────────────────────────────────────
+  { id: 'business', name: 'Business', icon: '💼', color: '#374151' },
+  { id: 'marketing', name: 'Marketing', icon: '📣', color: '#ec4899' },
+  { id: 'sales_bd', name: 'Sales & BD', icon: '🤝', color: '#14b8a6' },
+  { id: 'finance', name: 'Finance', icon: '💰', color: '#22c55e' },
+  { id: 'legal', name: 'Legal', icon: '⚖️', color: '#64748b' },
+  { id: 'science', name: 'Science', icon: '🔬', color: '#3b82f6' },
+  { id: 'education', name: 'Education', icon: '📚', color: '#f59e0b' },
+  // ── Phase 2: Life & Creative Skills ─────────────────────────────────────────
+  { id: 'creative_arts', name: 'Creative Arts', icon: '🎼', color: '#a855f7' },
+  { id: 'writing_language', name: 'Writing & Language', icon: '✍️', color: '#06b6d4' },
+  { id: 'culinary', name: 'Culinary Arts', icon: '🍳', color: '#ef4444' },
+  { id: 'physical_athletic', name: 'Physical & Athletic', icon: '🏃', color: '#84cc16' },
+  { id: 'mindfulness', name: 'Mindfulness', icon: '🧘', color: '#67e8f9' },
+  { id: 'interpersonal', name: 'Interpersonal', icon: '💛', color: '#fb923c' },
+  // ── Phase 3: Long Tail ───────────────────────────────────────────────────────
+  { id: 'performing_arts', name: 'Performing Arts', icon: '🎭', color: '#f97316' },
+  { id: 'home_lifestyle', name: 'Home & Lifestyle', icon: '🏠', color: '#a3e635' },
+  { id: 'games_strategy', name: 'Games & Strategy', icon: '♟️', color: '#c084fc' },
+  { id: 'travel_cultural', name: 'Travel & Cultural', icon: '✈️', color: '#34d399' },
 ];
 
 // ---------- Skills ----------
@@ -70,6 +99,55 @@ function levels(descs: string[]): SkillLevel[] {
     description,
     xpRequired: STD_XP[i],
   }));
+}
+
+/** Auto-generates level descriptions from a skill name (used for expanded taxonomy). */
+function autoLevels(skill: string): SkillLevel[] {
+  return levels([
+    `Familiar with core concepts of ${skill}.`,
+    `Applies basic ${skill} skills with guidance.`,
+    `Independently practices ${skill} at a functional level.`,
+    `Demonstrates solid ${skill} competency and consistency.`,
+    `Produces high-quality ${skill} output reliably.`,
+    `Advanced ${skill} practitioner; guides and teaches others.`,
+    `Expert in ${skill}; recognized for depth and quality.`,
+    `Master-level ${skill}; mentors practitioners and shapes standards.`,
+    `Leading ${skill} practitioner in the field; shapes community direction.`,
+    `World-class ${skill}; defines best practices and inspires a generation.`,
+  ]);
+}
+
+/** Compact skill builder for the expanded taxonomy. */
+interface SkillDef {
+  id: string;
+  name: string;
+  icon: string;
+  branch: string;
+  subDomain?: string;
+  workRelevant?: boolean;
+  lifeSkill?: boolean;
+  verifiable?: boolean;
+  trending?: boolean;
+  localizationTags?: string[];
+  tags?: string[];
+}
+
+function buildSkill(def: SkillDef): Skill {
+  return {
+    id: def.id,
+    name: def.name,
+    icon: def.icon,
+    branch: def.branch,
+    subDomain: def.subDomain,
+    maxLevel: 10,
+    workRelevant: def.workRelevant ?? false,
+    lifeSkill: def.lifeSkill ?? false,
+    verifiable: def.verifiable ?? false,
+    trending: def.trending ?? false,
+    localizationTags: def.localizationTags ?? [],
+    tags: def.tags ?? [],
+    levels: autoLevels(def.name),
+  };
 }
 
 export const SKILLS: Skill[] = [
@@ -2047,6 +2125,538 @@ export const SKILLS: Skill[] = [
       'Foundational contributor to modern B2B sales methodology.',
     ]),
   },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 1 EXPANSION — Business & Professional Domains
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ── Business & Management ───────────────────────────────────────────────────
+
+  buildSkill({ id: 'business_model_design', name: 'Business Model Design', icon: '🗺️', branch: 'business', subDomain: 'Strategy', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'competitive_strategy', name: 'Competitive Strategy', icon: '♟️', branch: 'business', subDomain: 'Strategy', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'market_research', name: 'Market Research', icon: '🔭', branch: 'business', subDomain: 'Strategy', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'strategic_planning', name: 'Strategic Planning', icon: '📋', branch: 'business', subDomain: 'Strategy', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'process_design', name: 'Process Design', icon: '🔄', branch: 'business', subDomain: 'Operations', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'supply_chain', name: 'Supply Chain Management', icon: '🚚', branch: 'business', subDomain: 'Operations', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'lean_six_sigma', name: 'Lean / Six Sigma', icon: '📉', branch: 'business', subDomain: 'Operations', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'operations_management', name: 'Operations Management', icon: '⚙️', branch: 'business', subDomain: 'Operations', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'people_management', name: 'People Management', icon: '👥', branch: 'business', subDomain: 'People Management', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'performance_reviews', name: 'Performance Reviews', icon: '📊', branch: 'business', subDomain: 'People Management', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'team_building', name: 'Team Building', icon: '🏗️', branch: 'business', subDomain: 'People Management', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'executive_leadership', name: 'Executive Leadership', icon: '👑', branch: 'business', subDomain: 'Leadership', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'change_management', name: 'Change Management', icon: '🔀', branch: 'business', subDomain: 'Leadership', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'board_communication', name: 'Board Communication', icon: '📢', branch: 'business', subDomain: 'Leadership', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'fundraising', name: 'Fundraising', icon: '💸', branch: 'business', subDomain: 'Entrepreneurship', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'pitch_decks', name: 'Pitch Decks', icon: '📊', branch: 'business', subDomain: 'Entrepreneurship', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'startup_operations', name: 'Startup Operations', icon: '🚀', branch: 'business', subDomain: 'Entrepreneurship', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'venture_building', name: 'Venture Building', icon: '🏢', branch: 'business', subDomain: 'Entrepreneurship', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'management_consulting', name: 'Management Consulting', icon: '🧩', branch: 'business', subDomain: 'Consulting', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'stakeholder_management', name: 'Stakeholder Management', icon: '🤝', branch: 'business', subDomain: 'Consulting', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'problem_structuring', name: 'Problem Structuring', icon: '🔍', branch: 'business', subDomain: 'Consulting', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'risk_management', name: 'Risk Management', icon: '⚠️', branch: 'business', subDomain: 'Operations', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'procurement', name: 'Procurement', icon: '📦', branch: 'business', subDomain: 'Operations', workRelevant: true, verifiable: true }),
+
+  // ── Marketing & Growth ──────────────────────────────────────────────────────
+
+  buildSkill({ id: 'brand_positioning', name: 'Brand Positioning', icon: '🏷️', branch: 'marketing', subDomain: 'Brand Strategy', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'brand_identity', name: 'Brand Identity', icon: '✨', branch: 'marketing', subDomain: 'Brand Strategy', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'messaging_strategy', name: 'Messaging Strategy', icon: '💬', branch: 'marketing', subDomain: 'Brand Strategy', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'seo', name: 'SEO', icon: '🔍', branch: 'marketing', subDomain: 'Content Marketing', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'content_marketing', name: 'Content Marketing', icon: '📝', branch: 'marketing', subDomain: 'Content Marketing', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'newsletter_marketing', name: 'Newsletter Marketing', icon: '📧', branch: 'marketing', subDomain: 'Content Marketing', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'storytelling_marketing', name: 'Storytelling', icon: '📖', branch: 'marketing', subDomain: 'Content Marketing', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'community_management', name: 'Community Management', icon: '👥', branch: 'marketing', subDomain: 'Social Media', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'social_media_marketing', name: 'Social Media Marketing', icon: '📱', branch: 'marketing', subDomain: 'Social Media', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'tiktok_content', name: 'TikTok Content', icon: '🎵', branch: 'marketing', subDomain: 'Social Media', workRelevant: true, lifeSkill: true, verifiable: false, trending: true }),
+  buildSkill({ id: 'linkedin_marketing', name: 'LinkedIn Marketing', icon: '💼', branch: 'marketing', subDomain: 'Social Media', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'google_ads', name: 'Google Ads', icon: '🎯', branch: 'marketing', subDomain: 'Performance Marketing', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'meta_ads', name: 'Meta Ads', icon: '📘', branch: 'marketing', subDomain: 'Performance Marketing', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'attribution_modeling', name: 'Attribution Modeling', icon: '📊', branch: 'marketing', subDomain: 'Performance Marketing', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'cac_ltv', name: 'CAC / LTV Optimization', icon: '💹', branch: 'marketing', subDomain: 'Performance Marketing', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'product_marketing', name: 'Product Marketing', icon: '🚀', branch: 'marketing', subDomain: 'Product Marketing', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'launch_playbooks', name: 'Launch Playbooks', icon: '📋', branch: 'marketing', subDomain: 'Product Marketing', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'viral_loops', name: 'Viral Loops & Referrals', icon: '🔁', branch: 'marketing', subDomain: 'Growth Hacking', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'funnel_optimization', name: 'Funnel Optimization', icon: '📐', branch: 'marketing', subDomain: 'Growth Hacking', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'media_relations', name: 'Media Relations', icon: '📰', branch: 'marketing', subDomain: 'PR & Communications', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'crisis_communications', name: 'Crisis Communications', icon: '🚨', branch: 'marketing', subDomain: 'PR & Communications', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'thought_leadership', name: 'Thought Leadership', icon: '💡', branch: 'marketing', subDomain: 'PR & Communications', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'email_marketing', name: 'Email Marketing', icon: '📨', branch: 'marketing', subDomain: 'Email Marketing', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'drip_campaigns', name: 'Drip Campaigns', icon: '💧', branch: 'marketing', subDomain: 'Email Marketing', workRelevant: true, verifiable: false }),
+
+  // ── Sales & Business Development ───────────────────────────────────────────
+
+  buildSkill({ id: 'prospecting', name: 'Sales Prospecting', icon: '🔍', branch: 'sales_bd', subDomain: 'Sales', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'discovery_calls', name: 'Discovery Calls', icon: '📞', branch: 'sales_bd', subDomain: 'Sales', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'closing_deals', name: 'Closing Deals', icon: '🤝', branch: 'sales_bd', subDomain: 'Sales', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'crm_management', name: 'CRM Management', icon: '💾', branch: 'sales_bd', subDomain: 'Sales', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'sales_forecasting', name: 'Sales Forecasting', icon: '📈', branch: 'sales_bd', subDomain: 'Sales', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'upselling', name: 'Upselling & Cross-selling', icon: '⬆️', branch: 'sales_bd', subDomain: 'Account Management', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'renewal_management', name: 'Renewal Management', icon: '🔄', branch: 'sales_bd', subDomain: 'Account Management', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'channel_sales', name: 'Channel Sales', icon: '📡', branch: 'sales_bd', subDomain: 'Partnerships', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'bd_outreach', name: 'BD Outreach', icon: '📤', branch: 'sales_bd', subDomain: 'Partnerships', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'contract_negotiation', name: 'Contract Negotiation', icon: '📜', branch: 'sales_bd', subDomain: 'Partnerships', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'customer_onboarding', name: 'Customer Onboarding', icon: '🎓', branch: 'sales_bd', subDomain: 'Customer Success', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'health_scoring', name: 'Customer Health Scoring', icon: '❤️', branch: 'sales_bd', subDomain: 'Customer Success', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'churn_prevention', name: 'Churn Prevention', icon: '🛡️', branch: 'sales_bd', subDomain: 'Customer Success', workRelevant: true, verifiable: false }),
+
+  // ── Finance & Accounting ────────────────────────────────────────────────────
+
+  buildSkill({ id: 'bookkeeping', name: 'Bookkeeping', icon: '📒', branch: 'finance', subDomain: 'Accounting', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'gaap_accounting', name: 'GAAP Accounting', icon: '📊', branch: 'finance', subDomain: 'Accounting', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'tax_preparation', name: 'Tax Preparation', icon: '📋', branch: 'finance', subDomain: 'Accounting', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'financial_audit', name: 'Financial Audit', icon: '🔎', branch: 'finance', subDomain: 'Accounting', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'financial_modeling', name: 'Financial Modeling', icon: '📈', branch: 'finance', subDomain: 'Financial Analysis', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'dcf_valuation', name: 'DCF / Valuation', icon: '💹', branch: 'finance', subDomain: 'Financial Analysis', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'business_forecasting', name: 'Business Forecasting', icon: '🔮', branch: 'finance', subDomain: 'Financial Analysis', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'portfolio_management', name: 'Portfolio Management', icon: '📂', branch: 'finance', subDomain: 'Investment', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'options_trading', name: 'Options Trading', icon: '📊', branch: 'finance', subDomain: 'Investment', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'budgeting', name: 'Personal Budgeting', icon: '💰', branch: 'finance', subDomain: 'Personal Finance', workRelevant: false, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'retirement_planning', name: 'Retirement Planning', icon: '🏖️', branch: 'finance', subDomain: 'Personal Finance', workRelevant: false, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'real_estate_investing', name: 'Real Estate Investing', icon: '🏘️', branch: 'finance', subDomain: 'Personal Finance', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'deal_sourcing', name: 'Deal Sourcing', icon: '🎯', branch: 'finance', subDomain: 'Venture Capital', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'due_diligence', name: 'Due Diligence', icon: '🔍', branch: 'finance', subDomain: 'Venture Capital', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'cap_table', name: 'Cap Table Management', icon: '📋', branch: 'finance', subDomain: 'Venture Capital', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'fp_a', name: 'FP&A', icon: '📊', branch: 'finance', subDomain: 'Financial Analysis', workRelevant: true, verifiable: true }),
+
+  // ── Legal & Compliance ──────────────────────────────────────────────────────
+
+  buildSkill({ id: 'contract_law', name: 'Contract Law', icon: '📜', branch: 'legal', subDomain: 'Corporate Law', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'employment_law', name: 'Employment Law', icon: '👔', branch: 'legal', subDomain: 'Corporate Law', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'ip_law', name: 'Intellectual Property Law', icon: '💡', branch: 'legal', subDomain: 'Corporate Law', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'ma_law', name: 'M&A Law', icon: '🤝', branch: 'legal', subDomain: 'Corporate Law', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'gdpr_compliance', name: 'GDPR Compliance', icon: '🔒', branch: 'legal', subDomain: 'Regulatory Compliance', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'soc2_compliance', name: 'SOC 2 Compliance', icon: '✅', branch: 'legal', subDomain: 'Regulatory Compliance', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'hipaa_compliance', name: 'HIPAA Compliance', icon: '🏥', branch: 'legal', subDomain: 'Regulatory Compliance', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'patent_filing', name: 'Patent Filing', icon: '📄', branch: 'legal', subDomain: 'Intellectual Property', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'trademark_registration', name: 'Trademark Registration', icon: '™️', branch: 'legal', subDomain: 'Intellectual Property', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'privacy_law', name: 'Privacy Law', icon: '🛡️', branch: 'legal', subDomain: 'Regulatory Compliance', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'legal_writing', name: 'Legal Writing', icon: '✍️', branch: 'legal', subDomain: 'Corporate Law', workRelevant: true, verifiable: true }),
+
+  // ── Science & Research ──────────────────────────────────────────────────────
+
+  buildSkill({ id: 'molecular_biology', name: 'Molecular Biology', icon: '🧬', branch: 'science', subDomain: 'Life Sciences', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'genetics', name: 'Genetics', icon: '🔬', branch: 'science', subDomain: 'Life Sciences', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'biochemistry', name: 'Biochemistry', icon: '⚗️', branch: 'science', subDomain: 'Life Sciences', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'cell_biology', name: 'Cell Biology', icon: '🦠', branch: 'science', subDomain: 'Life Sciences', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'physics_research', name: 'Physics', icon: '⚛️', branch: 'science', subDomain: 'Physical Sciences', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'materials_science', name: 'Materials Science', icon: '🔩', branch: 'science', subDomain: 'Physical Sciences', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'behavioral_economics', name: 'Behavioral Economics', icon: '🧠', branch: 'science', subDomain: 'Social Sciences', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'cognitive_psychology', name: 'Cognitive Psychology', icon: '💭', branch: 'science', subDomain: 'Social Sciences', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'sociology_research', name: 'Sociology', icon: '👥', branch: 'science', subDomain: 'Social Sciences', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'climate_science', name: 'Climate Science', icon: '🌍', branch: 'science', subDomain: 'Environmental Science', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'ecology', name: 'Ecology', icon: '🌿', branch: 'science', subDomain: 'Environmental Science', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'sustainability_science', name: 'Sustainability Science', icon: '♻️', branch: 'science', subDomain: 'Environmental Science', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'clinical_research', name: 'Clinical Research', icon: '🏥', branch: 'science', subDomain: 'Medical & Health', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'pharmacology', name: 'Pharmacology', icon: '💊', branch: 'science', subDomain: 'Medical & Health', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'epidemiology', name: 'Epidemiology', icon: '📊', branch: 'science', subDomain: 'Medical & Health', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'scientific_writing', name: 'Scientific Writing', icon: '📄', branch: 'science', subDomain: 'Academic Research', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'grant_writing', name: 'Grant Writing', icon: '📝', branch: 'science', subDomain: 'Academic Research', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'statistical_analysis_sci', name: 'Statistical Analysis', icon: '📈', branch: 'science', subDomain: 'Academic Research', workRelevant: true, verifiable: true }),
+
+  // ── Education & Teaching ────────────────────────────────────────────────────
+
+  buildSkill({ id: 'lesson_planning', name: 'Lesson Planning', icon: '📋', branch: 'education', subDomain: 'Curriculum Design', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'assessment_design', name: 'Assessment Design', icon: '✅', branch: 'education', subDomain: 'Curriculum Design', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'lms_management', name: 'LMS Management', icon: '💻', branch: 'education', subDomain: 'Online Education', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'educational_video', name: 'Educational Video Production', icon: '🎬', branch: 'education', subDomain: 'Online Education', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'cohort_facilitation', name: 'Cohort Facilitation', icon: '👥', branch: 'education', subDomain: 'Online Education', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'tutoring', name: 'Tutoring', icon: '📚', branch: 'education', subDomain: 'Tutoring', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'life_coaching', name: 'Life Coaching', icon: '🌟', branch: 'education', subDomain: 'Coaching', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'career_coaching', name: 'Career Coaching', icon: '🎯', branch: 'education', subDomain: 'Coaching', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'executive_coaching', name: 'Executive Coaching', icon: '👑', branch: 'education', subDomain: 'Coaching', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'technical_mentorship', name: 'Technical Mentorship', icon: '🧑‍💻', branch: 'education', subDomain: 'Mentorship', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'instructional_design', name: 'Instructional Design', icon: '🎓', branch: 'education', subDomain: 'Curriculum Design', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'classroom_management', name: 'Classroom Management', icon: '🏫', branch: 'education', subDomain: 'Teaching', workRelevant: true, verifiable: false }),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 2 — Life Skills & Creative Domains
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ── Creative Arts — Music ───────────────────────────────────────────────────
+
+  buildSkill({ id: 'piano', name: 'Piano', icon: '🎹', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'guitar', name: 'Guitar', icon: '🎸', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'violin', name: 'Violin', icon: '🎻', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'drums', name: 'Drums', icon: '🥁', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'bass_guitar', name: 'Bass Guitar', icon: '🎸', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'cello', name: 'Cello', icon: '🎻', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'trumpet', name: 'Trumpet', icon: '🎺', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'flute', name: 'Flute', icon: '🪈', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'ukulele', name: 'Ukulele', icon: '🎵', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'erhu', name: 'Erhu', icon: '🎵', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN', 'zh-TW'] }),
+  buildSkill({ id: 'guqin', name: 'Guqin', icon: '🎵', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN'] }),
+  buildSkill({ id: 'saxophone', name: 'Saxophone', icon: '🎷', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'singing', name: 'Singing', icon: '🎤', branch: 'creative_arts', subDomain: 'Music — Vocal', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'rap_music', name: 'Rap & Hip-Hop', icon: '🎤', branch: 'creative_arts', subDomain: 'Music — Vocal', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'opera_singing', name: 'Opera Singing', icon: '🎭', branch: 'creative_arts', subDomain: 'Music — Vocal', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'beatboxing', name: 'Beatboxing', icon: '🎵', branch: 'creative_arts', subDomain: 'Music — Vocal', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'ableton', name: 'Ableton / FL Studio', icon: '🎛️', branch: 'creative_arts', subDomain: 'Music — Production', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'sound_design', name: 'Sound Design', icon: '🔊', branch: 'creative_arts', subDomain: 'Music — Production', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'audio_mixing', name: 'Audio Mixing', icon: '🎚️', branch: 'creative_arts', subDomain: 'Music — Production', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'music_theory', name: 'Music Theory', icon: '🎼', branch: 'creative_arts', subDomain: 'Music — Production', lifeSkill: true, verifiable: true }),
+
+  // ── Creative Arts — Visual ──────────────────────────────────────────────────
+
+  buildSkill({ id: 'drawing', name: 'Drawing', icon: '✏️', branch: 'creative_arts', subDomain: 'Visual Arts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'oil_painting', name: 'Oil Painting', icon: '🖌️', branch: 'creative_arts', subDomain: 'Visual Arts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'watercolor', name: 'Watercolor Painting', icon: '🎨', branch: 'creative_arts', subDomain: 'Visual Arts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'sketching', name: 'Sketching', icon: '✏️', branch: 'creative_arts', subDomain: 'Visual Arts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'procreate', name: 'Procreate', icon: '📱', branch: 'creative_arts', subDomain: 'Digital Art', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'digital_illustration', name: 'Digital Illustration', icon: '🖼️', branch: 'creative_arts', subDomain: 'Digital Art', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'blender_3d', name: 'Blender 3D', icon: '🔷', branch: 'creative_arts', subDomain: 'Digital Art', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'portrait_photography', name: 'Portrait Photography', icon: '📷', branch: 'creative_arts', subDomain: 'Photography', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'landscape_photography', name: 'Landscape Photography', icon: '🌄', branch: 'creative_arts', subDomain: 'Photography', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'product_photography', name: 'Product Photography', icon: '📦', branch: 'creative_arts', subDomain: 'Photography', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'lightroom', name: 'Lightroom Editing', icon: '💡', branch: 'creative_arts', subDomain: 'Photography', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'cinematography', name: 'Cinematography', icon: '🎥', branch: 'creative_arts', subDomain: 'Film & Video', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'video_editing', name: 'Video Editing', icon: '✂️', branch: 'creative_arts', subDomain: 'Film & Video', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'directing', name: 'Film Directing', icon: '🎬', branch: 'creative_arts', subDomain: 'Film & Video', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'pottery', name: 'Pottery & Ceramics', icon: '🏺', branch: 'creative_arts', subDomain: 'Sculpture & Crafts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'woodworking', name: 'Woodworking', icon: '🪵', branch: 'creative_arts', subDomain: 'Sculpture & Crafts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'knitting', name: 'Knitting & Weaving', icon: '🧶', branch: 'creative_arts', subDomain: 'Sculpture & Crafts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'jewelry_making', name: 'Jewelry Making', icon: '💎', branch: 'creative_arts', subDomain: 'Sculpture & Crafts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'storyboarding', name: 'Storyboarding', icon: '🎞️', branch: 'creative_arts', subDomain: 'Comics & Animation', workRelevant: true, verifiable: true }),
+  buildSkill({ id: '2d_animation', name: '2D Animation', icon: '🎬', branch: 'creative_arts', subDomain: 'Comics & Animation', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'character_design', name: 'Character Design', icon: '🧑‍🎨', branch: 'creative_arts', subDomain: 'Comics & Animation', workRelevant: true, lifeSkill: true, verifiable: true }),
+
+  // ── Writing & Language ──────────────────────────────────────────────────────
+
+  buildSkill({ id: 'fiction_writing', name: 'Fiction Writing', icon: '📚', branch: 'writing_language', subDomain: 'Creative Writing', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'poetry_writing', name: 'Poetry', icon: '🌹', branch: 'writing_language', subDomain: 'Creative Writing', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'short_story', name: 'Short Story Writing', icon: '📝', branch: 'writing_language', subDomain: 'Creative Writing', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'world_building', name: 'World-building', icon: '🌍', branch: 'writing_language', subDomain: 'Creative Writing', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'journalism', name: 'Journalism', icon: '📰', branch: 'writing_language', subDomain: 'Non-fiction', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'essay_writing', name: 'Essay Writing', icon: '✍️', branch: 'writing_language', subDomain: 'Non-fiction', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'memoir_writing', name: 'Memoir Writing', icon: '📖', branch: 'writing_language', subDomain: 'Non-fiction', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'screenwriting', name: 'Screenwriting', icon: '🎬', branch: 'writing_language', subDomain: 'Screenwriting', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'mandarin', name: 'Mandarin Chinese', icon: '🇨🇳', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true, localizationTags: ['zh-CN', 'zh-TW'] }),
+  buildSkill({ id: 'english', name: 'English', icon: '🇬🇧', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'spanish', name: 'Spanish', icon: '🇪🇸', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'french', name: 'French', icon: '🇫🇷', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'japanese', name: 'Japanese', icon: '🇯🇵', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true, localizationTags: ['ja-JP'] }),
+  buildSkill({ id: 'arabic', name: 'Arabic', icon: '🇸🇦', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true, localizationTags: ['ar-SA', 'ar-EG'] }),
+  buildSkill({ id: 'korean', name: 'Korean', icon: '🇰🇷', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true, localizationTags: ['ko-KR'] }),
+  buildSkill({ id: 'german', name: 'German', icon: '🇩🇪', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'hindi', name: 'Hindi', icon: '🇮🇳', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true, localizationTags: ['hi-IN'] }),
+  buildSkill({ id: 'portuguese', name: 'Portuguese', icon: '🇧🇷', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'russian', name: 'Russian', icon: '🇷🇺', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'italian', name: 'Italian', icon: '🇮🇹', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'dutch', name: 'Dutch', icon: '🇳🇱', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'swedish', name: 'Swedish', icon: '🇸🇪', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'turkish', name: 'Turkish', icon: '🇹🇷', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'thai', name: 'Thai', icon: '🇹🇭', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true, localizationTags: ['th-TH'] }),
+  buildSkill({ id: 'vietnamese', name: 'Vietnamese', icon: '🇻🇳', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true, localizationTags: ['vi-VN'] }),
+  buildSkill({ id: 'indonesian', name: 'Indonesian / Malay', icon: '🇮🇩', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'swahili', name: 'Swahili', icon: '🌍', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true, localizationTags: ['sw-KE', 'sw-TZ'] }),
+  buildSkill({ id: 'literary_translation', name: 'Literary Translation', icon: '📖', branch: 'writing_language', subDomain: 'Translation & Localization', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'technical_localization', name: 'Technical Localization', icon: '🌐', branch: 'writing_language', subDomain: 'Translation & Localization', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'calligraphy', name: 'Calligraphy', icon: '🖊️', branch: 'writing_language', subDomain: 'Calligraphy', lifeSkill: true, verifiable: true }),
+
+  // ── Culinary Arts ───────────────────────────────────────────────────────────
+
+  buildSkill({ id: 'chinese_cooking', name: 'Chinese Cuisine', icon: '🥘', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN'] }),
+  buildSkill({ id: 'french_cooking', name: 'French Cuisine', icon: '🥐', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'italian_cooking', name: 'Italian Cuisine', icon: '🍝', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'japanese_cooking', name: 'Japanese Cuisine', icon: '🍱', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'indian_cooking', name: 'Indian Cuisine', icon: '🍛', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'baking', name: 'Baking', icon: '🍞', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'pastry', name: 'Pastry & Desserts', icon: '🥐', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'bbq_grilling', name: 'BBQ & Grilling', icon: '🔥', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'knife_skills', name: 'Knife Skills', icon: '🔪', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'barista', name: 'Barista / Coffee', icon: '☕', branch: 'culinary', subDomain: 'Beverage', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'tea_ceremony', name: 'Tea Ceremony', icon: '🍵', branch: 'culinary', subDomain: 'Beverage', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN', 'ja-JP'] }),
+  buildSkill({ id: 'wine_pairing', name: 'Wine Pairing', icon: '🍷', branch: 'culinary', subDomain: 'Beverage', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'cocktail_mixing', name: 'Cocktail Mixing', icon: '🍹', branch: 'culinary', subDomain: 'Beverage', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'meal_planning', name: 'Meal Planning & Nutrition', icon: '🥗', branch: 'culinary', subDomain: 'Nutrition', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'fermentation', name: 'Fermentation', icon: '🫙', branch: 'culinary', subDomain: 'Food Preservation', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'vegan_cooking', name: 'Vegan & Plant-Based Cooking', icon: '🌱', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+
+  // ── Physical & Athletic Skills ──────────────────────────────────────────────
+
+  buildSkill({ id: 'soccer', name: 'Soccer / Football', icon: '⚽', branch: 'physical_athletic', subDomain: 'Team Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'basketball', name: 'Basketball', icon: '🏀', branch: 'physical_athletic', subDomain: 'Team Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'baseball', name: 'Baseball', icon: '⚾', branch: 'physical_athletic', subDomain: 'Team Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'volleyball', name: 'Volleyball', icon: '🏐', branch: 'physical_athletic', subDomain: 'Team Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'rugby', name: 'Rugby', icon: '🏉', branch: 'physical_athletic', subDomain: 'Team Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'cricket', name: 'Cricket', icon: '🏏', branch: 'physical_athletic', subDomain: 'Team Sports', lifeSkill: true, verifiable: true, localizationTags: ['en-IN', 'en-AU', 'en-GB'] }),
+  buildSkill({ id: 'tennis', name: 'Tennis', icon: '🎾', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'swimming', name: 'Swimming', icon: '🏊', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'golf', name: 'Golf', icon: '⛳', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'cycling', name: 'Cycling', icon: '🚴', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'marathon_running', name: 'Marathon Running', icon: '🏃', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'triathlon', name: 'Triathlon', icon: '🏅', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'boxing', name: 'Boxing', icon: '🥊', branch: 'physical_athletic', subDomain: 'Combat Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'judo', name: 'Judo', icon: '🥋', branch: 'physical_athletic', subDomain: 'Combat Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'bjj', name: 'Brazilian Jiu-Jitsu', icon: '🥋', branch: 'physical_athletic', subDomain: 'Combat Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'muay_thai', name: 'Muay Thai', icon: '🥊', branch: 'physical_athletic', subDomain: 'Combat Sports', lifeSkill: true, verifiable: true, localizationTags: ['th-TH'] }),
+  buildSkill({ id: 'fencing', name: 'Fencing', icon: '🤺', branch: 'physical_athletic', subDomain: 'Combat Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'kung_fu', name: 'Kung Fu', icon: '🥋', branch: 'physical_athletic', subDomain: 'Martial Arts', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN'] }),
+  buildSkill({ id: 'karate', name: 'Karate', icon: '🥋', branch: 'physical_athletic', subDomain: 'Martial Arts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'taekwondo', name: 'Taekwondo', icon: '🥋', branch: 'physical_athletic', subDomain: 'Martial Arts', lifeSkill: true, verifiable: true, localizationTags: ['ko-KR'] }),
+  buildSkill({ id: 'tai_chi', name: 'Tai Chi', icon: '🧘', branch: 'physical_athletic', subDomain: 'Martial Arts', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN'] }),
+  buildSkill({ id: 'badminton', name: 'Badminton', icon: '🏸', branch: 'physical_athletic', subDomain: 'Racket Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'table_tennis', name: 'Table Tennis', icon: '🏓', branch: 'physical_athletic', subDomain: 'Racket Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'squash', name: 'Squash', icon: '🎾', branch: 'physical_athletic', subDomain: 'Racket Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'skiing', name: 'Skiing', icon: '⛷️', branch: 'physical_athletic', subDomain: 'Winter Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'snowboarding', name: 'Snowboarding', icon: '🏂', branch: 'physical_athletic', subDomain: 'Winter Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'ice_skating', name: 'Ice Skating', icon: '⛸️', branch: 'physical_athletic', subDomain: 'Winter Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'surfing', name: 'Surfing', icon: '🏄', branch: 'physical_athletic', subDomain: 'Water Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'scuba_diving', name: 'Scuba Diving', icon: '🤿', branch: 'physical_athletic', subDomain: 'Water Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'sailing', name: 'Sailing', icon: '⛵', branch: 'physical_athletic', subDomain: 'Water Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'rock_climbing', name: 'Rock Climbing', icon: '🧗', branch: 'physical_athletic', subDomain: 'Extreme Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'skateboarding', name: 'Skateboarding', icon: '🛹', branch: 'physical_athletic', subDomain: 'Extreme Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'weightlifting', name: 'Weightlifting', icon: '🏋️', branch: 'physical_athletic', subDomain: 'Fitness & Wellness', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'yoga', name: 'Yoga', icon: '🧘', branch: 'physical_athletic', subDomain: 'Fitness & Wellness', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'pilates', name: 'Pilates', icon: '🤸', branch: 'physical_athletic', subDomain: 'Fitness & Wellness', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'crossfit', name: 'CrossFit', icon: '🏋️', branch: 'physical_athletic', subDomain: 'Fitness & Wellness', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'calisthenics', name: 'Calisthenics', icon: '💪', branch: 'physical_athletic', subDomain: 'Fitness & Wellness', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'hiking', name: 'Hiking & Trekking', icon: '🥾', branch: 'physical_athletic', subDomain: 'Outdoor & Survival', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'first_aid', name: 'First Aid & CPR', icon: '🩺', branch: 'physical_athletic', subDomain: 'Outdoor & Survival', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'horse_riding', name: 'Horse Riding', icon: '🐴', branch: 'physical_athletic', subDomain: 'Equestrian', lifeSkill: true, verifiable: true }),
+
+  // ── Mindfulness & Wellbeing ─────────────────────────────────────────────────
+
+  buildSkill({ id: 'mindfulness_meditation', name: 'Mindfulness Meditation', icon: '🧘', branch: 'mindfulness', subDomain: 'Meditation', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'breathwork', name: 'Breathwork', icon: '💨', branch: 'mindfulness', subDomain: 'Meditation', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'transcendental_meditation', name: 'Transcendental Meditation', icon: '🌅', branch: 'mindfulness', subDomain: 'Meditation', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'stress_management', name: 'Stress Management', icon: '😌', branch: 'mindfulness', subDomain: 'Mental Health', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'emotional_regulation', name: 'Emotional Regulation', icon: '❤️', branch: 'mindfulness', subDomain: 'Mental Health', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'resilience_building', name: 'Resilience Building', icon: '💪', branch: 'mindfulness', subDomain: 'Mental Health', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'sleep_hygiene', name: 'Sleep Hygiene', icon: '😴', branch: 'mindfulness', subDomain: 'Sleep & Recovery', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'stoicism', name: 'Stoicism', icon: '🏛️', branch: 'mindfulness', subDomain: 'Spiritual Practices', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'yoga_philosophy', name: 'Yoga Philosophy', icon: '🌸', branch: 'mindfulness', subDomain: 'Spiritual Practices', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'journaling', name: 'Journaling', icon: '📓', branch: 'mindfulness', subDomain: 'Mental Health', lifeSkill: true, verifiable: false }),
+
+  // ── Interpersonal Skills ────────────────────────────────────────────────────
+
+  buildSkill({ id: 'active_listening', name: 'Active Listening', icon: '👂', branch: 'interpersonal', subDomain: 'Communication', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'persuasion', name: 'Persuasion', icon: '💬', branch: 'interpersonal', subDomain: 'Communication', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'empathy', name: 'Empathy', icon: '💛', branch: 'interpersonal', subDomain: 'Communication', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'nonviolent_communication', name: 'Nonviolent Communication', icon: '🕊️', branch: 'interpersonal', subDomain: 'Communication', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'presentations', name: 'Presentations', icon: '📊', branch: 'interpersonal', subDomain: 'Public Speaking', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'debate', name: 'Debate', icon: '🗣️', branch: 'interpersonal', subDomain: 'Public Speaking', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'pitching', name: 'Pitching', icon: '🎤', branch: 'interpersonal', subDomain: 'Public Speaking', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'salary_negotiation', name: 'Salary Negotiation', icon: '💰', branch: 'interpersonal', subDomain: 'Negotiation', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'win_win_negotiation', name: 'Win-Win Negotiation', icon: '🤝', branch: 'interpersonal', subDomain: 'Negotiation', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'influence_without_authority', name: 'Influence Without Authority', icon: '✨', branch: 'interpersonal', subDomain: 'Leadership', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'delegation', name: 'Delegation', icon: '📋', branch: 'interpersonal', subDomain: 'Leadership', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'self_awareness', name: 'Self-Awareness', icon: '🪞', branch: 'interpersonal', subDomain: 'Emotional Intelligence', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'social_awareness', name: 'Social Awareness', icon: '👁️', branch: 'interpersonal', subDomain: 'Emotional Intelligence', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'mediation', name: 'Mediation', icon: '⚖️', branch: 'interpersonal', subDomain: 'Conflict Resolution', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'de_escalation', name: 'De-escalation', icon: '🕊️', branch: 'interpersonal', subDomain: 'Conflict Resolution', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'relationship_building', name: 'Relationship Building', icon: '🌐', branch: 'interpersonal', subDomain: 'Networking', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'cross_cultural_comm', name: 'Cross-Cultural Communication', icon: '🌍', branch: 'interpersonal', subDomain: 'Cultural Intelligence', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'child_development', name: 'Child Development', icon: '👶', branch: 'interpersonal', subDomain: 'Parenting', lifeSkill: true, verifiable: false }),
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 3 — Long Tail: Performing Arts, Home, Games, Travel
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ── Performing Arts ─────────────────────────────────────────────────────────
+
+  buildSkill({ id: 'ballet', name: 'Ballet', icon: '🩰', branch: 'performing_arts', subDomain: 'Dance', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'contemporary_dance', name: 'Contemporary Dance', icon: '💃', branch: 'performing_arts', subDomain: 'Dance', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'hip_hop_dance', name: 'Hip-Hop Dance', icon: '🕺', branch: 'performing_arts', subDomain: 'Dance', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'ballroom_dance', name: 'Ballroom Dance', icon: '💃', branch: 'performing_arts', subDomain: 'Dance', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'salsa_dance', name: 'Salsa', icon: '🌶️', branch: 'performing_arts', subDomain: 'Dance', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'breakdancing', name: 'Breakdancing / B-boying', icon: '🕺', branch: 'performing_arts', subDomain: 'Dance', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'acting', name: 'Acting', icon: '🎭', branch: 'performing_arts', subDomain: 'Theater', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'improvisation_theater', name: 'Improv Comedy', icon: '😄', branch: 'performing_arts', subDomain: 'Theater', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'stage_direction', name: 'Stage Direction', icon: '🎬', branch: 'performing_arts', subDomain: 'Theater', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'stand_up_comedy', name: 'Stand-Up Comedy', icon: '🎤', branch: 'performing_arts', subDomain: 'Comedy', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'close_up_magic', name: 'Close-Up Magic', icon: '🪄', branch: 'performing_arts', subDomain: 'Magic & Illusion', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'playwriting', name: 'Playwriting', icon: '📜', branch: 'performing_arts', subDomain: 'Theater', workRelevant: true, lifeSkill: true, verifiable: true }),
+
+  // ── Home & Lifestyle ────────────────────────────────────────────────────────
+
+  buildSkill({ id: 'carpentry', name: 'Carpentry', icon: '🔨', branch: 'home_lifestyle', subDomain: 'Home DIY', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'plumbing', name: 'Plumbing', icon: '🔧', branch: 'home_lifestyle', subDomain: 'Home DIY', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'electrical_diy', name: 'Electrical DIY', icon: '⚡', branch: 'home_lifestyle', subDomain: 'Home DIY', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'home_painting', name: 'Home Painting', icon: '🖌️', branch: 'home_lifestyle', subDomain: 'Home DIY', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'tiling', name: 'Tiling', icon: '🔲', branch: 'home_lifestyle', subDomain: 'Home DIY', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'vegetable_gardening', name: 'Vegetable Gardening', icon: '🥕', branch: 'home_lifestyle', subDomain: 'Gardening', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'hydroponics', name: 'Hydroponics', icon: '🌿', branch: 'home_lifestyle', subDomain: 'Gardening', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'bonsai', name: 'Bonsai', icon: '🌳', branch: 'home_lifestyle', subDomain: 'Gardening', lifeSkill: true, verifiable: true, localizationTags: ['ja-JP', 'zh-CN'] }),
+  buildSkill({ id: 'flower_arranging', name: 'Flower Arranging', icon: '💐', branch: 'home_lifestyle', subDomain: 'Gardening', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'interior_design_home', name: 'Interior Design', icon: '🛋️', branch: 'home_lifestyle', subDomain: 'Interior Design', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'tailoring', name: 'Tailoring & Sewing', icon: '🧵', branch: 'home_lifestyle', subDomain: 'Sewing & Fashion', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'embroidery', name: 'Embroidery', icon: '🪡', branch: 'home_lifestyle', subDomain: 'Sewing & Fashion', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'car_maintenance', name: 'Car Maintenance', icon: '🔧', branch: 'home_lifestyle', subDomain: 'Car Maintenance', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'konmari_method', name: 'Organization & Decluttering', icon: '📦', branch: 'home_lifestyle', subDomain: 'Organization', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'personal_finance_mgmt', name: 'Personal Finance Management', icon: '💳', branch: 'home_lifestyle', subDomain: 'Life Admin', lifeSkill: true, verifiable: false }),
+
+  // ── Games & Strategy ────────────────────────────────────────────────────────
+
+  buildSkill({ id: 'chess', name: 'Chess', icon: '♟️', branch: 'games_strategy', subDomain: 'Board Games', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'go_weiqi', name: 'Go (Weiqi / Baduk)', icon: '⬛', branch: 'games_strategy', subDomain: 'Board Games', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN', 'ja-JP', 'ko-KR'] }),
+  buildSkill({ id: 'shogi', name: 'Shogi', icon: '🎌', branch: 'games_strategy', subDomain: 'Board Games', lifeSkill: true, verifiable: true, localizationTags: ['ja-JP'] }),
+  buildSkill({ id: 'poker', name: 'Poker', icon: '🃏', branch: 'games_strategy', subDomain: 'Card Games', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'bridge_card', name: 'Bridge', icon: '🃏', branch: 'games_strategy', subDomain: 'Card Games', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'magic_gathering', name: 'Magic: The Gathering', icon: '🧙', branch: 'games_strategy', subDomain: 'Card Games', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'fps_gaming', name: 'FPS / Competitive Gaming', icon: '🎮', branch: 'games_strategy', subDomain: 'Video Games', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'speedrunning', name: 'Speedrunning', icon: '⏱️', branch: 'games_strategy', subDomain: 'Video Games', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'game_streaming', name: 'Game Streaming / Content Creation', icon: '📺', branch: 'games_strategy', subDomain: 'Video Games', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'sudoku', name: 'Sudoku & Logic Puzzles', icon: '🔢', branch: 'games_strategy', subDomain: 'Puzzle & Logic', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'rubiks_cube', name: "Rubik's Cube", icon: '🟥', branch: 'games_strategy', subDomain: 'Puzzle & Logic', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'escape_rooms', name: 'Escape Rooms / Puzzle Design', icon: '🔐', branch: 'games_strategy', subDomain: 'Puzzle & Logic', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'valorant', name: 'Valorant / FPS eSports', icon: '🔫', branch: 'games_strategy', subDomain: 'eSports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'league_of_legends', name: 'League of Legends / MOBA', icon: '⚔️', branch: 'games_strategy', subDomain: 'eSports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'game_design', name: 'Game Design', icon: '🎲', branch: 'games_strategy', subDomain: 'Board Games', workRelevant: true, lifeSkill: true, verifiable: true }),
+
+  // ── Travel & Cultural ───────────────────────────────────────────────────────
+
+  buildSkill({ id: 'itinerary_design', name: 'Itinerary & Trip Planning', icon: '🗺️', branch: 'travel_cultural', subDomain: 'Travel Planning', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'budget_travel', name: 'Budget Travel', icon: '💸', branch: 'travel_cultural', subDomain: 'Travel Planning', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'backpacking_travel', name: 'Backpacking', icon: '🎒', branch: 'travel_cultural', subDomain: 'Travel Planning', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'cultural_etiquette', name: 'Cultural Etiquette', icon: '🙏', branch: 'travel_cultural', subDomain: 'Cultural Intelligence', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'expat_life', name: 'Expat Life & Relocation', icon: '🌏', branch: 'travel_cultural', subDomain: 'Cultural Intelligence', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'map_reading', name: 'Navigation & Map Reading', icon: '🧭', branch: 'travel_cultural', subDomain: 'Geography', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'world_geography', name: 'World Geography', icon: '🌍', branch: 'travel_cultural', subDomain: 'Geography', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'solo_travel', name: 'Solo Travel', icon: '🧳', branch: 'travel_cultural', subDomain: 'Travel Planning', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'travel_photography', name: 'Travel Photography', icon: '📸', branch: 'travel_cultural', subDomain: 'Travel Planning', workRelevant: true, lifeSkill: true, verifiable: true }),
+
+  // ── Engineering — Security & Emerging Tech (Phase 1 gaps) ──────────────────
+
+  buildSkill({ id: 'penetration_testing', name: 'Penetration Testing', icon: '🔐', branch: 'engineering', subDomain: 'Security', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'cryptography', name: 'Cryptography', icon: '🔑', branch: 'engineering', subDomain: 'Security', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'iam_security', name: 'Identity & Access Management', icon: '🛡️', branch: 'engineering', subDomain: 'Security', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'embedded_systems', name: 'Embedded Systems', icon: '🔌', branch: 'engineering', subDomain: 'Embedded & Hardware', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'arduino_fpga', name: 'Arduino / FPGA', icon: '🤖', branch: 'engineering', subDomain: 'Embedded & Hardware', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'solidity', name: 'Solidity / Smart Contracts', icon: '⛓️', branch: 'engineering', subDomain: 'Blockchain', workRelevant: true, verifiable: true, trending: false }),
+  buildSkill({ id: 'unity_game_dev', name: 'Unity Game Development', icon: '🎮', branch: 'engineering', subDomain: 'Game Development', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'unreal_engine', name: 'Unreal Engine', icon: '🎮', branch: 'engineering', subDomain: 'Game Development', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'swift_ios', name: 'Swift / iOS Development', icon: '🍎', branch: 'engineering', subDomain: 'Mobile', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'kotlin_android', name: 'Kotlin / Android Development', icon: '🤖', branch: 'engineering', subDomain: 'Mobile', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'flutter', name: 'Flutter / Dart', icon: '🐦', branch: 'engineering', subDomain: 'Mobile', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'redis', name: 'Redis', icon: '🔴', branch: 'engineering', subDomain: 'Backend', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'elasticsearch', name: 'Elasticsearch', icon: '🔍', branch: 'engineering', subDomain: 'Backend', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'microservices', name: 'Microservices Architecture', icon: '🔧', branch: 'engineering', subDomain: 'Backend', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'grpc', name: 'gRPC / Protocol Buffers', icon: '🔗', branch: 'engineering', subDomain: 'Backend', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'code_review', name: 'Code Review', icon: '👁️', branch: 'engineering', subDomain: 'Software Engineering', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'debugging', name: 'Debugging & Profiling', icon: '🐛', branch: 'engineering', subDomain: 'Software Engineering', workRelevant: true, verifiable: false }),
+
+  // ── AI/ML — Phase 1 gaps ────────────────────────────────────────────────────
+
+  buildSkill({ id: 'fine_tuning', name: 'Model Fine-Tuning', icon: '🎯', branch: 'ai_ml', subDomain: 'LLM & Generative AI', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'rag_systems', name: 'RAG Systems', icon: '🔍', branch: 'ai_ml', subDomain: 'LLM & Generative AI', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'ai_safety', name: 'AI Safety & Alignment', icon: '🛡️', branch: 'ai_ml', subDomain: 'AI Ethics & Safety', workRelevant: true, verifiable: false, trending: true }),
+  buildSkill({ id: 'generative_ai', name: 'Generative AI Applications', icon: '✨', branch: 'ai_ml', subDomain: 'LLM & Generative AI', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'multimodal_ai', name: 'Multimodal AI', icon: '🎭', branch: 'ai_ml', subDomain: 'LLM & Generative AI', workRelevant: true, verifiable: true, trending: true }),
+
+  // ── Data — Phase 1 gaps ─────────────────────────────────────────────────────
+
+  buildSkill({ id: 'looker_bi', name: 'Looker / Business Intelligence', icon: '📊', branch: 'data', subDomain: 'Business Intelligence', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'tableau', name: 'Tableau', icon: '📈', branch: 'data', subDomain: 'Data Visualization', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'ab_testing', name: 'A/B Testing', icon: '🔬', branch: 'data', subDomain: 'Experimentation', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'causal_inference', name: 'Causal Inference', icon: '🔗', branch: 'data', subDomain: 'Data Science', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'snowflake', name: 'Snowflake', icon: '❄️', branch: 'data', subDomain: 'Data Warehousing', workRelevant: true, verifiable: true }),
+  buildSkill({ id: 'bigquery', name: 'BigQuery', icon: '📦', branch: 'data', subDomain: 'Data Warehousing', workRelevant: true, verifiable: true }),
+
+  // ── Additional Physical & Athletic ─────────────────────────────────────────
+
+  buildSkill({ id: 'parkour', name: 'Parkour', icon: '🏃', branch: 'physical_athletic', subDomain: 'Extreme Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'archery', name: 'Archery', icon: '🏹', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'kayaking', name: 'Kayaking', icon: '🛶', branch: 'physical_athletic', subDomain: 'Water Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'bouldering', name: 'Bouldering', icon: '🧗', branch: 'physical_athletic', subDomain: 'Extreme Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'hiit', name: 'HIIT Training', icon: '🏃', branch: 'physical_athletic', subDomain: 'Fitness & Wellness', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'rowing_sport', name: 'Rowing', icon: '🚣', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'gymnastics', name: 'Gymnastics', icon: '🤸', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'pole_dancing', name: 'Pole Fitness', icon: '🎪', branch: 'physical_athletic', subDomain: 'Fitness & Wellness', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'open_water_swimming', name: 'Open Water Swimming', icon: '🌊', branch: 'physical_athletic', subDomain: 'Water Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'track_field', name: 'Track & Field', icon: '🏃', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'american_football', name: 'American Football', icon: '🏈', branch: 'physical_athletic', subDomain: 'Team Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'handball', name: 'Handball', icon: '🤾', branch: 'physical_athletic', subDomain: 'Team Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'diving', name: 'Platform Diving', icon: '🤽', branch: 'physical_athletic', subDomain: 'Individual Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'krav_maga', name: 'Krav Maga', icon: '🥊', branch: 'physical_athletic', subDomain: 'Martial Arts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'pickleball', name: 'Pickleball', icon: '🎾', branch: 'physical_athletic', subDomain: 'Racket Sports', lifeSkill: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'wilderness_survival', name: 'Wilderness Survival', icon: '🏕️', branch: 'physical_athletic', subDomain: 'Outdoor & Survival', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'bmx', name: 'BMX', icon: '🚲', branch: 'physical_athletic', subDomain: 'Extreme Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'curling', name: 'Curling', icon: '🥌', branch: 'physical_athletic', subDomain: 'Winter Sports', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'dressage', name: 'Dressage', icon: '🐎', branch: 'physical_athletic', subDomain: 'Equestrian', lifeSkill: true, verifiable: true }),
+
+  // ── Additional Creative Arts ───────────────────────────────────────────────
+
+  buildSkill({ id: 'acrylic_painting', name: 'Acrylic Painting', icon: '🎨', branch: 'creative_arts', subDomain: 'Visual Arts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'charcoal_drawing', name: 'Charcoal Drawing', icon: '✏️', branch: 'creative_arts', subDomain: 'Visual Arts', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'live_looping', name: 'Live Looping', icon: '🎛️', branch: 'creative_arts', subDomain: 'Music — Production', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'mastering_audio', name: 'Audio Mastering', icon: '🎚️', branch: 'creative_arts', subDomain: 'Music — Production', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'manga_art', name: 'Manga & Comics', icon: '📕', branch: 'creative_arts', subDomain: 'Comics & Animation', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'street_photography', name: 'Street Photography', icon: '📷', branch: 'creative_arts', subDomain: 'Photography', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'lute_banjo', name: 'Lute / Banjo / Harp', icon: '🪕', branch: 'creative_arts', subDomain: 'Music — Instruments', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'choral_singing', name: 'Choral Singing', icon: '🎶', branch: 'creative_arts', subDomain: 'Music — Vocal', lifeSkill: true, verifiable: true }),
+
+  // ── Additional Writing & Language ──────────────────────────────────────────
+
+  buildSkill({ id: 'polish', name: 'Polish', icon: '🇵🇱', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'ukrainian', name: 'Ukrainian', icon: '🇺🇦', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'hebrew', name: 'Hebrew', icon: '🇮🇱', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'sign_language', name: 'Sign Language (ASL/BSL)', icon: '🤟', branch: 'writing_language', subDomain: 'Languages', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'ghost_writing', name: 'Ghost Writing', icon: '👻', branch: 'writing_language', subDomain: 'Non-fiction', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'copywriting', name: 'Copywriting', icon: '✍️', branch: 'writing_language', subDomain: 'Non-fiction', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'persian_farsi', name: 'Persian / Farsi', icon: '🇮🇷', branch: 'writing_language', subDomain: 'Languages', workRelevant: true, lifeSkill: true, verifiable: true }),
+
+  // ── Additional Culinary ────────────────────────────────────────────────────
+
+  buildSkill({ id: 'mexican_cooking', name: 'Mexican Cuisine', icon: '🌮', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'thai_cooking', name: 'Thai Cuisine', icon: '🍜', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'korean_cooking', name: 'Korean Cuisine', icon: '🥘', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true, localizationTags: ['ko-KR'] }),
+  buildSkill({ id: 'bread_baking', name: 'Artisan Bread Baking', icon: '🥖', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'chocolate_making', name: 'Chocolate Making', icon: '🍫', branch: 'culinary', subDomain: 'Cooking', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'sports_nutrition', name: 'Sports Nutrition', icon: '🥗', branch: 'culinary', subDomain: 'Nutrition', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'beer_brewing', name: 'Beer Brewing', icon: '🍺', branch: 'culinary', subDomain: 'Beverage', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'pickling', name: 'Pickling & Canning', icon: '🫙', branch: 'culinary', subDomain: 'Food Preservation', lifeSkill: true, verifiable: true }),
+
+  // ── Additional Marketing ───────────────────────────────────────────────────
+
+  buildSkill({ id: 'influencer_marketing', name: 'Influencer Marketing', icon: '⭐', branch: 'marketing', subDomain: 'Social Media', workRelevant: true, verifiable: false, trending: true }),
+  buildSkill({ id: 'podcast_marketing', name: 'Podcast / Audio Marketing', icon: '🎙️', branch: 'marketing', subDomain: 'Content Marketing', workRelevant: true, verifiable: false, trending: true }),
+  buildSkill({ id: 'affiliate_marketing', name: 'Affiliate Marketing', icon: '🔗', branch: 'marketing', subDomain: 'Performance Marketing', workRelevant: true, verifiable: false }),
+
+  // ── Additional Games ───────────────────────────────────────────────────────
+
+  buildSkill({ id: 'mahjong', name: 'Mahjong', icon: '🀄', branch: 'games_strategy', subDomain: 'Board Games', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN', 'zh-TW', 'ja-JP'] }),
+  buildSkill({ id: 'dungeons_dragons', name: 'Dungeons & Dragons / TTRPGs', icon: '🐉', branch: 'games_strategy', subDomain: 'Board Games', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'backgammon', name: 'Backgammon', icon: '🎲', branch: 'games_strategy', subDomain: 'Board Games', lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'moba_esports', name: 'MOBA / Dota 2', icon: '⚔️', branch: 'games_strategy', subDomain: 'eSports', lifeSkill: true, verifiable: true }),
+
+  // ── Additional Business ────────────────────────────────────────────────────
+
+  buildSkill({ id: 'org_design', name: 'Organizational Design', icon: '🏛️', branch: 'business', subDomain: 'People Management', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'corporate_governance', name: 'Corporate Governance', icon: '⚖️', branch: 'business', subDomain: 'Strategy', workRelevant: true, verifiable: true }),
+
+  // ── Additional Science ─────────────────────────────────────────────────────
+
+  buildSkill({ id: 'neuroscience', name: 'Neuroscience', icon: '🧠', branch: 'science', subDomain: 'Life Sciences', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'bioinformatics', name: 'Bioinformatics', icon: '🧬', branch: 'science', subDomain: 'Life Sciences', workRelevant: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'environmental_engineering', name: 'Environmental Engineering', icon: '♻️', branch: 'science', subDomain: 'Environmental Science', workRelevant: true, verifiable: true }),
+
+  // ── Additional Interpersonal ───────────────────────────────────────────────
+
+  buildSkill({ id: 'public_speaking_adv', name: 'Advanced Public Speaking', icon: '🎙️', branch: 'interpersonal', subDomain: 'Public Speaking', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'positive_discipline', name: 'Positive Discipline', icon: '🌱', branch: 'interpersonal', subDomain: 'Parenting', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'facilitation', name: 'Workshop Facilitation', icon: '🎯', branch: 'interpersonal', subDomain: 'Communication', workRelevant: true, verifiable: false }),
+
+  // ── Additional Performing Arts ─────────────────────────────────────────────
+
+  buildSkill({ id: 'folk_dance', name: 'Folk & Traditional Dance', icon: '👘', branch: 'performing_arts', subDomain: 'Dance', lifeSkill: true, verifiable: true, localizationTags: ['zh-CN', 'in-ID'] }),
+  buildSkill({ id: 'voice_acting', name: 'Voice Acting', icon: '🎙️', branch: 'performing_arts', subDomain: 'Theater', workRelevant: true, lifeSkill: true, verifiable: true }),
+  buildSkill({ id: 'musical_theater', name: 'Musical Theater', icon: '🎭', branch: 'performing_arts', subDomain: 'Theater', lifeSkill: true, verifiable: true }),
+
+  // ── Additional Home & Lifestyle ────────────────────────────────────────────
+
+  buildSkill({ id: 'solar_energy_diy', name: 'Solar & Home Energy', icon: '☀️', branch: 'home_lifestyle', subDomain: 'Home DIY', lifeSkill: true, verifiable: true, trending: true }),
+  buildSkill({ id: 'minimalism', name: 'Minimalism', icon: '🧘', branch: 'home_lifestyle', subDomain: 'Organization', lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'urban_farming', name: 'Urban Farming', icon: '🌿', branch: 'home_lifestyle', subDomain: 'Gardening', lifeSkill: true, verifiable: true, trending: true }),
+
+  // ── Additional Finance ─────────────────────────────────────────────────────
+
+  buildSkill({ id: 'crypto_defi', name: 'Crypto & DeFi', icon: '🪙', branch: 'finance', subDomain: 'Investment', workRelevant: true, lifeSkill: true, verifiable: false }),
+  buildSkill({ id: 'accounting_software', name: 'Accounting Software (QuickBooks)', icon: '💻', branch: 'finance', subDomain: 'Accounting', workRelevant: true, verifiable: true }),
+
+  // ── Additional Education ───────────────────────────────────────────────────
+
+  buildSkill({ id: 'corporate_training', name: 'Corporate Training', icon: '🏢', branch: 'education', subDomain: 'Teaching', workRelevant: true, verifiable: false }),
+  buildSkill({ id: 'e_learning_design', name: 'E-learning Design', icon: '💻', branch: 'education', subDomain: 'Online Education', workRelevant: true, verifiable: true }),
 ];
 
 // ---------- Seed Profiles ----------

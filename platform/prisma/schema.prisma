@@ -120,20 +120,26 @@ model Branch {
 }
 
 model Skill {
-  id            String             @id @default(cuid())
-  name          String
-  branchId      String
-  parentSkillId String?
-  description   String?
-  icon          String?
-  maxLevel      Int                @default(10)
-  prerequisites String[]
-  tags          String[]
-  agentCompat   Boolean            @default(true)
-  community     Boolean            @default(false)
-  levelsJson    Json
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  id                String             @id @default(cuid())
+  name              String
+  branchId          String
+  parentSkillId     String?
+  description       String?
+  icon              String?
+  maxLevel          Int                @default(10)
+  prerequisites     String[]
+  tags              String[]
+  agentCompat       Boolean            @default(true)
+  community         Boolean            @default(false)
+  levelsJson        Json
+  subDomain         String?
+  workRelevant      Boolean            @default(false)
+  lifeSkill         Boolean            @default(false)
+  verifiable        Boolean            @default(false)
+  trending          Boolean            @default(false)
+  localizationTags  String[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   branch        Branch             @relation(fields: [branchId], references: [id])
   parentSkill   Skill?             @relation("SkillParent", fields: [parentSkillId], references: [id])
   childSkills   Skill[]            @relation("SkillParent")
