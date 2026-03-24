@@ -1,4 +1,7 @@
+"use client";
+
 import type { Metadata } from "next";
+import { useState } from "react";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -7,6 +10,77 @@ export const metadata: Metadata = {
 };
 
 export default function Contact() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      subject: formData.get("subject") as string,
+      message: formData.get("message") as string,
+    };
+
+    try {
+      const response = await fetch("https://platform.futurelabs.vip/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || "Failed to send message");
+      }
+
+      setIsSuccess(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send message");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  if (isSuccess) {
+    return (
+      <>
+        <section className="bg-slate-900 text-white py-20">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <h1 className="text-4xl sm:text-5xl font-bold text-balance">
+              Message sent!
+            </h1>
+            <p className="mt-4 text-slate-300 text-lg max-w-2xl text-balance">
+              Thank you for reaching out. We&apos;ll get back to you soon.
+            </p>
+          </div>
+        </section>
+        <section className="py-20 bg-slate-50">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-slate-900 mb-2">
+                Thank you!
+              </h2>
+              <p className="text-slate-600">
+                Your message has been received. We&apos;ll respond as soon as possible.
+              </p>
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  }
+
   return (
     <>
       {/* Header */}
@@ -29,13 +103,12 @@ export default function Contact() {
             <h2 className="text-xl font-bold text-slate-900 mb-8">
               Send us a message
             </h2>
-            <form
-              action="mailto:hello@futurelab.ai"
-              method="get"
-              encType="text/plain"
-              noValidate
-              aria-label="Contact form"
-            >
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} aria-label="Contact form">
               <div className="space-y-6">
                 <div>
                   <label
@@ -103,7 +176,7 @@ export default function Contact() {
                   </label>
                   <textarea
                     id="message"
-                    name="body"
+                    name="message"
                     required
                     rows={5}
                     className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-900 placeholder:text-slate-400 text-sm resize-none"
@@ -111,11 +184,17 @@ export default function Contact() {
                   />
                 </div>
 
+                {/* Honeypot field - hidden from users, catches bots */}
+                <div className="hidden" aria-hidden="true">
+                  <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+                </div>
+
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  disabled={isSubmitting}
+                  className="w-full px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                 >
-                  Send message
+                  {isSubmitting ? "Sending..." : "Send message"}
                 </button>
               </div>
             </form>
