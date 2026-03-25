@@ -14,8 +14,8 @@ export async function GET(req: NextRequest) {
     const where: Record<string, unknown> = { privacy: "public" };
 
     if (branch) {
-      where.skills = {
-        some: { skill: { branch: { name: { contains: branch, mode: "insensitive" } } } },
+      where.UserSkillRecord = {
+        some: { Skill: { Branch: { name: { contains: branch, mode: "insensitive" } } } },
       };
     }
 
@@ -24,12 +24,12 @@ export async function GET(req: NextRequest) {
       orderBy: { totalXp: "desc" },
       take: limit,
       include: {
-        skills: {
-          include: { skill: { include: { branch: true } } },
+        UserSkillRecord: {
+          include: { Skill: { include: { Branch: true } } },
           orderBy: { currentLevel: "desc" },
           take: 3,
         },
-        _count: { select: { receivedEndorsements: true } },
+        _count: { select: { SkillEndorsement: true } },
       },
     });
 
@@ -41,13 +41,13 @@ export async function GET(req: NextRequest) {
         avatarEmoji: p.avatarEmoji ?? "🧑",
         entityType: p.entityType,
         totalXp: p.totalXp,
-        skillCount: p.skills.length,
-        endorsementCount: p._count.receivedEndorsements,
-        topSkills: p.skills.map((s) => ({
-          name: s.skill.name,
-          icon: s.skill.icon,
+        skillCount: p.UserSkillRecord.length,
+        endorsementCount: p._count.SkillEndorsement,
+        topSkills: p.UserSkillRecord.map((s) => ({
+          name: s.Skill.name,
+          icon: s.Skill.icon,
           level: s.currentLevel,
-          branch: s.skill.branch.name,
+          branch: s.Skill.Branch.name,
         })),
       }))
     );
