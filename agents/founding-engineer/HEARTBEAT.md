@@ -34,6 +34,7 @@ If `PAPERCLIP_APPROVAL_ID` is set:
 - Always checkout before working: `POST /api/issues/{id}/checkout`.
 - Never retry a 409 -- that task belongs to someone else.
 - Do the work. Update status and comment when done.
+- It's mandatory to deploy changes after code commit, never say done before deply!
 
 ## 7. Fact Extraction
 
