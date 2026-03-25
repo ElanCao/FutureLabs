@@ -16,27 +16,45 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
     const endorsements = await prisma.skillEndorsement.findMany({
       where: { endorseeId: profile.id },
-      include: {
-        Endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
-        Skill: { select: { id: true, name: true, icon: true } },
-      },
       orderBy: { createdAt: "desc" },
     });
 
+    // Fetch endorser and skill data separately
+    const endorserIds = [...new Set(endorsements.map((e) => e.endorserId))];
+    const skillIds = [...new Set(endorsements.map((e) => e.skillId))];
+
+    const [endorsers, skills] = await Promise.all([
+      prisma.profile.findMany({
+        where: { id: { in: endorserIds } },
+        select: { id: true, username: true, displayName: true, avatarEmoji: true },
+      }),
+      prisma.skill.findMany({
+        where: { id: { in: skillIds } },
+        select: { id: true, name: true, icon: true },
+      }),
+    ]);
+
+    const endorserMap = new Map(endorsers.map((e) => [e.id, e]));
+    const skillMap = new Map(skills.map((s) => [s.id, s]));
+
     return NextResponse.json(
-      endorsements.map((e) => ({
-        id: e.id,
-        skillId: e.skillId,
-        skillName: e.Skill.name,
-        skillIcon: e.Skill.icon,
-        endorser: {
-          username: e.Endorser.username,
-          displayName: e.Endorser.displayName ?? e.Endorser.username,
-          avatarEmoji: e.Endorser.avatarEmoji ?? "🧑",
-        },
-        note: e.note,
-        createdAt: e.createdAt,
-      }))
+      endorsements.map((e) => {
+        const endorser = endorserMap.get(e.endorserId);
+        const skill = skillMap.get(e.skillId);
+        return {
+          id: e.id,
+          skillId: e.skillId,
+          skillName: skill?.name ?? "Unknown",
+          skillIcon: skill?.icon ?? "⭐",
+          endorser: {
+            username: endorser?.username ?? "unknown",
+            displayName: endorser?.displayName ?? endorser?.username ?? "Unknown",
+            avatarEmoji: endorser?.avatarEmoji ?? "🧑",
+          },
+          note: e.note,
+          createdAt: e.createdAt,
+        };
+      })
     );
   } catch {
     return NextResponse.json([]);
