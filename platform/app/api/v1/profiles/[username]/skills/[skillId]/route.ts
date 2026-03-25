@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-options";
 import { prisma } from "@/lib/prisma";
+import { EvidenceType } from "@prisma/client";
 
 interface Params { params: { username: string; skillId: string } }
 
@@ -86,7 +87,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
           data: evidence.map((ev: { type: string; title?: string; url?: string; description?: string }) => ({
             id: crypto.randomUUID(),
             userSkillRecordId: userSkillRecord.id,
-            type: ev.type as any,
+            type: ev.type as EvidenceType,
             title: ev.title ?? null,
             url: ev.url ?? null,
             description: ev.description ?? null,
