@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   const codeHash = await bcrypt.hash(otp, 10);
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-  await prisma.emailOtp.create({ data: { email: normalizedEmail, codeHash, expiresAt } });
+  await prisma.emailOtp.create({ data: { id: crypto.randomUUID(), email: normalizedEmail, codeHash, expiresAt } });
   await sendOtpEmail(normalizedEmail, otp);
 
   return NextResponse.json({ success: true }, { status: 200 });
