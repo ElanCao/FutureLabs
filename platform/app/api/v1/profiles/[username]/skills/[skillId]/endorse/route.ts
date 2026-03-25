@@ -64,13 +64,13 @@ export async function POST(req: NextRequest, { params }: Params) {
         note: note ?? null,
       },
       include: {
-        endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
-        skill: { select: { name: true, icon: true } },
+        Endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
+        Skill: { select: { name: true, icon: true } },
       },
     });
 
     // Create notification for the endorsee (suppress duplicates by referenceId)
-    const notifMessage = `${endorserProfile.displayName ?? endorserProfile.username} endorsed your ${endorsement.skill.name} skill`;
+    const notifMessage = `${endorserProfile.displayName ?? endorserProfile.username} endorsed your ${endorsement.Skill.name} skill`;
     await prisma.notification.upsert({
       where: {
         // We use a synthetic unique constraint workaround: find existing by profileId + referenceId

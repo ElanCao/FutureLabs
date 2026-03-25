@@ -17,8 +17,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
     const endorsements = await prisma.skillEndorsement.findMany({
       where: { endorseeId: profile.id },
       include: {
-        endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
-        skill: { select: { id: true, name: true, icon: true } },
+        Endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
+        Skill: { select: { id: true, name: true, icon: true } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -27,12 +27,12 @@ export async function GET(_req: NextRequest, { params }: Params) {
       endorsements.map((e) => ({
         id: e.id,
         skillId: e.skillId,
-        skillName: e.skill.name,
-        skillIcon: e.skill.icon,
+        skillName: e.Skill.name,
+        skillIcon: e.Skill.icon,
         endorser: {
-          username: e.endorser.username,
-          displayName: e.endorser.displayName ?? e.endorser.username,
-          avatarEmoji: e.endorser.avatarEmoji ?? "🧑",
+          username: e.Endorser.username,
+          displayName: e.Endorser.displayName ?? e.Endorser.username,
+          avatarEmoji: e.Endorser.avatarEmoji ?? "🧑",
         },
         note: e.note,
         createdAt: e.createdAt,
