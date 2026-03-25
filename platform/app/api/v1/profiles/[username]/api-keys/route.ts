@@ -58,6 +58,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
   const key = await prisma.apiKey.create({
     data: {
+      id: crypto.randomUUID(),
       profileId: profile.id,
       name: name.trim(),
       keyHash: hash,

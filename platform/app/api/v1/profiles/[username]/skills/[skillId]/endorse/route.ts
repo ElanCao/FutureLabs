@@ -57,6 +57,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       },
       update: { note: note ?? null },
       create: {
+        id: crypto.randomUUID(),
         endorserId: endorserProfile.id,
         endorseeId: endorseeProfile.id,
         skillId: params.skillId,
@@ -92,6 +93,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       if (!existing) {
         await prisma.notification.create({
           data: {
+            id: crypto.randomUUID(),
             profileId: endorseeProfile.id,
             type: "endorsement",
             referenceId: endorsement.id,

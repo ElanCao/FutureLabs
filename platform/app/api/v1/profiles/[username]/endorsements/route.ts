@@ -71,7 +71,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     if (!skillRecord) return NextResponse.json({ error: "User does not have this skill" }, { status: 400 });
 
     const endorsement = await prisma.skillEndorsement.create({
-      data: { endorserId: endorser.id, endorseeId: endorsee.id, skillId, note: note ?? null },
+      data: { id: crypto.randomUUID(), endorserId: endorser.id, endorseeId: endorsee.id, skillId, note: note ?? null },
       include: {
         skill: { select: { name: true, icon: true } },
         endorser: { select: { username: true, displayName: true } },
@@ -80,6 +80,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     await prisma.notification.create({
       data: {
+        id: crypto.randomUUID(),
         profileId: endorsee.id,
         type: "endorsement",
         referenceId: endorsement.id,
