@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
     const dbProfile = await prisma.profile.findUnique({
       where: { username },
       include: {
-        skills: {
+        userRecords: {
           include: { skill: { include: { branch: true } } },
           orderBy: { currentLevel: "desc" },
         },
@@ -67,8 +67,8 @@ export async function GET(req: NextRequest) {
       displayName = dbProfile.displayName ?? username;
       avatarEmoji = dbProfile.avatarEmoji ?? "🧑";
       totalXp = dbProfile.totalXp;
-      totalSkillCount = dbProfile.skills.length;
-      topSkills = dbProfile.skills.slice(0, 8).map((s) => ({
+      totalSkillCount = dbProfile.userRecords.length;
+      topSkills = dbProfile.userRecords.slice(0, 8).map((s) => ({
         id: s.skillId,
         name: s.skill.name,
         icon: s.skill.icon ?? "⭐",
