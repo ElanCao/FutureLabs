@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -8,9 +9,14 @@ export default function Footer() {
           <div className="col-span-1 sm:col-span-2 md:col-span-1">
             <Link
               href="/"
-              className="font-bold text-xl text-white tracking-tight focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
+              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded inline-block"
             >
-              FutureLab
+              <Image
+                src="/futurelabs-logo-dark.svg"
+                alt="FutureLabs"
+                width={130}
+                height={32}
+              />
             </Link>
             <p className="mt-3 text-sm leading-relaxed">
               The future that humans live with AI — a platform where human
@@ -52,16 +58,21 @@ export default function Footer() {
 
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4">
-              Product
+              Products
             </h3>
             <ul className="space-y-2 text-sm" role="list">
               <li>
-                <Link
-                  href="/product"
-                  className="hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
+                <a
+                  href="https://platform.futurelabs.vip"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded text-violet-400 hover:text-violet-300"
                 >
-                  Platform
-                </Link>
+                  SkillTree
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
               </li>
               <li>
                 <Link
@@ -69,6 +80,14 @@ export default function Footer() {
                   className="hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
                 >
                   How it works
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/product"
+                  className="hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 rounded"
+                >
+                  Platform overview
                 </Link>
               </li>
             </ul>

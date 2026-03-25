@@ -74,7 +74,7 @@ export default function About() {
       <section className="bg-slate-900 text-white py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <h1 className="text-4xl sm:text-5xl font-bold text-balance">
-            About FutureLab
+            About FutureLabs
           </h1>
           <p className="mt-4 text-slate-300 text-lg max-w-2xl text-balance">
             We&apos;re building the infrastructure for a world where humans and AI

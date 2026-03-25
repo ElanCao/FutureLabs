@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://futurelabs.vip/standards/skill.md/v1.0/schema.json",
+  "title": "SKILL.md Schema",
+  "description": "JSON Schema for validating SKILL.md YAML frontmatter. Version 1.0.0",
+  "version": "1.0.0",
+  "type": "object",
+  "definitions": {
+    "LevelDefinition": {
+      "type": "object",
+      "description": "A single level definition within a skill",
+      "required": ["level", "title", "description"],
+      "properties": {
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Level number (1 = beginner, 10 = world-class)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Display title for this level (e.g., 'Novice', 'Expert')",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "description": {
+          "type": "string",
+          "description": "What someone at this level can demonstrably DO. Use action verbs.",
+          "minLength": 10,
+          "maxLength": 500
+        },
+        "xp_threshold": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Experience points required to reach this level"
+        },
+        "evidence_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "completed_tutorial",
+              "simple_script",
+              "small_project",
+              "code_review",
+              "production_code",
+              "open_source_contribution",
+              "system_design",
+              "technical_leadership",
+              "conference_talk",
+              "influential_project",
+              "published_work",
+              "certification",
+              "peer_assessment",
+              "portfolio",
+              "client_work",
+              "test_result"
+            ]
+          },
+          "description": "Types of evidence accepted for this level"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SkillMetadata": {
+      "type": "object",
+      "description": "YAML frontmatter metadata for a SKILL.md file",
+      "required": ["id", "name", "version", "category", "description", "created"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "URL-safe unique identifier (kebab-case)",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable skill name",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Semantic version of this skill definition"
+        },
+        "category": {
+          "type": "string",
+          "description": "Broad category for grouping skills",
+          "examples": ["engineering", "design", "data", "management", "communication"]
+        },
+        "description": {
+          "type": "string",
+          "description": "One-line description of what this skill covers",
+          "minLength": 10,
+          "maxLength": 200
+        },
+        "created": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date when skill was first defined"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date of last modification"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author or organization that defined the skill"
+        },
+        "license": {
+          "type": "string",
+          "description": "SPDX license identifier",
+          "examples": ["CC-BY-4.0", "MIT", "Apache-2.0"]
+        },
+        "parent": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9-]+$",
+          "description": "ID of parent skill for hierarchical relationships"
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "description": "List of skill IDs required before learning this skill",
+          "default": []
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "description": "List of related skill IDs",
+          "default": []
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "description": "Free-form tags for discovery",
+          "default": []
+        },
+        "level_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 5,
+          "description": "Number of proficiency levels for this skill"
+        },
+        "agent_compatible": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether AI agents can hold this skill"
+        },
+        "attestation_required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether skill claims require third-party verification"
+        },
+        "levels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LevelDefinition"
+          },
+          "minItems": 1,
+          "maxItems": 10,
+          "description": "Detailed level definitions (optional but recommended)"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/definitions/SkillMetadata"
+    }
+  ]
+}

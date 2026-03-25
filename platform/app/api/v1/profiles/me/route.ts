@@ -1,62 +1,65 @@
 /**
  * GET /api/v1/profiles/me — return the current user's profile
- * Supports both session auth (browser) and API key auth (AI agents)
  */
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-options";
-import { getProfileFromApiKey } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-function serializeProfile(profile: Awaited<ReturnType<typeof prisma.profile.findUnique>> & {
-  skills: { skillId: string; currentLevel: number; xp: number; evidence: { type: string; title: string | null; url: string | null; description: string | null }[] }[]
-} | null) {
-  if (!profile) return null;
-  return {
-    username: profile.username,
-    displayName: profile.displayName ?? profile.username,
-    bio: profile.bio ?? "",
-    avatarEmoji: profile.avatarEmoji ?? "🧑",
-    entityType: profile.entityType,
-    privacy: profile.privacy,
-    totalXp: profile.totalXp,
-    skills: profile.skills.map((s) => ({
-      skillId: s.skillId,
-      currentLevel: s.currentLevel,
-      xp: s.xp,
-      evidence: s.evidence.map((e) => ({
-        type: e.type, title: e.title, url: e.url, description: e.description,
-      })),
-    })),
-  };
-}
-
-export async function GET(req: NextRequest) {
-  // Try API key auth first (for AI agents)
-  const agentProfile = await getProfileFromApiKey(req);
-  if (agentProfile) {
-    const full = await prisma.profile.findUnique({
-      where: { id: agentProfile.id },
-      include: { skills: { include: { evidence: true } } },
-    });
-    return NextResponse.json(serializeProfile(full));
+export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Fall back to session auth
-  const session = await getServerSession(authOptions);
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const userId = (session.user as { id?: string }).id;
-  if (!userId) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
-
   try {
-    const profile = await prisma.profile.findUnique({
-      where: { userId },
-      include: { skills: { include: { evidence: true } } },
+    // Look up user by email and include their profile
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: {
+        Profile: {
+          include: {
+            UserSkillRecord: {
+              include: {
+                EvidenceRecord: true,
+              },
+            },
+          },
+        },
+      },
     });
-    if (!profile) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
-    return NextResponse.json(serializeProfile(profile));
-  } catch {
-    return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+
+    if (!user?.Profile) {
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+    }
+
+    // Transform to API response format
+    const profile = user.Profile;
+    const skills = profile.UserSkillRecord.map((record) => ({
+      skillId: record.skillId,
+      currentLevel: record.currentLevel,
+      xp: record.xp,
+      evidence: record.EvidenceRecord.map((ev) => ({
+        type: ev.type,
+        title: ev.title,
+        url: ev.url,
+        description: ev.description,
+        verified: ev.verified,
+      })),
+    }));
+
+    return NextResponse.json({
+      username: profile.username,
+      displayName: profile.displayName ?? profile.username,
+      bio: profile.bio ?? "",
+      avatarEmoji: profile.avatarEmoji ?? "🧑",
+      privacy: profile.privacy.toLowerCase(),
+      entityType: profile.entityType.toLowerCase(),
+      totalXp: profile.totalXp,
+      skills,
+    });
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });
   }
 }

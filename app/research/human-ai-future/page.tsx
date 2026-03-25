@@ -7,6 +7,34 @@ export const metadata: Metadata = {
     "FutureLabs founding research report: what it means for humans to live and work alongside AI agents — trends, opportunities, and implications for individuals, organizations, and society.",
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const sections = [
+  {
+    id: "agentic-shift",
+    label: "The Agentic Shift",
+  },
+  {
+    id: "what-it-means",
+    label: "What It Means to Live With AI",
+  },
+  {
+    id: "key-trends",
+    label: "Key Trends",
+  },
+  {
+    id: "opportunities",
+    label: "Opportunities",
+  },
+  {
+    id: "implications",
+    label: "Implications",
+  },
+  {
+    id: "futurelabs-position",
+    label: "FutureLabs' Position",
+  },
+];
+
 export default function HumanAIFuturePage() {
   return (
     <div className="bg-white">
