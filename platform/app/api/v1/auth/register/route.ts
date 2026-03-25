@@ -46,9 +46,11 @@ export async function POST(req: NextRequest) {
     const hash = await bcrypt.hash(password, 12);
     await prisma.user.create({
       data: {
+        id: crypto.randomUUID(),
         email: normalizedEmail,
         name: name?.trim() || null,
         password: hash,
+        updatedAt: new Date(),
         // emailVerified intentionally null until OTP confirmed
       },
     });
