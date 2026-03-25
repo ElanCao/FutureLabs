@@ -81,11 +81,12 @@ export default function AdminMessagesPage() {
   }, [page, statusFilter, searchQuery]);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.isAdmin) {
+    const user = session?.user as { isAdmin?: boolean } | undefined;
+    if (status === "authenticated" && user?.isAdmin) {
       fetchMessages();
     } else if (status === "unauthenticated") {
       setLoading(false);
-    } else if (status === "authenticated" && !session?.user?.isAdmin) {
+    } else if (status === "authenticated" && !user?.isAdmin) {
       setLoading(false);
       setError("Unauthorized - Admin access required");
     }
@@ -209,7 +210,8 @@ export default function AdminMessagesPage() {
     );
   }
 
-  if (!session?.user?.isAdmin) {
+  const user = session?.user as { isAdmin?: boolean } | undefined;
+  if (!user?.isAdmin) {
     return (
       <div className="min-h-screen bg-gray-950 text-white flex flex-col">
         <Nav />

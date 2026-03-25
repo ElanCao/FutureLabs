@@ -1,13 +1,6 @@
 "use client";
 
-import type { Metadata } from "next";
 import { useState } from "react";
-
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Get in touch with FutureLabs — request early access, ask questions, or explore partnership opportunities.",
-};
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
