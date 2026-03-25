@@ -29,7 +29,6 @@ export async function GET(req: NextRequest) {
           orderBy: { currentLevel: "desc" },
           take: 3,
         },
-        _count: { select: { SkillEndorsement: true } },
       },
     });
 
@@ -42,7 +41,7 @@ export async function GET(req: NextRequest) {
         entityType: p.entityType,
         totalXp: p.totalXp,
         skillCount: p.UserSkillRecord.length,
-        endorsementCount: p._count.SkillEndorsement,
+        endorsementCount: 0,
         topSkills: p.UserSkillRecord.map((s) => ({
           name: s.Skill.name,
           icon: s.Skill.icon,
