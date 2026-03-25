@@ -56,8 +56,8 @@ export async function GET(req: NextRequest) {
     const dbProfile = await prisma.profile.findUnique({
       where: { username },
       include: {
-        userRecords: {
-          include: { skill: { include: { branch: true } } },
+        UserSkillRecord: {
+          include: { Skill: { include: { Branch: true } } },
           orderBy: { currentLevel: "desc" },
         },
       },
@@ -67,14 +67,14 @@ export async function GET(req: NextRequest) {
       displayName = dbProfile.displayName ?? username;
       avatarEmoji = dbProfile.avatarEmoji ?? "🧑";
       totalXp = dbProfile.totalXp;
-      totalSkillCount = dbProfile.userRecords.length;
-      topSkills = dbProfile.userRecords.slice(0, 8).map((s) => ({
+      totalSkillCount = dbProfile.UserSkillRecord.length;
+      topSkills = dbProfile.UserSkillRecord.slice(0, 8).map((s) => ({
         id: s.skillId,
-        name: s.skill.name,
-        icon: s.skill.icon ?? "⭐",
-        maxLevel: s.skill.maxLevel,
-        branchName: s.skill.branch.name,
-        branchColor: s.skill.branch.color ?? "#6366f1",
+        name: s.Skill.name,
+        icon: s.Skill.icon ?? "⭐",
+        maxLevel: s.Skill.maxLevel,
+        branchName: s.Skill.Branch.name,
+        branchColor: s.Skill.Branch.color ?? "#6366f1",
         currentLevel: s.currentLevel,
         xp: s.xp,
       }));
