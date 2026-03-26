@@ -20,8 +20,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
     });
 
     // Fetch endorser and skill data separately
-    const endorserIds = [...new Set(endorsements.map((e) => e.endorserId))];
-    const skillIds = [...new Set(endorsements.map((e) => e.skillId))];
+    const endorserIds = Array.from(new Set(endorsements.map((e) => e.endorserId)));
+    const skillIds = Array.from(new Set(endorsements.map((e) => e.skillId)));
 
     const [endorsers, skills] = await Promise.all([
       prisma.profile.findMany({
@@ -91,8 +91,8 @@ export async function POST(req: NextRequest, { params }: Params) {
     const endorsement = await prisma.skillEndorsement.create({
       data: { id: crypto.randomUUID(), endorserId: endorser.id, endorseeId: endorsee.id, skillId, note: note ?? null },
       include: {
-        skill: { select: { name: true, icon: true } },
-        endorser: { select: { username: true, displayName: true } },
+        Skill: { select: { name: true, icon: true } },
+        Profile_SkillEndorsement_endorserIdToProfile: { select: { username: true, displayName: true } },
       },
     });
 
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         profileId: endorsee.id,
         type: "endorsement",
         referenceId: endorsement.id,
-        message: `${endorser.displayName ?? endorser.username} endorsed your ${endorsement.skill.name} skill!`,
+        message: `${endorser.displayName ?? endorser.username} endorsed your ${endorsement.Skill.name} skill!`,
       },
     });
 
@@ -110,11 +110,11 @@ export async function POST(req: NextRequest, { params }: Params) {
       {
         id: endorsement.id,
         skillId: endorsement.skillId,
-        skillName: endorsement.skill.name,
-        skillIcon: endorsement.skill.icon,
+        skillName: endorsement.Skill.name,
+        skillIcon: endorsement.Skill.icon,
         endorser: {
-          username: endorsement.endorser.username,
-          displayName: endorsement.endorser.displayName ?? endorsement.endorser.username,
+          username: endorsement.Profile_SkillEndorsement_endorserIdToProfile.username,
+          displayName: endorsement.Profile_SkillEndorsement_endorserIdToProfile.displayName ?? endorsement.Profile_SkillEndorsement_endorserIdToProfile.username,
         },
         note: endorsement.note,
         createdAt: endorsement.createdAt,

@@ -18,48 +18,54 @@ npm run dev
 
 ## Deployment
 
-The site is deployed to **Vercel** on every push to `main` (production) or `staging` (preview).
+This repository contains two deployments:
 
-### Branches
+### Company Website (Root)
+- **Framework**: Next.js 14 (static export)
+- **Hosting**: GitHub Pages
+- **URL**: `https://elancao.github.io/FutureLabs`
+- **Trigger**: Push to `main`
+- **Workflow**: `.github/workflows/pages.yml`
 
-| Branch    | Environment | URL                                    |
-|-----------|-------------|----------------------------------------|
-| `main`    | Production  | `https://example.com` (custom domain)  |
-| `staging` | Preview     | `https://staging.example.com` (Vercel) |
+### SkillTree Platform (`platform/`)
+- **Framework**: Next.js 14 + Prisma + NextAuth
+- **Hosting**: Vercel
+- **URL**: `https://futurelabs.vip`
+- **Trigger**: Push to `main` with changes in `platform/`
+- **Workflow**: `.github/workflows/deploy-platform.yml`
 
-### First-time Vercel Setup
+### Required GitHub Secrets
 
-1. Create a Vercel project linked to this repository.
-2. Set the following **GitHub repository secrets**:
-   - `VERCEL_TOKEN` — your Vercel API token
-   - `VERCEL_ORG_ID` — found in Vercel project settings
-   - `VERCEL_PROJECT_ID` — found in Vercel project settings
-3. Set environment variables in Vercel dashboard:
-   - `NEXT_PUBLIC_SITE_URL` — canonical URL (e.g. `https://example.com`)
-4. Push to `main` — the GitHub Actions deploy workflow runs automatically.
-
-### Custom Domain
-
-1. In Vercel project → Settings → Domains, add your domain.
-2. Update `NEXT_PUBLIC_SITE_URL` in Vercel env vars and in `vercel.json`.
-3. Vercel auto-provisions HTTPS via Let's Encrypt.
+| Secret | Description |
+|--------|-------------|
+| `VERCEL_TOKEN` | Vercel API token |
+| `VERCEL_ORG_ID` | Vercel organization ID |
+| `VERCEL_PLATFORM_PROJECT_ID` | Vercel project ID for platform |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `DIRECT_URL` | PostgreSQL direct URL (for migrations) |
+| `NEXTAUTH_SECRET` | NextAuth.js secret |
+| `NEXTAUTH_URL` | NextAuth.js URL |
+| `GITHUB_ID` | GitHub OAuth app ID |
+| `GITHUB_SECRET` | GitHub OAuth app secret |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
 
 ### CI/CD Workflows
 
-- **`.github/workflows/ci.yml`** — runs lint + build on every push and PR.
-- **`.github/workflows/deploy.yml`** — deploys to Vercel on push to `main` (prod) or `staging` (preview).
-
-### Environment Variables
-
-See `.env.example` for all configuration variables with descriptions.
+- **`.github/workflows/ci.yml`** — runs lint + build on both website and platform for every push/PR
+- **`.github/workflows/pages.yml`** — deploys company website to GitHub Pages on push to `main`
+- **`.github/workflows/deploy-platform.yml`** — deploys SkillTree platform to Vercel on push to `main`
 
 ## Tech Stack
 
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS
-- **Hosting**: Vercel (CDN/edge delivery, auto HTTPS, global regions)
+- **Hosting**:
+  - Website: GitHub Pages
+  - Platform: Vercel
 - **CI/CD**: GitHub Actions
 
 ## Monitoring
 
-Vercel provides built-in analytics, real user monitoring, and deployment health checks. For uptime alerting, integrate a third-party service (e.g. Better Uptime, Checkly) pointed at your production domain.
+- **Website (GitHub Pages)**: Monitor via GitHub's deployment status and external uptime services
+- **Platform (Vercel)**: Built-in analytics, real user monitoring, and deployment health checks available in the Vercel dashboard

@@ -20,7 +20,7 @@ export async function getProfileFromApiKey(req: NextRequest) {
     const hash = hashApiKey(raw);
     const apiKey = await prisma.apiKey.findUnique({
       where: { keyHash: hash },
-      include: { profile: true },
+      include: { Profile: true },
     });
     if (!apiKey) return null;
     if (apiKey.expiresAt && apiKey.expiresAt < new Date()) return null;
@@ -28,7 +28,7 @@ export async function getProfileFromApiKey(req: NextRequest) {
     // Update lastUsedAt asynchronously
     prisma.apiKey.update({ where: { id: apiKey.id }, data: { lastUsedAt: new Date() } }).catch(() => {});
 
-    return apiKey.profile;
+    return apiKey.Profile;
   } catch {
     return null;
   }

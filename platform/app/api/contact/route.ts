@@ -7,6 +7,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 
+// Force dynamic to prevent static generation issues
+export const dynamic = "force-dynamic";
+
 // Lazy-load Resend to avoid build-time errors
 function getResend(): Resend | null {
   const apiKey = process.env.RESEND_API_KEY;

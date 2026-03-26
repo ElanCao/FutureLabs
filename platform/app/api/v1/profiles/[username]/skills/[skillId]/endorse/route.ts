@@ -64,7 +64,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         note: note ?? null,
       },
       include: {
-        Endorser: { select: { username: true, displayName: true, avatarEmoji: true } },
+        Profile_SkillEndorsement_endorserIdToProfile: { select: { username: true, displayName: true, avatarEmoji: true } },
         Skill: { select: { name: true, icon: true } },
       },
     });
@@ -79,6 +79,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       },
       update: {},
       create: {
+        id: crypto.randomUUID(),
         profileId: endorseeProfile.id,
         type: "endorsement",
         referenceId: endorsement.id,
@@ -110,9 +111,9 @@ export async function POST(req: NextRequest, { params }: Params) {
       note: endorsement.note,
       createdAt: endorsement.createdAt,
       endorser: {
-        username: endorsement.endorser.username,
-        displayName: endorsement.endorser.displayName ?? endorsement.endorser.username,
-        avatarEmoji: endorsement.endorser.avatarEmoji ?? "🧑",
+        username: endorsement.Profile_SkillEndorsement_endorserIdToProfile.username,
+        displayName: endorsement.Profile_SkillEndorsement_endorserIdToProfile.displayName ?? endorsement.Profile_SkillEndorsement_endorserIdToProfile.username,
+        avatarEmoji: endorsement.Profile_SkillEndorsement_endorserIdToProfile.avatarEmoji ?? "🧑",
       },
     }, { status: 201 });
   } catch (err) {

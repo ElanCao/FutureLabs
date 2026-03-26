@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { sendWelcomeDrip } from "@/lib/email";
 
+export const dynamic = "force-dynamic";
+
 const MAX_ATTEMPTS = 3;
 
 export async function POST(req: NextRequest) {

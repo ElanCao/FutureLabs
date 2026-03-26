@@ -50,9 +50,9 @@ export async function GET(req: NextRequest) {
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: [{ branch: { name: "asc" } }, { name: "asc" }],
+        orderBy: [{ Branch: { name: "asc" } }, { name: "asc" }],
         include: {
-          branch: { select: { id: true, name: true, icon: true, color: true } },
+          Branch: { select: { id: true, name: true, icon: true, color: true } },
         },
       }),
       prisma.skill.count({ where }),

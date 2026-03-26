@@ -84,6 +84,7 @@ async function main() {
         verifiable: skill.verifiable ?? false,
         trending: skill.trending ?? false,
         localizationTags: skill.localizationTags ?? [],
+        updatedAt: new Date(),
       },
     });
     seeded++;
