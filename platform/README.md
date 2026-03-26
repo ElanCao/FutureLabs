@@ -38,7 +38,17 @@ platform/
 
 Platform deploys to **Vercel** on push to `main` (production) or `staging` (preview).
 
+URL: https://platform.futurelabs.vip
+
 See [`vercel.json`](vercel.json) for project settings. The CI pipeline (`../.github/workflows/ci.yml`) lints and builds this app on every push/PR.
+
+## Admin Dashboard
+
+- **Contact Messages**: `/admin/messages` - View and manage contact form submissions
+  - Filter by status (Unread, Read, Replied, Archived, Spam)
+  - Search messages
+  - Update status and add notes
+  - Reply via email
 
 ## Contributing Skills
 
