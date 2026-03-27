@@ -14,15 +14,11 @@ on:
           - preview
           - production
 
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-
 jobs:
   deploy-website:
     name: Deploy Website
     runs-on: ubuntu-latest
-    env:
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_WEBSITE }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,26 +29,15 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-
-      - name: Build Project Artifacts
-        run: vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-
-      - name: Deploy Project Artifacts to Vercel
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
         id: deploy
-        run: |
-          DEPLOY_URL=$(vercel deploy --prebuilt ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }})
-          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_WEBSITE }}
+          vercel-args: ${{ (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production') && '--prod' || '' }}
+          working-directory: . 
 
       - name: Comment Deployment URL
         if: github.event_name == 'pull_request'
