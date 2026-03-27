@@ -82,6 +82,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: platform/package-lock.json
 
+      - name: Install dependencies
+        run: cd platform && npm install
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -101,7 +104,7 @@ jobs:
         working-directory: platform
         id: deploy
         run: |
-          DEPLOY_URL=$(vercel deploy --prebuilt ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }})
+          DEPLOY_URL=$(vercel deploy --prebuilt ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }} --cwd platform)
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
