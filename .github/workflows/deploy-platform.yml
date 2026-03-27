@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-platform:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +34,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_PLATFORM }}
           vercel-args: '--prod'
-          working-directory: platform
+          working-directory: .
 
       - name: Comment Deployment URL
         if: github.event_name == 'pull_request'
