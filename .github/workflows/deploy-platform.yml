@@ -24,6 +24,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: platform/package-lock.json
 
+      - name: Install dependencies
+        run: cd platform && npm install
+
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
