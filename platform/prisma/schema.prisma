@@ -207,6 +207,28 @@ enum EvidenceType {
   contribution
 }
 
+model Profile {
+  id                  String              @id @default(cuid())
+  username            String              @unique
+  displayName         String?
+  bio                 String?
+  avatarUrl           String?
+  avatarEmoji         String?
+  entityType          EntityType          @default(human)
+  privacy             Privacy             @default(private)
+  totalXp             Int                 @default(0)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  userId              String?             @unique
+  user                User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  skills              UserSkillRecord[]
+  givenEndorsements   SkillEndorsement[]  @relation("GivenEndorsements")
+  receivedEndorsements SkillEndorsement[] @relation("ReceivedEndorsements")
+  notifications       Notification[]
+  apiKeys             ApiKey[]
+  achievements        Achievement[]
+}
+
 enum Privacy {
   public
   friends
@@ -240,4 +262,22 @@ enum ContactStatus {
   REPLIED
   ARCHIVED
   SPAM
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  profileId   String
+  type        String   // e.g., "skill_count", "level_reached", "first_collaboration", "endorsement_received"
+  tier        String   // "bronze", "silver", "gold", "platinum"
+  name        String   // e.g., "100 Skills", "Level 10", "First Collaboration"
+  description String?
+  icon        String   // emoji or icon identifier
+  metadata    Json?    // { skillCount: 100, level: 10, etc. }
+  unlockedAt  DateTime @default(now())
+  sharedAt    DateTime?
+  shareCount  Int      @default(0)
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([profileId, type])
 }
