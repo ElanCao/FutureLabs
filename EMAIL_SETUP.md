@@ -138,3 +138,4 @@ Once you add a domain in Resend, you'll get specific DNS records. Typical setup:
 - Resend Docs: https://resend.com/docs
 - DNS troubleshooting: Check Resend dashboard for record validation
 - Issues: Escalate to engineering
+  
