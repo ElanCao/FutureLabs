@@ -204,10 +204,10 @@ export default function ContactPage() {
             <p>
               Prefer email? Reach us directly at{" "}
               <a
-                href="mailto:hello@futurelab.ai"
+                href="mailto:hello@futurelabs.vip"
                 className="text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded"
               >
-                hello@futurelab.ai
+                hello@futurelabs.vip
               </a>
             </p>
           </div>
