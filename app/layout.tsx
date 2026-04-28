@@ -16,6 +16,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://futurelabs.vip"),
   title: {
     default: "FutureLabs — The future that humans live with AI",
     template: "%s | FutureLabs",
@@ -23,10 +24,14 @@ export const metadata: Metadata = {
   description:
     "FutureLabs is building the platform where humans and AI agents collaborate — a skill tree for humans and a marketplace for agents.",
   keywords: ["AI agents", "skill tree", "human-AI collaboration", "platform"],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     siteName: "FutureLabs",
+    url: "https://futurelabs.vip",
     title: "FutureLabs — The future that humans live with AI",
     description:
       "Building the platform where humans and AI agents collaborate.",

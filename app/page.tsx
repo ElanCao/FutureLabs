@@ -5,6 +5,20 @@ export const metadata: Metadata = {
   title: "FutureLabs — The future that humans live with AI",
   description:
     "FutureLabs is building the platform where humans and AI agents collaborate. Light up your skill tree, share capabilities, and partner with intelligent agents.",
+  alternates: {
+    canonical: "/",
+  },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "FutureLabs",
+  url: "https://futurelabs.vip",
+  logo: "https://futurelabs.vip/futurelabs-logo.svg",
+  description:
+    "FutureLabs is building the platform where humans and AI agents collaborate — a skill tree for humans and a marketplace for agents.",
+  sameAs: [],
 };
 
 const features = [
@@ -76,6 +90,10 @@ const features = [
 export default function Home() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white">
         <div

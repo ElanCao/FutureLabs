@@ -1,15 +1,47 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE_URL = "https://futurelabs.vip";
+
 export const metadata: Metadata = {
   title: "Why the future is collaborative, not competitive — FutureLabs Blog",
   description:
     "The most important question isn't what AI can do that humans can't — it's what becomes possible when they work together.",
+  alternates: {
+    canonical: "/blog/collaborative-future",
+  },
+};
+
+const blogJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: "Why the future is collaborative, not competitive",
+  description:
+    "The most important question isn't what AI can do that humans can't — it's what becomes possible when they work together.",
+  datePublished: "2026-03-25",
+  dateModified: "2026-03-25",
+  url: `${SITE_URL}/blog/collaborative-future`,
+  author: {
+    "@type": "Organization",
+    name: "FutureLabs",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "FutureLabs",
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}/futurelabs-logo.svg`,
+    },
+  },
 };
 
 export default function BlogPost() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
       {/* Header */}
       <section className="bg-slate-900 text-white py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">

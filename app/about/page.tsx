@@ -4,6 +4,9 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "Learn about FutureLabs — our mission, values, and the team building the platform for human-AI collaboration.",
+  alternates: {
+    canonical: "/about",
+  },
 };
 
 const team = [

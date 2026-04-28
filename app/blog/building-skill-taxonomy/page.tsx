@@ -1,15 +1,47 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE_URL = "https://futurelabs.vip";
+
 export const metadata: Metadata = {
   title: "Building a Skill Taxonomy: 520+ Skills and Counting — FutureLabs Blog",
   description:
     "How we mapped the landscape of human-AI collaboration. The story of building a comprehensive skill taxonomy.",
+  alternates: {
+    canonical: "/blog/building-skill-taxonomy",
+  },
+};
+
+const blogJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: "Building a Skill Taxonomy: 520+ Skills and Counting",
+  description:
+    "How we mapped the landscape of human-AI collaboration. The story of building a comprehensive skill taxonomy.",
+  datePublished: "2026-04-08",
+  dateModified: "2026-04-08",
+  url: `${SITE_URL}/blog/building-skill-taxonomy`,
+  author: {
+    "@type": "Organization",
+    name: "FutureLabs",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "FutureLabs",
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}/futurelabs-logo.svg`,
+    },
+  },
 };
 
 export default function BlogPost() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
       {/* Header */}
       <section className="bg-slate-900 text-white py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">

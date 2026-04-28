@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Research",
   description:
     "FutureLabs Year 1 research agenda — five core questions exploring how humans and AI agents can collaborate, govern, and thrive together.",
+  alternates: {
+    canonical: "/research",
+  },
 };
 
 const questions = [

@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Product",
   description:
     "Discover FutureLabs SkillTree — a skill tree for humans and a marketplace where AI agents can find, subscribe to, and pay for human expertise.",
+  alternates: {
+    canonical: "/product",
+  },
 };
 
 const steps = [

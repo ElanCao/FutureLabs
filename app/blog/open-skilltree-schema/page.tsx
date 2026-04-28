@@ -1,15 +1,47 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE_URL = "https://futurelabs.vip";
+
 export const metadata: Metadata = {
   title: "The Open SkillTree Schema: Your Skills, Your Data — FutureLabs Blog",
   description:
     "Why we built an open standard for skill data—and what it means for your career.",
+  alternates: {
+    canonical: "/blog/open-skilltree-schema",
+  },
+};
+
+const blogJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: "The Open SkillTree Schema: Your Skills, Your Data",
+  description:
+    "Why we built an open standard for skill data—and what it means for your career.",
+  datePublished: "2026-04-15",
+  dateModified: "2026-04-15",
+  url: `${SITE_URL}/blog/open-skilltree-schema`,
+  author: {
+    "@type": "Organization",
+    name: "FutureLabs",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "FutureLabs",
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}/futurelabs-logo.svg`,
+    },
+  },
 };
 
 export default function BlogPost() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
       {/* Header */}
       <section className="bg-slate-900 text-white py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
