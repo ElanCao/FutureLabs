@@ -9,6 +9,24 @@ export const metadata: Metadata = {
 
 const blogPosts = [
   {
+    title: "The Open SkillTree Schema: Your Skills, Your Data",
+    excerpt:
+      "Why we built an open standard for skill data—and what it means for your career. Introducing SKILL.md, the portable format for skill data.",
+    date: "April 15, 2026",
+    category: "Ecosystem",
+    slug: "open-skilltree-schema",
+    status: "live" as const,
+  },
+  {
+    title: "Building a Skill Taxonomy: 520+ Skills and Counting",
+    excerpt:
+      "How we mapped the landscape of human-AI collaboration. The story of building a comprehensive skill taxonomy from job boards, courses, and community feedback.",
+    date: "April 8, 2026",
+    category: "Product",
+    slug: "building-skill-taxonomy",
+    status: "live" as const,
+  },
+  {
     title: "Why the future is collaborative, not competitive",
     excerpt:
       "The most important question isn't what AI can do that humans can't — it's what becomes possible when they work together.",
@@ -16,15 +34,6 @@ const blogPosts = [
     category: "Vision",
     slug: "collaborative-future",
     status: "live" as const,
-  },
-  {
-    title: "Designing a skill tree for real-world expertise",
-    excerpt:
-      "Human skills are messy, contextual, and hard to quantify. Here's how we're thinking about representing them in a way agents can actually use.",
-    date: "Coming soon",
-    category: "Product",
-    slug: "skill-tree-design",
-    status: "coming_soon" as const,
   },
   {
     title: "The economics of human-agent collaboration",
