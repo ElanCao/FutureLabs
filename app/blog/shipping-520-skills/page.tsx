@@ -60,6 +60,50 @@ export default function BlogPost() {
         </div>
       </section>
 
+      {/* Hero Illustration — Skill DAG */}
+      <section className="bg-slate-50 border-y border-slate-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+          <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#6366f1" />
+              </marker>
+            </defs>
+            {/* Edges */}
+            <line x1="120" y1="80" x2="240" y2="60" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="120" y1="80" x2="240" y2="140" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="120" y1="200" x2="240" y2="140" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="120" y1="200" x2="240" y2="220" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="360" y1="60" x2="480" y2="80" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="360" y1="140" x2="480" y2="80" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="360" y1="140" x2="480" y2="200" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="360" y1="220" x2="480" y2="200" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="600" y1="80" x2="660" y2="140" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            <line x1="600" y1="200" x2="660" y2="140" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrowhead)" />
+            {/* Nodes */}
+            <circle cx="120" cy="80" r="32" fill="#4f46e5" />
+            <text x="120" y="84" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">Python</text>
+            <circle cx="120" cy="200" r="32" fill="#4f46e5" />
+            <text x="120" y="204" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">JavaScript</text>
+            <circle cx="300" cy="60" r="32" fill="#6366f1" />
+            <text x="300" y="64" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">pandas</text>
+            <circle cx="300" cy="140" r="32" fill="#6366f1" />
+            <text x="300" y="144" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">React</text>
+            <circle cx="300" cy="220" r="32" fill="#6366f1" />
+            <text x="300" y="224" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">Node.js</text>
+            <circle cx="540" cy="80" r="32" fill="#818cf8" />
+            <text x="540" y="84" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">scikit</text>
+            <circle cx="540" cy="200" r="32" fill="#818cf8" />
+            <text x="540" y="204" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">Next.js</text>
+            <circle cx="660" cy="140" r="40" fill="#312e81" />
+            <text x="660" y="137" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">MLOps /</text>
+            <text x="660" y="151" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">Full Stack</text>
+            {/* Caption */}
+            <text x="360" y="270" textAnchor="middle" fill="#64748b" fontSize="12" fontFamily="system-ui">A directed acyclic graph: prerequisites flow left to right, unlocking advanced skills</text>
+          </svg>
+        </div>
+      </section>
+
       {/* Content */}
       <article className="py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 prose prose-slate prose-lg">

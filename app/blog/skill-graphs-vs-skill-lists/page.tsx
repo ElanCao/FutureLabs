@@ -60,6 +60,55 @@ export default function BlogPost() {
         </div>
       </section>
 
+      {/* Hero Illustration — List vs Graph */}
+      <section className="bg-slate-50 border-y border-slate-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+          <svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+            {/* Left: Flat List */}
+            <rect x="40" y="20" width="240" height="220" rx="12" fill="white" stroke="#e2e8f0" strokeWidth="2" />
+            <text x="160" y="48" textAnchor="middle" fill="#1e293b" fontSize="14" fontWeight="700" fontFamily="system-ui">Skill List</text>
+            <rect x="70" y="68" width="180" height="28" rx="6" fill="#f1f5f9" />
+            <text x="80" y="86" fill="#475569" fontSize="11" fontFamily="system-ui">• Python</text>
+            <rect x="70" y="104" width="180" height="28" rx="6" fill="#f1f5f9" />
+            <text x="80" y="122" fill="#475569" fontSize="11" fontFamily="system-ui">• React</text>
+            <rect x="70" y="140" width="180" height="28" rx="6" fill="#f1f5f9" />
+            <text x="80" y="158" fill="#475569" fontSize="11" fontFamily="system-ui">• Kubernetes</text>
+            <rect x="70" y="176" width="180" height="28" rx="6" fill="#f1f5f9" />
+            <text x="80" y="194" fill="#475569" fontSize="11" fontFamily="system-ui">• Leadership</text>
+            {/* Center arrow */}
+            <line x1="310" y1="130" x2="370" y2="130" stroke="#cbd5e1" strokeWidth="2" strokeDasharray="6 4" />
+            <polygon points="370,125 380,130 370,135" fill="#cbd5e1" />
+            <text x="345" y="118" textAnchor="middle" fill="#94a3b8" fontSize="10" fontFamily="system-ui">vs</text>
+            {/* Right: Graph */}
+            <rect x="400" y="20" width="280" height="220" rx="12" fill="white" stroke="#e2e8f0" strokeWidth="2" />
+            <text x="540" y="48" textAnchor="middle" fill="#1e293b" fontSize="14" fontWeight="700" fontFamily="system-ui">Skill Graph</text>
+            {/* Graph nodes */}
+            <circle cx="480" cy="90" r="24" fill="#4f46e5" />
+            <text x="480" y="94" textAnchor="middle" fill="white" fontSize="9" fontWeight="600" fontFamily="system-ui">Python</text>
+            <circle cx="600" cy="90" r="24" fill="#6366f1" />
+            <text x="600" y="94" textAnchor="middle" fill="white" fontSize="9" fontWeight="600" fontFamily="system-ui">React</text>
+            <circle cx="540" cy="170" r="24" fill="#818cf8" />
+            <text x="540" y="174" textAnchor="middle" fill="white" fontSize="9" fontWeight="600" fontFamily="system-ui">Next.js</text>
+            <circle cx="660" cy="170" r="24" fill="#312e81" />
+            <text x="660" y="174" textAnchor="middle" fill="white" fontSize="9" fontWeight="600" fontFamily="system-ui">K8s</text>
+            <circle cx="460" cy="170" r="24" fill="#6366f1" />
+            <text x="460" y="174" textAnchor="middle" fill="white" fontSize="9" fontWeight="600" fontFamily="system-ui">JS</text>
+            {/* Graph edges */}
+            <defs>
+              <marker id="g-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#6366f1" />
+              </marker>
+            </defs>
+            <line x1="480" y1="114" x2="510" y2="152" stroke="#6366f1" strokeWidth="2" markerEnd="url(#g-arrow)" />
+            <line x1="600" y1="114" x2="570" y2="152" stroke="#6366f1" strokeWidth="2" markerEnd="url(#g-arrow)" />
+            <line x1="460" y1="146" x2="516" y2="164" stroke="#6366f1" strokeWidth="2" markerEnd="url(#g-arrow)" />
+            <line x1="564" y1="170" x2="636" y2="170" stroke="#6366f1" strokeWidth="2" markerEnd="url(#g-arrow)" />
+            {/* Caption */}
+            <text x="360" y="250" textAnchor="middle" fill="#64748b" fontSize="12" fontFamily="system-ui">Flat lists hide relationships. Graphs expose prerequisites, unlocks, and depth.</text>
+          </svg>
+        </div>
+      </section>
+
       {/* Content */}
       <article className="py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 prose prose-slate prose-lg">

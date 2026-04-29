@@ -60,6 +60,54 @@ export default function BlogPost() {
         </div>
       </section>
 
+      {/* Hero Illustration — Adoption Pipeline */}
+      <section className="bg-slate-50 border-y border-slate-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+          <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+            <defs>
+              <marker id="p-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#6366f1" />
+              </marker>
+            </defs>
+            {/* Step 1 */}
+            <rect x="10" y="60" width="120" height="80" rx="10" fill="#4f46e5" />
+            <text x="70" y="95" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">1. Export</text>
+            <text x="70" y="112" textAnchor="middle" fill="#c7d2fe" fontSize="9" fontFamily="system-ui">SKILL.md</text>
+            <text x="70" y="128" textAnchor="middle" fill="#c7d2fe" fontSize="9" fontFamily="system-ui">from SkillTree</text>
+            {/* Arrow */}
+            <line x1="138" y1="100" x2="158" y2="100" stroke="#6366f1" strokeWidth="2" markerEnd="url(#p-arrow)" />
+            {/* Step 2 */}
+            <rect x="170" y="60" width="120" height="80" rx="10" fill="#6366f1" />
+            <text x="230" y="95" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">2. Validate</text>
+            <text x="230" y="112" textAnchor="middle" fill="#c7d2fe" fontSize="9" fontFamily="system-ui">Run validator</text>
+            <text x="230" y="128" textAnchor="middle" fill="#c7d2fe" fontSize="9" fontFamily="system-ui">in CI</text>
+            {/* Arrow */}
+            <line x1="298" y1="100" x2="318" y2="100" stroke="#6366f1" strokeWidth="2" markerEnd="url(#p-arrow)" />
+            {/* Step 3 */}
+            <rect x="330" y="60" width="120" height="80" rx="10" fill="#818cf8" />
+            <text x="390" y="95" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">3. Extend</text>
+            <text x="390" y="112" textAnchor="middle" fill="#e0e7ff" fontSize="9" fontFamily="system-ui">Add custom</text>
+            <text x="390" y="128" textAnchor="middle" fill="#e0e7ff" fontSize="9" fontFamily="system-ui">extensions</text>
+            {/* Arrow */}
+            <line x1="458" y1="100" x2="478" y2="100" stroke="#6366f1" strokeWidth="2" markerEnd="url(#p-arrow)" />
+            {/* Step 4 */}
+            <rect x="490" y="60" width="100" height="80" rx="10" fill="#312e81" />
+            <text x="540" y="95" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">4. Render</text>
+            <text x="540" y="112" textAnchor="middle" fill="#c7d2fe" fontSize="9" fontFamily="system-ui">Visualize on</text>
+            <text x="540" y="128" textAnchor="middle" fill="#c7d2fe" fontSize="9" fontFamily="system-ui">your site</text>
+            {/* Arrow */}
+            <line x1="598" y1="100" x2="618" y2="100" stroke="#6366f1" strokeWidth="2" markerEnd="url(#p-arrow)" />
+            {/* Step 5 */}
+            <rect x="630" y="60" width="80" height="80" rx="10" fill="#4f46e5" />
+            <text x="670" y="95" textAnchor="middle" fill="white" fontSize="11" fontWeight="600" fontFamily="system-ui">5. Agent</text>
+            <text x="670" y="112" textAnchor="middle" fill="#c7d2fe" fontSize="9" fontFamily="system-ui">Discover</text>
+            <text x="670" y="128" textAnchor="middle" fill="#c7d2fe" fontSize="9" fontFamily="system-ui">&amp; match</text>
+            {/* Caption */}
+            <text x="360" y="180" textAnchor="middle" fill="#64748b" fontSize="12" fontFamily="system-ui">Five steps from export to agent-ready structured skill data</text>
+          </svg>
+        </div>
+      </section>
+
       {/* Content */}
       <article className="py-16 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 prose prose-slate prose-lg">
@@ -212,7 +260,7 @@ jobs:
 
           <pre><code>{`## Schema Extensions
 - verifiable_credentials:
-    - issuer: " coursera.org"
+    - issuer: "coursera.org"
       course: "Machine Learning Specialization"
       completed: "2024-03-15"
       credential_url: "https://coursera.org/verify/..."
