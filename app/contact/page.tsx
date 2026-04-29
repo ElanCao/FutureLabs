@@ -23,6 +23,23 @@ function getUtmParams(): UtmParams {
   };
 }
 
+function getPrefilledSubject(): string {
+  if (typeof window === "undefined") {
+    return "";
+  }
+  const params = new URLSearchParams(window.location.search);
+  const subject = params.get("subject") || "";
+  // Only allow known subject values to prevent injection
+  const validSubjects = [
+    "Early access request",
+    "Partnership inquiry",
+    "Investor inquiry",
+    "Press & media",
+    "Other",
+  ];
+  return validSubjects.includes(subject) ? subject : "";
+}
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -37,6 +54,10 @@ export default function ContactPage() {
 
   useEffect(() => {
     setUtmParams(getUtmParams());
+    const prefill = getPrefilledSubject();
+    if (prefill) {
+      setFormData((prev) => ({ ...prev, subject: prefill }));
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
