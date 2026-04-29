@@ -12,6 +12,33 @@ export const metadata: Metadata = {
 
 const blogPosts = [
   {
+    title: "The Open SkillTree Schema — Adoption Guide",
+    excerpt:
+      "A practical guide to adopting SKILL.md: export, validate, extend, and integrate the open skill data format into your workflow.",
+    date: "May 26, 2026",
+    category: "Engineering",
+    slug: "open-skilltree-schema-adoption",
+    status: "live" as const,
+  },
+  {
+    title: "Skill Graphs vs. Skill Lists: Why Structure Matters",
+    excerpt:
+      "Flat skill lists are failing engineers and hiring managers. Here's why graph structures are the future of capability representation.",
+    date: "May 19, 2026",
+    category: "Opinion",
+    slug: "skill-graphs-vs-skill-lists",
+    status: "live" as const,
+  },
+  {
+    title: "What We Learned Shipping 520+ Skills",
+    excerpt:
+      "Behind the scenes of building SkillTree's taxonomy: five lessons from mapping 520+ skills across 20 domains.",
+    date: "May 5, 2026",
+    category: "Product",
+    slug: "shipping-520-skills",
+    status: "live" as const,
+  },
+  {
     title: "The Open SkillTree Schema: Your Skills, Your Data",
     excerpt:
       "Why we built an open standard for skill data—and what it means for your career. Introducing SKILL.md, the portable format for skill data.",
