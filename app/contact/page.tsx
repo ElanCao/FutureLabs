@@ -1,7 +1,27 @@
 "use client";
 
 import type { Metadata } from "next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface UtmParams {
+  source: string;
+  medium: string;
+  campaign: string;
+  content: string;
+}
+
+function getUtmParams(): UtmParams {
+  if (typeof window === "undefined") {
+    return { source: "", medium: "", campaign: "", content: "" };
+  }
+  const params = new URLSearchParams(window.location.search);
+  return {
+    source: params.get("utm_source") || "",
+    medium: params.get("utm_medium") || "",
+    campaign: params.get("utm_campaign") || "",
+    content: params.get("utm_content") || "",
+  };
+}
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -11,8 +31,13 @@ export default function ContactPage() {
     message: "",
     website: "", // honeypot field
   });
+  const [utmParams, setUtmParams] = useState<UtmParams>({ source: "", medium: "", campaign: "", content: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
+
+  useEffect(() => {
+    setUtmParams(getUtmParams());
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +48,7 @@ export default function ContactPage() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, utm: utmParams }),
       });
 
       const data = await res.json();
