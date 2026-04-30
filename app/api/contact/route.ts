@@ -151,7 +151,7 @@ ${utmHtml}
     }
 
     return NextResponse.json(
-      { success: true, message: "Message sent successfully! We'll get back to you soon." },
+      { success: true, message: "Message sent successfully! We'll get back to you soon.", dbId: contactMessage?.id ?? null, dbUrl: process.env.DATABASE_URL ? "set" : "missing" },
       { status: 200 }
     );
   } catch (error) {
