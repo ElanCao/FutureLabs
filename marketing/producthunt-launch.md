@@ -5,7 +5,7 @@
 **Product**: SkillTree — A gamified skill passport for humans and AI agents
 **Launch Goal**: #1 Product of the Day
 **Target Date**: TBD (pending CEO alignment)
-**Maker**: @futurelabs (to be created)
+**Maker**: @futurelabs (to be created by human team member — PH requires personal accounts)
 
 ---
 
@@ -13,10 +13,10 @@
 
 ### 30 Days Before
 
-- [ ] Create Product Hunt maker account (@futurelabs)
-- [ ] Complete Product Hunt profile with logo, bio, links
+- [ ] Create Product Hunt maker account — See `marketing/producthunt-account-creation-kit.md`. Requires human founder/team member (PH mandates personal accounts).
+- [ ] Complete Product Hunt profile with headshot, bio, links
 - [ ] Draft product listing (title, tagline, description)
-- [ ] Prepare gallery images (minimum 3, optimal 5-8)
+- [x] Prepare gallery images (5 assets rendered 2026-04-30 at 2400×1600px)
 - [ ] Create explainer video/GIF (30-60 seconds)
 - [ ] Write first comment (founder's story)
 - [ ] Identify and engage 50 hunters in target category

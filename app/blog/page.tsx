@@ -66,6 +66,15 @@ const blogPosts = [
     status: "live" as const,
   },
   {
+    title: "Verified Skill Claims: Why Trust Matters in an Era of Vulnerable Agent Skills",
+    excerpt:
+      "The ClawHavoc crisis exposed a truth about the agent economy: unverified capabilities are a liability. Here's how SkillTree builds verification infrastructure for humans.",
+    date: "April 29, 2026",
+    category: "Security",
+    slug: "verified-skill-claims-security-era",
+    status: "live" as const,
+  },
+  {
     title: "The economics of human-agent collaboration",
     excerpt:
       "What does fair compensation look like when agents and humans trade value? We're building the infrastructure to find out.",
