@@ -79,9 +79,12 @@ export async function POST(request: NextRequest) {
           userAgent: request.headers.get("user-agent")?.slice(0, 500) || null,
         },
       });
-    } catch (dbError) {
+    } catch (dbError: any) {
       console.error("Failed to persist contact form submission:", dbError);
-      // Continue to send email so we don't lose the submission entirely
+      return NextResponse.json(
+        { error: "DB error: " + (dbError.message || String(dbError)) },
+        { status: 500 }
+      );
     }
 
     // Add contact to Resend audience (best-effort, non-blocking)
