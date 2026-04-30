@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendEmail } from "@/lib/email";
+import { sendEmail, addContactToAudience } from "@/lib/email";
+import { prisma } from "@/lib/prisma";
 
 const CONTACT_TO_EMAIL = process.env.CONTACT_FORM_TO_EMAIL || "hello@futurelabs.vip";
 
@@ -62,6 +63,37 @@ export async function POST(request: NextRequest) {
       ? `\nUTM Attribution:\n${utmLines.join("\n")}`
       : "";
 
+    // Persist to database
+    let contactMessage;
+    try {
+      contactMessage = await prisma.contactMessage.create({
+        data: {
+          name: name.trim().slice(0, 100),
+          email: email.trim().toLowerCase().slice(0, 255),
+          subject: subject?.trim().slice(0, 200) || null,
+          message: message.trim().slice(0, 5000),
+          source: "website",
+          ipAddress: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+            request.headers.get("x-real-ip") ||
+            null,
+          userAgent: request.headers.get("user-agent")?.slice(0, 500) || null,
+        },
+      });
+    } catch (dbError) {
+      console.error("Failed to persist contact form submission:", dbError);
+      // Continue to send email so we don't lose the submission entirely
+    }
+
+    // Add contact to Resend audience (best-effort, non-blocking)
+    const nameParts = name.trim().split(" ");
+    void addContactToAudience({
+      email: email.trim().toLowerCase(),
+      firstName: nameParts[0],
+      lastName: nameParts.slice(1).join(" ") || undefined,
+    }).catch((err) => {
+      console.error("Resend audience add failed:", err);
+    });
+
     // Send internal notification email
     const emailResult = await sendEmail({
       to: CONTACT_TO_EMAIL,
@@ -74,8 +106,8 @@ export async function POST(request: NextRequest) {
 <hr/>
 <p>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
 ${utmHtml}
-<p><em>Submitted at ${new Date().toISOString()}</em></p>`,
-      text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject || "Not specified"}\n\n${message}${utmText}\n\nSubmitted at ${new Date().toISOString()}`,
+<p><em>Submitted at ${new Date().toISOString()}${contactMessage ? ` | DB ID: ${contactMessage.id}` : ""}</em></p>`,
+      text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject || "Not specified"}\n\n${message}${utmText}\n\nSubmitted at ${new Date().toISOString()}${contactMessage ? ` | DB ID: ${contactMessage.id}` : ""}`,
       replyTo: email,
       tags: [
         { name: "source", value: "contact_form" },
