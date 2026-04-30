@@ -10,6 +10,9 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
 
+  // Prevent bundling of Prisma + pg so driver adapters work in serverless
+  serverExternalPackages: ['@prisma/client', '@prisma/adapter-pg', 'pg'],
+
   // Static export for GitHub Pages
   ...(isStaticExport && {
     output: 'export',
