@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import QRCode from "qrcode";
+import { trackEvent } from "@/lib/analytics";
 import { getProfile, getProfileSkills, SEED_PROFILES, type Profile } from "@/lib/seed-data";
 
 interface EnrichedSkillRecord {
@@ -634,6 +635,11 @@ function ShareCardContent() {
     a.href = canvas.toDataURL("image/png");
     a.click();
     setDownloaded(true);
+    trackEvent("share_card_generated", {
+      username,
+      type: activeTab,
+      achievement_id: selectedAchievement?.id,
+    });
 
     // Track share if milestone
     if (activeTab === "milestone" && selectedAchievement) {

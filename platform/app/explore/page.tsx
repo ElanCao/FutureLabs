@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Nav from "@/app/components/Nav";
+import { trackEvent } from "@/lib/analytics";
 import { BRANCHES, SEED_PROFILES, type Profile } from "@/lib/seed-data";
 
 const PAGE_SIZE = 12;
@@ -70,7 +71,13 @@ export default function ExplorePage() {
 
         {/* Skill search */}
         <form
-          onSubmit={(e) => { e.preventDefault(); setSkillSearch(searchInput.trim()); setPage(1); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const query = searchInput.trim();
+            setSkillSearch(query);
+            setPage(1);
+            if (query) trackEvent("skill_search", { query });
+          }}
           className="flex gap-2 mb-6"
         >
           <input

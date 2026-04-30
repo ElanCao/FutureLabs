@@ -16,6 +16,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useCallback, useMemo, useEffect } from "react";
 import dagre from "dagre";
+import { trackEvent } from "@/lib/analytics";
 import { BRANCH_COLORS } from "@/lib/branch-colors";
 export { BRANCH_COLORS } from "@/lib/branch-colors";
 
@@ -225,6 +226,10 @@ export default function SkillTreeGraph({ skills, userSkills = [], activeBranch }
     return (data.locked as boolean) ? "#374151" : (data.branchColor as string);
   }, []);
 
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    trackEvent("skill_explore", { skill_id: node.id });
+  }, []);
+
   return (
     <div style={{ width: "100%", height: "100%", background: "#0a0a0f", borderRadius: 12, overflow: "hidden" }}>
       <ReactFlow
@@ -232,6 +237,7 @@ export default function SkillTreeGraph({ skills, userSkills = [], activeBranch }
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
         fitView
         fitViewOptions={{ padding: 0.15 }}

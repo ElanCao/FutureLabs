@@ -4,6 +4,7 @@ import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Nav from "@/app/components/Nav";
+import { trackEvent } from "@/lib/analytics";
 import { SKILLS, BRANCHES, type UserSkillRecord, type EvidenceRecord } from "@/lib/seed-data";
 
 interface ProfileData {
@@ -338,6 +339,7 @@ export default function DashboardPage() {
         ...p,
         skills: [...p.skills, { skillId, currentLevel: level, xp: 0 }],
       } : p);
+      trackEvent("skill_complete", { skill_id: skillId, level });
     }
     setSaving(null);
   }
