@@ -6,8 +6,6 @@ export async function GET() {
   const results: any = {
     env: {
       databaseUrl: process.env.DATABASE_URL ? "set" : "missing",
-      resendKey: process.env.RESEND_API_KEY ? "set" : "missing",
-      audienceId: process.env.RESEND_AUDIENCE_ID ? "set" : "missing",
     },
   };
 
@@ -17,13 +15,15 @@ export async function GET() {
     const { Pool } = require("pg");
 
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    const adapter = new PrismaPg(pool);
-    const prisma = new PrismaClient({ adapter });
+    const factory = new PrismaPg(pool);
+    results.factoryName = factory?.constructor?.name;
+    results.factoryHasConnect = typeof factory.connect === "function";
 
-    results.adapterType = typeof adapter;
-    results.adapterName = adapter?.constructor?.name;
-    results.clientType = typeof prisma;
+    const connectedAdapter = await factory.connect();
+    results.adapterName = connectedAdapter?.constructor?.name;
+    results.adapterHasQueryRaw = typeof connectedAdapter.queryRaw === "function";
 
+    const prisma = new PrismaClient({ adapter: connectedAdapter });
     const count = await prisma.contactMessage.count();
     results.count = count;
     results.ok = true;
