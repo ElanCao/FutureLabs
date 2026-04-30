@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import WaitlistSignup from "./components/WaitlistSignup";
 
 export const metadata: Metadata = {
   title: "FutureLabs — The future that humans live with AI",
@@ -129,13 +130,8 @@ export default function Home() {
             >
               See the platform
             </Link>
-            <Link
-              href="/contact"
-              className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl border border-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
-            >
-              Get early access
-            </Link>
           </div>
+          <WaitlistSignup variant="hero" page="homepage-hero" />
         </div>
       </section>
 
@@ -190,14 +186,11 @@ export default function Home() {
             Ready to be part of the future?
           </h2>
           <p className="mt-4 text-indigo-200 text-lg text-balance">
-            Join our early access list and be the first to explore the platform.
+            Join our waitlist and be the first to explore the platform.
           </p>
-          <Link
-            href="/contact"
-            className="mt-8 inline-flex items-center px-8 py-3 bg-white text-indigo-700 font-semibold rounded-xl hover:bg-indigo-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-indigo-600"
-          >
-            Get early access
-          </Link>
+          <div className="mt-8 max-w-md mx-auto">
+            <WaitlistSignup variant="inline" page="homepage-cta" />
+          </div>
         </div>
       </section>
     </>

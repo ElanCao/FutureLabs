@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import WaitlistSignup from "../components/WaitlistSignup";
 
 export const metadata: Metadata = {
   title: "Product",
@@ -218,12 +219,9 @@ export default function Product() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
             </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center px-8 py-3 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 font-semibold rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-            >
-              Get in touch
-            </Link>
+          </div>
+          <div className="mt-8 max-w-md mx-auto">
+            <WaitlistSignup variant="inline" page="product-cta" />
           </div>
         </div>
       </section>
