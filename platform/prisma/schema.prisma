@@ -102,6 +102,7 @@ model Profile {
   SkillEndorsement_SkillEndorsement_endorseeIdToProfile SkillEndorsement[] @relation("SkillEndorsement_endorseeIdToProfile")
   SkillEndorsement_SkillEndorsement_endorserIdToProfile SkillEndorsement[] @relation("SkillEndorsement_endorserIdToProfile")
   UserSkillRecord                                       UserSkillRecord[]
+  achievements                                          Achievement[]
 }
 
 model Session {
@@ -163,6 +164,11 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime
   password      String?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  utmContent    String?
+  utmTerm       String?
   Account       Account[]
   Profile       Profile?
   Session       Session[]
@@ -193,6 +199,27 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  status    ContactStatus @default(UNREAD)
+  source    String        @default("website")
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  repliedAt DateTime?
+  repliedBy String?
+  notes     String?
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@index([createdAt])
+}
+
 enum EntityType {
   human
   ai_agent
@@ -207,53 +234,10 @@ enum EvidenceType {
   contribution
 }
 
-model Profile {
-  id                  String              @id @default(cuid())
-  username            String              @unique
-  displayName         String?
-  bio                 String?
-  avatarUrl           String?
-  avatarEmoji         String?
-  entityType          EntityType          @default(human)
-  privacy             Privacy             @default(private)
-  totalXp             Int                 @default(0)
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  userId              String?             @unique
-  user                User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
-  skills              UserSkillRecord[]
-  givenEndorsements   SkillEndorsement[]  @relation("GivenEndorsements")
-  receivedEndorsements SkillEndorsement[] @relation("ReceivedEndorsements")
-  notifications       Notification[]
-  apiKeys             ApiKey[]
-  achievements        Achievement[]
-}
-
 enum Privacy {
   public
   friends
   private
-}
-
-model ContactMessage {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  subject   String?
-  message   String   @db.Text
-  status    ContactStatus @default(UNREAD)
-  source    String   @default("website")
-  ipAddress String?
-  userAgent String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  repliedAt DateTime?
-  repliedBy String?
-  notes     String?  @db.Text
-
-  @@index([status, createdAt])
-  @@index([email])
-  @@index([createdAt])
 }
 
 enum ContactStatus {
@@ -267,16 +251,16 @@ enum ContactStatus {
 model Achievement {
   id          String   @id @default(cuid())
   profileId   String
-  type        String   // e.g., "skill_count", "level_reached", "first_collaboration", "endorsement_received"
-  tier        String   // "bronze", "silver", "gold", "platinum"
-  name        String   // e.g., "100 Skills", "Level 10", "First Collaboration"
+  type        String
+  tier        String
+  name        String
   description String?
-  icon        String   // emoji or icon identifier
-  metadata    Json?    // { skillCount: 100, level: 10, etc. }
+  icon        String
+  metadata    Json?
   unlockedAt  DateTime @default(now())
   sharedAt    DateTime?
   shareCount  Int      @default(0)
-  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  Profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([profileId])
   @@index([profileId, type])

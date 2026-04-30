@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { SKILLS, BRANCHES } from "@/lib/seed-data";
+import { getStoredUtmParams, trackSignupComplete, clearStoredUtmParams } from "@/lib/utm";
 
 export default function OnboardingPage() {
   const { data: session, status } = useSession();
@@ -82,6 +83,11 @@ export default function OnboardingPage() {
           body: JSON.stringify({ currentLevel: selectedLevel, xp: 0 }),
         });
       }
+
+      // Track signup completion with UTM attribution
+      const utm = getStoredUtmParams();
+      trackSignupComplete(utm);
+      clearStoredUtmParams();
 
       router.push(`/dashboard`);
     } catch {

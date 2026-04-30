@@ -14,7 +14,16 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 
-  const { email, password, name } = body as { email?: string; password?: string; name?: string };
+  const { email, password, name, utm_source, utm_medium, utm_campaign, utm_content, utm_term } = body as {
+    email?: string;
+    password?: string;
+    name?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_content?: string;
+    utm_term?: string;
+  };
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Valid email is required" }, { status: 400 });
@@ -51,6 +60,11 @@ export async function POST(req: NextRequest) {
         name: name?.trim() || null,
         password: hash,
         updatedAt: new Date(),
+        utmSource: utm_source || null,
+        utmMedium: utm_medium || null,
+        utmCampaign: utm_campaign || null,
+        utmContent: utm_content || null,
+        utmTerm: utm_term || null,
         // emailVerified intentionally null until OTP confirmed
       },
     });

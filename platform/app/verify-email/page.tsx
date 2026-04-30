@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { getStoredUtmParams, trackSignupComplete, clearStoredUtmParams } from "@/lib/utm";
 
 function VerifyEmailForm() {
   const router = useRouter();
@@ -96,6 +97,10 @@ function VerifyEmailForm() {
         callbackUrl,
       });
       if (result?.url) {
+        // Track signup completion for email-verified users
+        const utm = getStoredUtmParams();
+        trackSignupComplete(utm);
+        clearStoredUtmParams();
         router.push(result.url);
         return;
       }

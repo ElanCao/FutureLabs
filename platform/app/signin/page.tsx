@@ -5,13 +5,16 @@ import { signIn, getProviders } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { getStoredUtmParams } from "@/lib/utm";
 
 type Mode = "signin" | "register";
 
 function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+  const rawCallbackUrl = searchParams.get("callbackUrl");
+  const callbackUrl = rawCallbackUrl ?? "/dashboard";
+  const registerCallbackUrl = rawCallbackUrl ?? "/onboarding";
   const errorParam = searchParams.get("error");
 
   const [mode, setMode] = useState<Mode>("signin");
@@ -39,10 +42,11 @@ function SignInForm() {
     setLoading(true);
 
     if (mode === "register") {
+      const utm = getStoredUtmParams();
       const res = await fetch("/api/v1/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password, name, ...utm }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -53,7 +57,7 @@ function SignInForm() {
       if (data.requiresVerification) {
         // Temporarily store password so verify-email can auto sign-in after OTP
         sessionStorage.setItem("__reg_pw", password);
-        router.push(`/verify-email?email=${encodeURIComponent(email)}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
+        router.push(`/verify-email?email=${encodeURIComponent(email)}&callbackUrl=${encodeURIComponent(registerCallbackUrl)}`);
         return;
       }
     }
