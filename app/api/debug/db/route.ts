@@ -3,52 +3,62 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const results: any = {
-    env: {
-      databaseUrl: process.env.DATABASE_URL ? "set" : "missing",
-    },
-  };
+  const results: any = {};
 
-  // Test 1: Direct pg connection
+  // Test 1: Check pg import
   try {
-    const { Pool } = require("pg");
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-    const pgResult = await pool.query("SELECT COUNT(*) as count FROM \"ContactMessage\"");
-    results.pgOk = true;
-    results.pgCount = parseInt(pgResult.rows[0].count);
-    await pool.end();
-  } catch (error: any) {
-    results.pgOk = false;
-    results.pgError = error.message;
+    const pg = require("pg");
+    results.pgType = typeof pg;
+    results.pgKeys = Object.keys(pg).slice(0, 10);
+    results.poolType = typeof pg.Pool;
+    results.poolIsFunction = typeof pg.Pool === "function";
+  } catch (e: any) {
+    results.pgError = e.message;
   }
 
-  // Test 2: PrismaPg factory connect
+  // Test 2: Direct pg query
   try {
+    const pg = require("pg");
+    const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+    const res = await pool.query("SELECT 1 as one");
+    results.pgQueryOk = true;
+    results.pgQueryResult = res.rows[0];
+    await pool.end();
+  } catch (e: any) {
+    results.pgQueryOk = false;
+    results.pgQueryError = e.message;
+  }
+
+  // Test 3: PrismaPg factory
+  try {
+    const pg = require("pg");
     const { PrismaPg } = require("@prisma/adapter-pg");
-    const { Pool } = require("pg");
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
     const factory = new PrismaPg(pool);
+    results.factoryType = typeof factory;
+    results.factoryConnectType = typeof factory.connect;
     const connected = await factory.connect();
     results.factoryConnectOk = true;
-    results.connectedAdapterName = connected?.constructor?.name;
-  } catch (error: any) {
+    results.connectedType = typeof connected;
+    results.connectedQueryRawType = typeof connected.queryRaw;
+  } catch (e: any) {
     results.factoryConnectOk = false;
-    results.factoryConnectError = error.message;
+    results.factoryError = e.message;
   }
 
-  // Test 3: PrismaClient with factory
+  // Test 4: PrismaClient with factory
   try {
+    const pg = require("pg");
     const { PrismaClient } = require("@prisma/client");
     const { PrismaPg } = require("@prisma/adapter-pg");
-    const { Pool } = require("pg");
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
     const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
     const count = await prisma.contactMessage.count();
     results.prismaOk = true;
     results.prismaCount = count;
-  } catch (error: any) {
+  } catch (e: any) {
     results.prismaOk = false;
-    results.prismaError = error.message;
+    results.prismaError = e.message;
   }
 
   return NextResponse.json(results);
