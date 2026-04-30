@@ -79,12 +79,9 @@ export async function POST(request: NextRequest) {
           userAgent: request.headers.get("user-agent")?.slice(0, 500) || null,
         },
       });
-    } catch (dbError: any) {
+    } catch (dbError) {
       console.error("Failed to persist contact form submission:", dbError);
-      return NextResponse.json(
-        { error: "DB error: " + (dbError.message || String(dbError)) },
-        { status: 500 }
-      );
+      // Continue to send email so we don't lose the submission entirely
     }
 
     // Add contact to Resend audience (best-effort, non-blocking)
@@ -151,7 +148,7 @@ ${utmHtml}
     }
 
     return NextResponse.json(
-      { success: true, message: "Message sent successfully! We'll get back to you soon.", dbId: contactMessage?.id ?? null, dbUrl: process.env.DATABASE_URL ? "set" : "missing" },
+      { success: true, message: "Message sent successfully! We'll get back to you soon." },
       { status: 200 }
     );
   } catch (error) {
