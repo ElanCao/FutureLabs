@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const results: any = { version: 2 };
+  const results: any = { version: 3 };
 
   const dbUrl = process.env.DATABASE_URL || "";
   results.dbUrlLength = dbUrl.length;
