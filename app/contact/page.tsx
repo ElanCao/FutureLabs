@@ -40,6 +40,16 @@ function getPrefilledSubject(): string {
   return validSubjects.includes(subject) ? subject : "";
 }
 
+function sendGaEvent(
+  eventName: string,
+  params?: Record<string, string | number | boolean>
+) {
+  if (typeof window !== "undefined" && "gtag" in window) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).gtag("event", eventName, params);
+  }
+}
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
@@ -77,11 +87,23 @@ export default function ContactPage() {
       if (res.ok) {
         setResult({ success: true, message: "Message sent successfully! We'll get back to you soon." });
         setFormData({ name: "", email: "", subject: "", message: "", website: "" });
+        sendGaEvent("contact_submit", {
+          subject: formData.subject || "Other",
+          utm_source: utmParams.source,
+          utm_medium: utmParams.medium,
+          utm_campaign: utmParams.campaign,
+        });
       } else {
         setResult({ success: false, message: data.error || "Failed to send message. Please try again." });
+        sendGaEvent("contact_submit_error", {
+          error_type: data.error || "unknown",
+        });
       }
     } catch (error) {
       setResult({ success: false, message: "Network error. Please check your connection and try again." });
+      sendGaEvent("contact_submit_error", {
+        error_type: "network",
+      });
     } finally {
       setIsSubmitting(false);
     }

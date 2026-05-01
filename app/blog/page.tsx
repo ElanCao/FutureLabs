@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import WaitlistSignup from "../components/WaitlistSignup";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -150,6 +151,21 @@ export default function Blog() {
                 </div>
               </article>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Waitlist CTA */}
+      <section className="py-16 bg-indigo-600 text-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-balance">
+            Want more like this?
+          </h2>
+          <p className="mt-3 text-indigo-200 text-lg text-balance">
+            Join the waitlist and get early access to SkillTree plus updates on human-AI collaboration.
+          </p>
+          <div className="mt-6 max-w-md mx-auto">
+            <WaitlistSignup variant="inline" page="blog-listing" />
           </div>
         </div>
       </section>

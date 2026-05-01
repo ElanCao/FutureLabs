@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import WaitlistSignup from "../../components/WaitlistSignup";
 
 const SITE_URL = "https://futurelabs.vip";
 
@@ -346,6 +347,21 @@ Response: Populated skill tree`}</code></pre>
           </p>
         </div>
       </article>
+
+      {/* Waitlist CTA */}
+      <section className="py-16 bg-indigo-600 text-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-balance">
+            Own your skill data
+          </h2>
+          <p className="mt-3 text-indigo-200 text-lg text-balance">
+            Join the waitlist and get early access to SkillTree plus one-click SKILL.md export.
+          </p>
+          <div className="mt-6 max-w-md mx-auto">
+            <WaitlistSignup variant="inline" page="blog-open-skilltree-schema" />
+          </div>
+        </div>
+      </section>
     </>
   );
 }

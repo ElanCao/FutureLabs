@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   keywords: ["AI agents", "skill tree", "human-AI collaboration", "platform"],
   alternates: {
     canonical: "/",
+    types: {
+      "application/rss+xml": "https://futurelabs.vip/feed.xml",
+    },
   },
   openGraph: {
     type: "website",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import WaitlistSignup from "../../components/WaitlistSignup";
 
 export const metadata: Metadata = {
   title: "The Future Where Humans Live With AI — FutureLabs Research",
@@ -481,29 +482,17 @@ export default function HumanAIFuturePage() {
         </section>
       </article>
 
-      {/* CTA */}
-      <section className="bg-slate-900 text-white py-16">
+      {/* Waitlist CTA */}
+      <section className="bg-indigo-600 text-white py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-xl font-bold mb-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-balance mb-3">
             Help us get the human-AI future right.
           </h2>
-          <p className="text-slate-300 mb-6 text-sm">
-            We&apos;re building research partnerships and looking for
-            collaborators who share our conviction that this work matters.
+          <p className="text-indigo-200 text-lg text-balance mb-6">
+            Join the waitlist and be part of the research shaping human-AI collaboration.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/research"
-              className="inline-flex items-center px-6 py-2.5 bg-white text-slate-900 font-medium rounded-lg transition-colors text-sm hover:bg-slate-100"
-            >
-              See full research agenda
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors text-sm"
-            >
-              Get in touch
-            </Link>
+          <div className="max-w-md mx-auto">
+            <WaitlistSignup variant="inline" page="research-human-ai-future" />
           </div>
         </div>
       </section>

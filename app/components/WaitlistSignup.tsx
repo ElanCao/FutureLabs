@@ -22,6 +22,16 @@ function getUtmParams(): UtmParams {
   };
 }
 
+function sendGaEvent(
+  eventName: string,
+  params?: Record<string, string | number | boolean>
+) {
+  if (typeof window !== "undefined" && "gtag" in window) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).gtag("event", eventName, params);
+  }
+}
+
 interface WaitlistSignupProps {
   page?: string;
   variant?: "hero" | "inline";
@@ -64,16 +74,31 @@ export default function WaitlistSignup({
       if (res.ok) {
         setResult({ success: true, message: data.message });
         setEmail("");
+        sendGaEvent("waitlist_signup", {
+          page,
+          utm_source: utmParams.source,
+          utm_medium: utmParams.medium,
+          utm_campaign: utmParams.campaign,
+          utm_content: utmParams.content,
+        });
       } else {
         setResult({
           success: false,
           message: data.error || "Something went wrong. Please try again.",
+        });
+        sendGaEvent("waitlist_signup_error", {
+          page,
+          error_type: data.error || "unknown",
         });
       }
     } catch {
       setResult({
         success: false,
         message: "Network error. Please check your connection.",
+      });
+      sendGaEvent("waitlist_signup_error", {
+        page,
+        error_type: "network",
       });
     } finally {
       setIsSubmitting(false);

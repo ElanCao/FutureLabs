@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import WaitlistSignup from "../components/WaitlistSignup";
 
 export const metadata: Metadata = {
   title: "About",
@@ -207,6 +208,21 @@ export default function About() {
           <p className="text-center text-slate-400 text-sm mt-10">
             This team grows as FutureLabs grows — check back as we expand.
           </p>
+        </div>
+      </section>
+
+      {/* Waitlist CTA */}
+      <section className="py-16 bg-indigo-600 text-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-balance">
+            Join the mission
+          </h2>
+          <p className="mt-3 text-indigo-200 text-lg text-balance">
+            Be part of the future where humans and AI agents collaborate as true partners.
+          </p>
+          <div className="mt-6 max-w-md mx-auto">
+            <WaitlistSignup variant="inline" page="about" />
+          </div>
         </div>
       </section>
     </>

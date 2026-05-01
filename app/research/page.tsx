@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import WaitlistSignup from "../components/WaitlistSignup";
 
 export const metadata: Metadata = {
   title: "Research",
@@ -264,23 +265,18 @@ export default function Research() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 bg-white">
+      {/* Waitlist CTA */}
+      <section className="py-16 bg-indigo-600 text-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-xl font-bold text-slate-900 mb-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-balance">
             Interested in collaborating?
           </h2>
-          <p className="text-slate-600 mb-6 text-sm">
-            We&apos;re looking for research partners, advisors, and early
-            collaborators who share our conviction that the human-AI
-            relationship is worth getting right.
+          <p className="mt-3 text-indigo-200 text-lg text-balance">
+            Join the waitlist and be part of the research shaping the human-AI future.
           </p>
-          <a
-            href="/contact"
-            className="inline-flex items-center px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-          >
-            Get in touch
-          </a>
+          <div className="mt-6 max-w-md mx-auto">
+            <WaitlistSignup variant="inline" page="research" />
+          </div>
         </div>
       </section>
     </>

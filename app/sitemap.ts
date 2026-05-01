@@ -8,6 +8,7 @@ const blogPosts: { slug: string; lastModified: string }[] = [
   { slug: "open-skilltree-schema-adoption", lastModified: "2026-05-26" },
   { slug: "skill-graphs-vs-skill-lists", lastModified: "2026-05-19" },
   { slug: "shipping-520-skills", lastModified: "2026-05-05" },
+  { slug: "verified-skill-claims-security-era", lastModified: "2026-04-29" },
   { slug: "open-skilltree-schema", lastModified: "2026-04-15" },
   { slug: "building-skill-taxonomy", lastModified: "2026-04-08" },
   { slug: "collaborative-future", lastModified: "2026-03-25" },
