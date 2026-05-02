@@ -64,6 +64,16 @@ export default function WaitlistSignup({
     setIsSubmitting(true);
     setResult(null);
 
+    // Fire submit-intent event before the API call so we can measure
+    // the submit -> complete funnel (FUT-136 taxonomy).
+    sendGaEvent("waitlist_signup_submit", {
+      page,
+      utm_source: utmParams.source,
+      utm_medium: utmParams.medium,
+      utm_campaign: utmParams.campaign,
+      utm_content: utmParams.content,
+    });
+
     try {
       const res = await fetch("/api/waitlist", {
         method: "POST",
@@ -74,7 +84,7 @@ export default function WaitlistSignup({
       if (res.ok) {
         setResult({ success: true, message: data.message });
         setEmail("");
-        sendGaEvent("waitlist_signup", {
+        sendGaEvent("signup_complete", {
           page,
           utm_source: utmParams.source,
           utm_medium: utmParams.medium,
