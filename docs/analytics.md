@@ -77,11 +77,17 @@ on the welcome email tags via Resend).
 
 ### Plausible (platform sub-app)
 
-- Domain: `platform.futurelabs.vip` (set via `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`).
-- Account ownership and a read-only shared-link URL are still pending CMO/CEO
-  account setup at https://plausible.io. Once the shared link exists, paste
-  it here:
-  - Plausible shared link: _TBD — pending CMO/CEO account setup_
+- Domain: `platform.futurelabs.vip` (hardcoded as `data-domain` on the
+  Plausible `<Script>` in `platform/app/layout.tsx`; fixed in FUT-212).
+- Account creation pending CMO operating email — see
+  [FUT-210](/FUT/issues/FUT-210) and the unblock options on
+  [FUT-136](/FUT/issues/FUT-136).
+- To grant CMO/CEO read access once the account exists:
+  1. Sign in to Plausible as the account owner.
+  2. Site settings → Visibility → **Add shared link** → tick "anyone with the
+     link", no password.
+  3. Paste the generated URL below.
+- Plausible shared link: _TBD — pending [FUT-210](/FUT/issues/FUT-210)._
 
 ## Adding a New Event
 

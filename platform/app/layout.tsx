@@ -54,7 +54,7 @@ export default function RootLayout({
       <head>
         <Script
           defer
-          data-domain="futurelabs.vip"
+          data-domain="platform.futurelabs.vip"
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />
